@@ -8,6 +8,9 @@ public class CS_UI_TabButton : MonoBehaviour
     private int PageIndex;
     private GameObject Page;
 
+
+    public GameObject GetPage() { return Page; }
+
     private void Start()
     {
 

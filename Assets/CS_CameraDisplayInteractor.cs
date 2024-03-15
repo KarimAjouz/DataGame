@@ -31,7 +31,7 @@ public class CS_CameraDisplayInteractor : MonoBehaviour
         {
             RaycastHit OutHit;
             int Layer = 1 << LayerMask.NameToLayer("UI");
-            if (Physics.Raycast(m_PlayerCamera.transform.position, m_PlayerCamera.transform.forward, out OutHit, 1.5f, LayerMask.NameToLayer("UI")))
+            if (Physics.Raycast(m_PlayerCamera.transform.position, m_PlayerCamera.transform.forward, out OutHit, 1.5f, ~LayerMask.NameToLayer("UI")))
             {
                 Canvas canvas = OutHit.collider.GetComponent<Canvas>();
                 if (canvas == null) 
@@ -51,20 +51,12 @@ public class CS_CameraDisplayInteractor : MonoBehaviour
                 DisplayController.SetPointerLocation(OutHit.point);
                 FindObjectOfType<CS_UI_HUDScript>().HideReticule();
 
+
                 FPEInputManager InputManager = FPEInputManager.Instance;
                 if (InputManager == null)
                 {
                     Debug.LogWarning("CS_CameraDisplayInteractor::Update --> No InputManager could be found");
                     return;
-                }
-
-                if (InputManager.GetButtonDown(FPEInputManager.eFPEInput.FPE_INPUT_INTERACT))
-                {
-                    DisplayController.SetPointerEventType(FPEInputManager.eFPEInput.FPE_INPUT_INTERACT, true);
-                }
-                else if (InputManager.GetButtonUp(FPEInputManager.eFPEInput.FPE_INPUT_INTERACT))
-                {
-                    DisplayController.SetPointerEventType(FPEInputManager.eFPEInput.FPE_INPUT_INTERACT, false);
                 }
             }
             else
