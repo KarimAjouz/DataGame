@@ -144,6 +144,11 @@ namespace Whilefun.FPEKit
 
         public bool b_Zoomed;
         
+        // #Begin KazChange: Exposing CurrentInteractable on Instance;
+        public GameObject GetCurrentInteractableObject() { return currentInteractableObject; }
+        public GameObject GetCurrentPutBackObject() { return currentPutbackObject; }
+        public GameObject GetCurrentHeldObject() { return currentHeldObject; }
+        // #End KazChange: Exposing CurrentInteractable on Instance;
 
         void Awake()
         {

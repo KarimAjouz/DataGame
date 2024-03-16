@@ -64,16 +64,27 @@ namespace Whilefun.FPEKit
         protected bool pickedUp = false;
 
         [Header("Pickup and Put Back events")]
+
         [SerializeField, Tooltip("If specified, this event will fire when the object is picked up")]
         private FPEGenericEvent OnPickupEvent = null;
         [SerializeField, Tooltip("If ONETIME, the event will only fire the first time object is picked up. If REPEAT, event will fire every time the object is picked up")]
         private FPEGenericEvent.eRepeatMode pickupRepeatMode = FPEGenericEvent.eRepeatMode.ONETIME;
         private bool pickupEventFiredOnce = false;
+
         [SerializeField, Tooltip("If specified, this event will fire when the object is put back")]
         private FPEGenericEvent OnPutBackEvent = null;
         [SerializeField, Tooltip("If ONETIME, the event will only fire the first time object is put back. If REPEAT, event will fire every time the object is put back")]
         private FPEGenericEvent.eRepeatMode putbackRepeatMode = FPEGenericEvent.eRepeatMode.ONETIME;
         private bool putbackEventFiredOnce = false;
+
+        // #Begin KazChange: Implemented throw event
+        [SerializeField, Tooltip("If specified, this event will fire when the object is put back")]
+        private FPEGenericEvent OnThrowEvent = null;
+        [SerializeField, Tooltip("If ONETIME, the event will only fire the first time object is put back. If REPEAT, event will fire every time the object is put back")]
+        private FPEGenericEvent.eRepeatMode ThrowRepeatMode = FPEGenericEvent.eRepeatMode.ONETIME;
+        private bool ThrowEventFiredOnce = false;
+
+        // #End KazChange: Implemented throw event
 
         public override void Awake()
         {
@@ -199,9 +210,9 @@ namespace Whilefun.FPEKit
 
                 if (putback)
                 {
-
                     if (enableSounds)
                     {
+                        Debug.Log("PutBack");
 
                         beingPutBack = true;
 
@@ -227,6 +238,20 @@ namespace Whilefun.FPEKit
 
                     }
 
+                }
+                else
+                {
+                    if (!ThrowEventFiredOnce || ThrowRepeatMode == FPEGenericEvent.eRepeatMode.REPEAT)
+                    {
+                        Debug.Log("Thrown");
+                        ThrowEventFiredOnce = true;
+
+                        if (OnThrowEvent != null)
+                        {
+                            OnThrowEvent.Invoke();
+                        }
+
+                    }
                 }
 
             }

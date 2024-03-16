@@ -1,0 +1,16 @@
+# Made using Asset Forge (2.3.0)
+
+:materials
+
+[name:_defaultMat;color:RGBA(0.939, 0.953, 1.000, 1.000);scale:(1.0, 1.0);shader:Default;valueA:0.35;valueB:0.25;]
+[name:custom1;color:RGBA(0.000, 0.017, 0.241, 1.000);scale:(1.0, 1.0);shader:Default;valueA:0.5;valueB:0.15;]
+[name:custom2;color:RGBA(1.000, 0.455, 0.000, 1.000);scale:(1.0, 1.0);shader:Default;valueA:0.5;valueB:0.15;]
+[name:custom3;color:RGBA(0.277, 0.327, 1.000, 1.000);scale:(1.0, 1.0);shader:Default;valueA:0.5;valueB:0.15;]
+
+:models
+
+[name:;collection:Primitives;type:cylinderHollow;position:(0.0000, 0.1500, 0.1500);rotation:(270.0000, 0.0000, 0.0000);scale:(0.2000, 0.2000, 0.2000);group:;locked:False;hidden:False;materials:custom3;]
+[name:;collection:Primitives;type:cylinder;position:(0.0000, 0.1500, 0.1500);rotation:(270.0000, 0.0000, 0.0000);scale:(0.0500, 0.2000, 0.0500);group:;locked:False;hidden:False;materials:custom2;]
+[name:;collection:Primitives;type:block_bevel;position:(0.0000, 0.0000, -0.0800);rotation:(0.0000, 0.0000, 0.0000);scale:(0.3000, 0.3000, 0.0600);group:;locked:False;hidden:False;materials:custom1;]
+[name:;collection:Primitives;type:cylinder;position:(-0.1000, 0.3000, -0.0800);rotation:(0.0000, 0.0000, 0.0000);scale:(0.0200, 0.2000, 0.0200);group:;locked:False;hidden:False;materials:custom1;]
+[name:;collection:Primitives;type:icosphere;position:(-0.1000, 0.4800, -0.0800);rotation:(0.0000, 0.0000, 0.0000);scale:(0.0500, 0.0500, 0.0500);group:;locked:False;hidden:False;materials:_defaultMat;]

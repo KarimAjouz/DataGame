@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CS_UI_TabPage : MonoBehaviour
 {
@@ -10,8 +11,11 @@ public class CS_UI_TabPage : MonoBehaviour
     [SerializeField]
     public Color PageColor = Color.blue;
 
+    [SerializeField]
+    public ColorBlock PageButtonColors = ColorBlock.defaultColorBlock;
 
-    public  CS_UI_TabPage(string InName, Color InColor)
+
+    public CS_UI_TabPage(string InName, Color InColor)
     {
         PageName = InName;
         PageColor = InColor;

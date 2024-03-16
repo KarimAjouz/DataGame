@@ -72,9 +72,8 @@ public class CS_TabbedDisplay : MonoBehaviour
             text.text = PageGO.PageName;
         }
 
-        newButtonGO.GetComponent<Image>().color = PageGO.PageColor;
+        newButtonGO.GetComponent<Button>().colors = PageGO.PageButtonColors;
 
         newButton.SetPage(PageGO.gameObject, Pages.Count - 1);
     }
-
 }
