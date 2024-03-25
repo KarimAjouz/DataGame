@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -59,7 +60,7 @@ public struct FMousePointerData
         }
     }
 
-    public void OnPressed(List<Button> buttonList, PointerEventData InPointerEventData)
+    public void OnPressed(List<IPointerClickHandler> ClickHandlers, PointerEventData InPointerEventData)
     {
         PressedPosition = Position;
         PressedTime = 0.0f;
@@ -69,7 +70,7 @@ public struct FMousePointerData
         EventType = EMousePointerEventType.PtrEventType_PRESSED;
     }
 
-    public void OnReleased(List<Button> buttonList, PointerEventData InPointerEventData)
+    public void OnReleased(List<IPointerClickHandler> ClickHandlers, PointerEventData InPointerEventData)
     {
         bIsPressed = false;
 
@@ -80,9 +81,9 @@ public struct FMousePointerData
         else if (PressedTime <= ClickedReleaseThreshold)
         {
             EventType = EMousePointerEventType.PtrEventType_CLICKED;
-            foreach (Button button in buttonList)
+            foreach (IPointerClickHandler ClickHandler in ClickHandlers)
             {
-                button.OnPointerClick(InPointerEventData);
+                ClickHandler.OnPointerClick(InPointerEventData);
             }
         }
     }
@@ -91,8 +92,9 @@ public struct FMousePointerData
 
 public class CS_UI_MousePointer : MonoBehaviour
 {
-    List<Button> buttonList;
-
+    List<IPointerClickHandler> m_ClickHandlerList;
+    List<Selectable> m_SelectableList;
+    
     private PointerEventData m_PointerEventData;     EventSystem m_EventSystem; 
     FMousePointerData m_PointerData;     RectTransform m_Transform;
 
@@ -103,9 +105,10 @@ public class CS_UI_MousePointer : MonoBehaviour
     
         InitialiseMousePointerData();
 
-        buttonList = new List<Button>();
-        m_PointerEventData = new PointerEventData(m_EventSystem);
+        m_ClickHandlerList = new List<IPointerClickHandler>();
+        m_SelectableList = new List<Selectable>();
 
+        m_PointerEventData = new PointerEventData(m_EventSystem);
     }
 
     // Update is called once per frame
@@ -146,31 +149,38 @@ public class CS_UI_MousePointer : MonoBehaviour
 
     private void OnTriggerEnter(Collider collision)
     {
-
-        Button collidedButton = collision.gameObject.GetComponent<Button>();
-        if (collidedButton != null)
+        Selectable collidedSelectable = collision.gameObject.GetComponent<Selectable>();
+        if (collidedSelectable != null)
         {
-            buttonList.Add(collidedButton);
-            collidedButton.OnPointerEnter(m_PointerEventData);
+            m_SelectableList.Add(collidedSelectable);
+            collidedSelectable.OnPointerEnter(m_PointerEventData);
+        }
 
-            CS_UI_TabButton tabButton = collidedButton.gameObject.GetComponent<CS_UI_TabButton>();
-            Debug.Log(tabButton.GetPage().GetComponent<CS_UI_TabPage>().PageName + " Button Added");
+        IPointerClickHandler collidedClickHandler = collision.gameObject.GetComponent<IPointerClickHandler>();
+        if (collidedClickHandler != null)
+        {
+            m_ClickHandlerList.Add(collidedClickHandler);
         }
     }
 
     private void OnTriggerExit(Collider collision)
     {
-        Button collidedButton = collision.gameObject.GetComponent<Button>();
-        if (collidedButton != null)
+        Selectable collidedSelectable = collision.gameObject.GetComponent<Selectable>();
+        if (collidedSelectable != null)
         {
-            if (buttonList.Contains(collidedButton))
+            if (m_SelectableList.Contains(collidedSelectable))
             {
-                buttonList.Remove(collidedButton);
-                collidedButton.OnPointerExit(m_PointerEventData);
+                m_SelectableList.Remove(collidedSelectable);
+                collidedSelectable.OnPointerExit(m_PointerEventData);
+            }
+        }
 
-                CS_UI_TabButton tabButton = collidedButton.gameObject.GetComponent<CS_UI_TabButton>();
-                Debug.Log(tabButton.GetPage().GetComponent<CS_UI_TabPage>().PageName + " Button Removed");
-
+        IPointerClickHandler collidedClickHandler = collision.gameObject.GetComponent<IPointerClickHandler>();
+        if (collidedClickHandler != null)
+        {
+            if (m_ClickHandlerList.Contains(collidedClickHandler))
+            {
+                m_ClickHandlerList.Remove(collidedClickHandler);
             }
         }
     }
@@ -192,11 +202,11 @@ public class CS_UI_MousePointer : MonoBehaviour
 
         if (InputManager.GetButtonDown(FPEInputManager.eFPEInput.FPE_INPUT_INTERACT))
         {
-            m_PointerData.OnPressed(buttonList, m_PointerEventData);
+            m_PointerData.OnPressed(m_ClickHandlerList, m_PointerEventData);
         }
         else if (InputManager.GetButtonUp(FPEInputManager.eFPEInput.FPE_INPUT_INTERACT))
         {
-            m_PointerData.OnReleased(buttonList, m_PointerEventData);
+            m_PointerData.OnReleased(m_ClickHandlerList, m_PointerEventData);
         }
     }
 }

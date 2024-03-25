@@ -1,0 +1,14 @@
+# Made using Asset Forge (2.3.0)
+
+:materials
+
+[name:_defaultMat;color:RGBA(0.752, 0.737, 0.666, 1.000);scale:(1.0, 1.0);shader:Default;valueA:0.35;valueB:0.25;]
+[name:custom1;color:RGBA(0.124, 0.124, 0.124, 1.000);scale:(1.0, 1.0);shader:Default;valueA:0.5;valueB:0.15;]
+
+:models
+
+[name:;collection:Primitives;type:block;position:(0.0000, 1.8000, 0.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.4000, 0.1000, 0.1000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:block;position:(0.0000, 0.1000, 0.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.4000, 0.1000, 0.1000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:block;position:(-0.6500, 0.1000, 0.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(0.1000, 1.8000, 0.1000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:block;position:(0.6500, 0.1000, 0.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(0.1000, 1.8000, 0.1000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:block_bevel;position:(0.0000, 0.1100, 0.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.3900, 1.7900, 0.1000);group:;locked:False;hidden:False;materials:custom1;]

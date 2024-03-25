@@ -5,9 +5,15 @@ using Whilefun.FPEKit;
 
 public class CS_Communicator : MonoBehaviour
 {
-
     Rigidbody m_rb;
     Collider m_collider;
+
+    [SerializeField]
+    public GameObject SourceGO;
+
+    [SerializeField]
+    public GameObject TargetGO;
+
     // Start is called before the first frame update
     void Start()
     {

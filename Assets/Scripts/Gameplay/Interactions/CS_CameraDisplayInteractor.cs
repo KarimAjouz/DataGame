@@ -31,7 +31,7 @@ public class CS_CameraDisplayInteractor : MonoBehaviour
         {
             RaycastHit OutHit;
             int Layer = 1 << LayerMask.NameToLayer("UI");
-            if (Physics.Raycast(m_PlayerCamera.transform.position, m_PlayerCamera.transform.forward, out OutHit, 1.5f, ~LayerMask.NameToLayer("UI")))
+            if (Physics.Raycast(m_PlayerCamera.transform.position, m_PlayerCamera.transform.forward, out OutHit, 3.0f, ~LayerMask.NameToLayer("UI")))
             {
                 Canvas canvas = OutHit.collider.GetComponent<Canvas>();
                 if (canvas == null) 

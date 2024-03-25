@@ -390,7 +390,6 @@ namespace Whilefun.FPEKit
                         if (currentPutbackObject)
                         {
 
-                            currentHeldObject.GetComponent<FPEInteractablePickupScript>().doPickupPutdown(true);
                             currentHeldObject.transform.position = currentPutbackObject.transform.position;
                             currentHeldObject.transform.rotation = currentPutbackObject.transform.rotation;
                             currentHeldObject.transform.parent = null;
@@ -399,6 +398,8 @@ namespace Whilefun.FPEKit
                             currentHeldObject.GetComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.Continuous;
                             currentHeldObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
                             currentHeldObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+
+                            currentHeldObject.GetComponent<FPEInteractablePickupScript>().doPickupPutdown(true);
 
                             Transform[] objectTransforms = currentHeldObject.GetComponentsInChildren<Transform>();
 
