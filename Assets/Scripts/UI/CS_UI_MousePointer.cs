@@ -95,8 +95,11 @@ public class CS_UI_MousePointer : MonoBehaviour
     List<IPointerClickHandler> m_ClickHandlerList;
     List<Selectable> m_SelectableList;
     
-    private PointerEventData m_PointerEventData;     EventSystem m_EventSystem; 
-    FMousePointerData m_PointerData;     RectTransform m_Transform;
+    private PointerEventData m_PointerEventData;
+    EventSystem m_EventSystem;
+
+    FMousePointerData m_PointerData;
+    RectTransform m_Transform;
 
     // Start is called before the first frame update
     void Start()
