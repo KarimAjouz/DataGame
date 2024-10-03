@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>ChoETL.JSON</id>
+    <version>1.2.1.67</version>
+    <title>Cinchoo ETL - JSON Reader / Writer</title>
+    <authors>Cinchoo</authors>
+    <owners>Cinchoo</owners>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/Cinchoo/ChoETL/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/Cinchoo/ChoETL</projectUrl>
+    <iconUrl>http://www.gravatar.com/avatar/6ebc114acdd1d9f7ec5028a165a819b1.png</iconUrl>
+    <description>Cinchoo ETL - JSON Reader / Writer</description>
+    <summary>Cinchoo ETL - JSON Reader / Writer</summary>
+    <releaseNotes>FIX: Multiple fixes.</releaseNotes>
+    <copyright>Copyright 2018 Cinchoo Inc</copyright>
+    <tags>ETL c# .NET CSV Xml JSON FlatFile</tags>
+    <dependencies>
+      <group targetFramework=".NETFramework4.5">
+        <dependency id="Newtonsoft.Json" version="12.0.0" />
+        <dependency id="ChoETL" version="1.2.1.67" />
+      </group>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="Newtonsoft.Json" version="12.0.0" />
+        <dependency id="ChoETL" version="1.2.1.67" />
+      </group>
+      <group targetFramework=".NETCoreApp2.0">
+        <dependency id="Newtonsoft.Json" version="12.0.0" />
+        <dependency id="ChoETL" version="1.2.1.67" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

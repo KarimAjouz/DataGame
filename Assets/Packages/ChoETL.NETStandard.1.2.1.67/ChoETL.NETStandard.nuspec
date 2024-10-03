@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>ChoETL.NETStandard</id>
+    <version>1.2.1.67</version>
+    <authors>Cinchoo</authors>
+    <owners></owners>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/Cinchoo/ChoETL/blob/master/LICENSE</licenseUrl>
+    <icon>cinchoo.png</icon>
+    <projectUrl>https://github.com/Cinchoo/ChoETL</projectUrl>
+    <iconUrl>http://www.gravatar.com/avatar/6ebc114acdd1d9f7ec5028a165a819b1.png</iconUrl>
+    <description>ETL Framework for .NET</description>
+    <releaseNotes>.NET Standard version</releaseNotes>
+    <copyright>Copyright Cinchoo Inc.</copyright>
+    <tags>ETL c# .NET CSV Xml JSON Flat</tags>
+    <repository type="GitHub" url="https://github.com/Cinchoo/ChoETL" commit="e780f12632e52d839b80f54fba035556cb97faa7" />
+    <dependencies>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="Microsoft.CSharp" version="4.4.1" exclude="Build,Analyzers" />
+        <dependency id="System.CodeDom" version="4.4.0" exclude="Build,Analyzers" />
+        <dependency id="System.ComponentModel.Annotations" version="4.4.1" exclude="Build,Analyzers" />
+        <dependency id="System.Configuration.ConfigurationManager" version="4.4.1" exclude="Build,Analyzers" />
+        <dependency id="System.Data.SqlClient" version="4.8.6" exclude="Build,Analyzers" />
+        <dependency id="System.Reflection.Emit" version="4.3.0" exclude="Build,Analyzers" />
+        <dependency id="System.Reflection.Emit.Lightweight" version="4.3.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

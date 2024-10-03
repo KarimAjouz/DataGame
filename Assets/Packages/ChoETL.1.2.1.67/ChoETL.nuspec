@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>ChoETL</id>
+    <version>1.2.1.67</version>
+    <title>Cinchoo ETL</title>
+    <authors>Cinchoo</authors>
+    <owners>Cinchoo</owners>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/Cinchoo/ChoETL/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/Cinchoo/ChoETL</projectUrl>
+    <iconUrl>http://www.gravatar.com/avatar/6ebc114acdd1d9f7ec5028a165a819b1.png</iconUrl>
+    <description>An ETL framework for .NET</description>
+    <summary>An ETL framework for .NET</summary>
+    <releaseNotes>FIX: Fixed number of issues.</releaseNotes>
+    <copyright>Copyright 2017 Cinchoo Inc</copyright>
+    <tags>ETL c# .NET CSV Xml JSON Flat</tags>
+    <dependencies>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="Microsoft.CSharp" version="4.4.1" />
+        <dependency id="System.CodeDom" version="4.4.0" />
+        <dependency id="System.ComponentModel.Annotations" version="4.4.1" />
+        <dependency id="System.Configuration.ConfigurationManager" version="4.4.1" />
+        <dependency id="System.Reflection.Emit" version="4.3.0" />
+        <dependency id="System.Reflection.Emit.Lightweight" version="4.3.0" />
+        <dependency id="System.Data.SqlClient" version="4.4.3" />
+      </group>
+      <group targetFramework=".NETCoreApp2.0">
+        <dependency id="Microsoft.CSharp" version="4.4.1" />
+        <dependency id="System.CodeDom" version="4.4.0" />
+        <dependency id="System.ComponentModel.Annotations" version="4.4.1" />
+        <dependency id="System.Configuration.ConfigurationManager" version="4.4.1" />
+        <dependency id="System.Data.SqlClient" version="4.4.3" />
+        <dependency id="System.Reflection.Emit" version="4.3.0" />
+        <dependency id="System.Reflection.Emit.Lightweight" version="4.3.0" />
+      </group>
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="PresentationFramework" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Configuration" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.ComponentModel.DataAnnotations" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Runtime.Serialization" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Xml" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Xml.Linq" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Core" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Data" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Net.Http" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Data.DataSetExtensions" targetFramework=".NETFramework4.5" />
+      <frameworkAssembly assemblyName="System.Web" targetFramework=".NETFramework4.5" />
+    </frameworkAssemblies>
+  </metadata>
+</package>
