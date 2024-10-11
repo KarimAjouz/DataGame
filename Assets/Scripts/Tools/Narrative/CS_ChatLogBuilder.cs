@@ -14,9 +14,6 @@ using System.Linq;
 public class CS_ChatLogBuilder : MonoBehaviour
 {
     [SerializeField]
-    public TextAsset TestChatlogCSV;
-
-    [SerializeField]
     [ReadOnly]
     private List<NNarrativeDataTypes.FChatLineTimeChunk> ChatLog;
 
@@ -30,61 +27,7 @@ public class CS_ChatLogBuilder : MonoBehaviour
         ChatLog = new List<NNarrativeDataTypes.FChatLineTimeChunk>();
     }
 
-    public string ConvertCsvFileToJsonString(TextAsset Lines)
-    {
-        var csv = new List<string[]>();
-        var CSVLines = Lines.text;
-
-        StringBuilder sb = new StringBuilder();
-        using (var p = ChoCSVReader.LoadText(CSVLines)
-            .WithFirstLineHeader()
-            .QuoteAllFields()
-            .MayContainEOLInData()
-            .ThrowAndStopOnMissingField(false)
-            )
-        {
-            using (var w = new ChoJSONWriter(sb))
-                w.Write(p);
-        }
-
-        GenerateJSONLog(sb.ToString());
-
-        return sb.ToString();
-    }
-
-
-    public JArray GetJobjectFromJsonString(string InJsonText)
-    {
-        if (InJsonText.IsNullOrEmpty())
-        {
-            Debug.LogWarning("Warning: Cannot create JObject from Empty JsonText!");
-            return null;
-        }
-        JArray jObject = JArray.Parse(InJsonText);
-
-        return jObject;
-
-    }
-
-    public void GenerateJSONLog(string InString)
-    {
-        string path = AssetDatabase.GetAssetPath(TestChatlogCSV).Split(".")[0] + "_JSON_" + ".txt";
-        // This text is added only once to the file.
-        if (!File.Exists(path))
-        {
-            // Create a file to write to.
-            using (StreamWriter sw = File.CreateText(path))
-            {
-                sw.WriteLine(InString);
-            }
-        }
-        else
-        {
-            File.WriteAllText(path, InString);
-        }
-    }
-
-    public void PopulateChatLogLines(TextAsset InLines)
+    public void PopulateChatLogLines(TextAsset InLines, JArray ChatLogArray)
     {
         if (InLines.IsObjectNullOrEmpty() || InLines.text.IsNullOrEmpty())
         {
@@ -93,9 +36,6 @@ public class CS_ChatLogBuilder : MonoBehaviour
         }
 
         ChatLog.Clear();
-
-        string ChatLogJsonString = ConvertCsvFileToJsonString(InLines);
-        JArray ChatLogAsJObj = GetJobjectFromJsonString(ChatLogJsonString);
 
         string PeopleRow = InLines.text.Split("\n")[0];
         string[] PeopleInChatLog = PeopleRow.Split(",");
@@ -115,7 +55,7 @@ public class CS_ChatLogBuilder : MonoBehaviour
             ChatRoom.People.Add(Person.Split("\r")[0]);
         }
 
-        foreach (JObject chatObject in ChatLogAsJObj.Children())
+        foreach (JObject chatObject in ChatLogArray.Children())
         {
             NNarrativeDataTypes.FChatLineTimeChunk NewTimeChunk = new NNarrativeDataTypes.FChatLineTimeChunk();
 

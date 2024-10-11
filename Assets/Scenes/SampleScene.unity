@@ -2672,7 +2672,9 @@ GameObject:
   - component: {fileID: 596470646}
   - component: {fileID: 596470645}
   - component: {fileID: 596470647}
+  - component: {fileID: 596470650}
   - component: {fileID: 596470648}
+  - component: {fileID: 596470649}
   m_Layer: 0
   m_Name: NarrativeManager
   m_TagString: Untagged
@@ -2692,7 +2694,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7b2c7919c705f04c87396adda535d6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TestChatlogCSV: {fileID: 4900000, guid: 3af722892824fd0488e4b73b04e4b7a9, type: 3}
   ChatLog:
   - TimestampString: 18:00
     TimeStamp: 1800
@@ -2853,6 +2854,113 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fc21b98c71262d45a53117941c2804f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &596470649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 596470643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f5885b7f4a03d94f92bb57eb2ba236c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CharacterData: []
+--- !u!114 &596470650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 596470643}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d8aa8ed7b3e4704f951fa58bba4d1d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TraitDictionary:
+    Traits:
+      _serializedList:
+      - Key:
+          DisplayName: EDUCATION
+        Value:
+        - DisplayName: Primary School
+        - DisplayName: Secondary School
+        - DisplayName: GCSEs
+        - DisplayName: BTEC
+        - DisplayName: A-Levels
+        - DisplayName: International Baccalaureate
+        - DisplayName: Associates Degree
+        - DisplayName: Undergraduate
+        - DisplayName: Post-Graduate
+        - DisplayName: PhD
+        - DisplayName: Post-Doctorate
+      - Key:
+          DisplayName: EMPLOYMENT STATUS
+        Value:
+        - DisplayName: Unemployed
+        - DisplayName: Student
+        - DisplayName: Part-Time
+        - DisplayName: Full-Time
+        - DisplayName: Self-Employed
+        - DisplayName: Apprenticeship
+        - DisplayName: Internship
+      - Key:
+          DisplayName: OCCUPATION FIELD
+        Value:
+        - DisplayName: Medicine
+        - DisplayName: Entertainment
+        - DisplayName: Publishing
+        - DisplayName: Marketing
+        - DisplayName: Consultancy
+        - DisplayName: Engineering
+        - DisplayName: Technology
+        - DisplayName: Trades
+        - DisplayName: Logistics
+        - DisplayName: Hospitality
+        - DisplayName: Education
+      - Key:
+          DisplayName: GENDER IDENTITY
+        Value:
+        - DisplayName: Male
+        - DisplayName: Female
+      - Key:
+          DisplayName: SEXUALITY
+        Value:
+        - DisplayName: Heterosexual
+        - DisplayName: Homosexual
+        - DisplayName: Bisexual
+        - DisplayName: Asexual
+        - DisplayName: Pansexual
+      - Key:
+          DisplayName: "LOCATION\r"
+        Value:
+        - DisplayName: Nuttemouth
+        - DisplayName: Nuttemyn Wells
+        - DisplayName: Nutteford Central
+        - DisplayName: Oxeley
+        - DisplayName: Antesbury
+    StringToTraitCategory:
+      _serializedList:
+      - Key: EDUCATION
+        Value:
+          DisplayName: EDUCATION
+      - Key: EMPLOYMENT STATUS
+        Value:
+          DisplayName: EMPLOYMENT STATUS
+      - Key: OCCUPATION FIELD
+        Value:
+          DisplayName: OCCUPATION FIELD
+      - Key: GENDER IDENTITY
+        Value:
+          DisplayName: GENDER IDENTITY
+      - Key: SEXUALITY
+        Value:
+          DisplayName: SEXUALITY
+      - Key: "LOCATION\r"
+        Value:
+          DisplayName: "LOCATION\r"
 --- !u!1 &642174158
 GameObject:
   m_ObjectHideFlags: 0
