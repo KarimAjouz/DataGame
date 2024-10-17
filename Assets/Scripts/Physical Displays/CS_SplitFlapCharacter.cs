@@ -9,23 +9,23 @@ using UnityEngine.U2D;
 public class CS_SplitFlapCharacter : MonoBehaviour
 {
     [SerializeField]
-    private GameObject PendingCard;
-    private GameObject QueuedCard;
+    private CS_SplitFlapCharacter_SingleCard PendingCard;
+    private CS_SplitFlapCharacter_SingleCard QueuedCard;
     private Vector3 PendingCardPos;
     private Quaternion PendingCardRot;
 
     [SerializeField]
-    private GameObject TopCard;
+    private CS_SplitFlapCharacter_SingleCard TopCard;
     private Vector3 TopCardPos;
     private Quaternion TopCardRot;
 
     [SerializeField]
-    private GameObject BottomCard;
+    private CS_SplitFlapCharacter_SingleCard BottomCard;
     private Vector3 BotCardPos;
     private Quaternion BotCardRot;
 
     [SerializeField]
-    private GameObject CompletedCard;
+    private CS_SplitFlapCharacter_SingleCard CompletedCard;
     private Vector3 CompCardPos;
     private Quaternion CompCardRot;
 
@@ -44,10 +44,10 @@ public class CS_SplitFlapCharacter : MonoBehaviour
 
         int NumCards = SFDisplay.AvailableCharacters.Length;
 
-        TopCard.GetComponent<CS_SplitFlapCharacter_SingleCard>().SetCard(SFDisplay.AvailableCharacters[(DisplayIndexCurrent) % NumCards], SFDisplay.AvailableCharacters[(DisplayIndexCurrent + 1) % NumCards]);
-        BottomCard.GetComponent<CS_SplitFlapCharacter_SingleCard>().SetCard(SFDisplay.AvailableCharacters[(DisplayIndexCurrent + NumCards - 1) % NumCards], SFDisplay.AvailableCharacters[DisplayIndexCurrent % NumCards]);
-        CompletedCard.GetComponent<CS_SplitFlapCharacter_SingleCard>().SetCard(SFDisplay.AvailableCharacters[(DisplayIndexCurrent + NumCards - 2) % NumCards], SFDisplay.AvailableCharacters[(DisplayIndexCurrent + NumCards - 1) % NumCards]);
-        PendingCard.GetComponent<CS_SplitFlapCharacter_SingleCard>().SetCard(SFDisplay.AvailableCharacters[(DisplayIndexCurrent + 1) % NumCards], SFDisplay.AvailableCharacters[(DisplayIndexCurrent + 2) % NumCards]);
+        TopCard.SetCard(SFDisplay.AvailableCharacters[(DisplayIndexCurrent) % NumCards], SFDisplay.AvailableCharacters[(DisplayIndexCurrent + 1) % NumCards]);
+        BottomCard.SetCard(SFDisplay.AvailableCharacters[(DisplayIndexCurrent + NumCards - 1) % NumCards], SFDisplay.AvailableCharacters[DisplayIndexCurrent % NumCards]);
+        CompletedCard.SetCard(SFDisplay.AvailableCharacters[(DisplayIndexCurrent + NumCards - 2) % NumCards], SFDisplay.AvailableCharacters[(DisplayIndexCurrent + NumCards - 1) % NumCards]);
+        PendingCard.SetCard(SFDisplay.AvailableCharacters[(DisplayIndexCurrent + 1) % NumCards], SFDisplay.AvailableCharacters[(DisplayIndexCurrent + 2) % NumCards]);
         
         TopCardPos = TopCard.transform.position;
         TopCardRot = TopCard.transform.rotation;
@@ -76,7 +76,7 @@ public class CS_SplitFlapCharacter : MonoBehaviour
 
         if (DisplayIndexCurrent != DisplayIndexTarget)
         {
-            TopCard.GetComponent<CS_SplitFlapCharacter_SingleCard>().FireAnim();
+            TopCard.FireAnim();
             SpinCardAnim();
         }
     }
@@ -94,7 +94,7 @@ public class CS_SplitFlapCharacter : MonoBehaviour
         CompletedCard = QueuedCard;
 
         QueuedCard = null;
-        PendingCard.GetComponent<CS_SplitFlapCharacter_SingleCard>().SetCard(SFDisplay.AvailableCharacters[(DisplayIndexCurrent + 1) % SFDisplay.AvailableCharacters.Length], SFDisplay.AvailableCharacters[(DisplayIndexCurrent + 2) % SFDisplay.AvailableCharacters.Length]);
+        PendingCard.SetCard(SFDisplay.AvailableCharacters[(DisplayIndexCurrent + 1) % SFDisplay.AvailableCharacters.Length], SFDisplay.AvailableCharacters[(DisplayIndexCurrent + 2) % SFDisplay.AvailableCharacters.Length]);
 
 
         TopCard.transform.SetPositionAndRotation(TopCardPos, TopCardRot);
@@ -107,5 +107,13 @@ public class CS_SplitFlapCharacter : MonoBehaviour
         BottomCard.transform.SetPositionAndRotation(BotCardPos, BotCardRot);
 
         SFDisplay.CatchAudio.Play();
+    }
+
+    public void SetCardHighlightColour(Color InColour)
+    {
+        TopCard.SetColor(InColour);
+        BottomCard.SetColor(InColour);
+        PendingCard.SetColor(InColour);
+        CompletedCard.SetColor(InColour);
     }
 }

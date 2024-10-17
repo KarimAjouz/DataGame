@@ -9,10 +9,10 @@ using UnityEngine.U2D;
 public class CS_SplitFlapCharacter_SingleCard : MonoBehaviour
 {
     [SerializeField]
-    private TMP_Text FrontText;
+    private TextMeshProUGUI FrontText;
 
     [SerializeField]
-    private TMP_Text RearText;
+    private TextMeshProUGUI RearText;
 
     [SerializeField]
     [ReadOnly]
@@ -45,5 +45,11 @@ public class CS_SplitFlapCharacter_SingleCard : MonoBehaviour
     public void CompleteAnim()
     {
         ParentCharacter.CompleteSpinAnim();
+    }
+
+    public void SetColor(Color c)
+    {
+        FrontText.color = c;
+        RearText.color = c;
     }
 }
