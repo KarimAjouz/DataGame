@@ -34,6 +34,11 @@ public class CS_SplitFlapCharacter_SingleCard : MonoBehaviour
 
     public void FireAnim()
     {
+        if(Anim.IsNull())
+        {
+            return;
+        }
+
         Anim.Play();
     }
 

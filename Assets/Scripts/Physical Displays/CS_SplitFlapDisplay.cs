@@ -1,4 +1,6 @@
 using ChoETL;
+using Newtonsoft.Json;
+using NNarrativeDataTypes;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -15,6 +17,8 @@ public class CS_SplitFlapDisplay : MonoBehaviour
     private bool bIsInputField = false;
 
     private string InputPromptText;
+
+    private string InputFormat;
 
     private int ActiveCharIndex;
 
@@ -41,9 +45,6 @@ public class CS_SplitFlapDisplay : MonoBehaviour
     [SerializeField]
     public CS_SplitFlapDisplayFontHolder FontHolder;
 
-    private float runningClock = 5.0f;
-    private bool ShouldTest = true;
-
     [SerializeField]
     private Color ActiveColour;
 
@@ -60,22 +61,10 @@ public class CS_SplitFlapDisplay : MonoBehaviour
         CharacterDisplays = new List<CS_SplitFlapCharacter>(GetComponentsInChildren<CS_SplitFlapCharacter>());
 
         if (bIsInputField)
-            SetDisplayText(InputPromptText);
+            SetDisplayText(InputPromptText + InputFormat);
 
     }
 
-    private void Update()
-    {
-
-        if (runningClock < 0.0f && ShouldTest)
-        {
-            SetDisplayText(DisplayText);
-            //runningClock = 2.0f;
-            ShouldTest = false;
-        }
-        else
-            runningClock -= Time.deltaTime;
-    }
 
     public void RegenerateDisplay()
     {
@@ -99,24 +88,38 @@ public class CS_SplitFlapDisplay : MonoBehaviour
         }
     }
 
-    public void InitDisplay(bool InIsInputDisplay, string InInputPrompt = null)
+    public void InitDisplay(bool InIsInputDisplay, string InInputPrompt = null, string InInputFormat = null)
     {
         bIsInputField = InIsInputDisplay;
         if(bIsInputField)
         {
             SetInputPromptText(InInputPrompt);
+            SetInputFormatText(InInputFormat);
         }
     }
 
     public void SetDisplayText(string InText)
     {
+        if(InText.IsNullOrEmpty()) 
+        { 
+            return; 
+        }
+
         if(bIsInputField)
         {
             SetInputPromptText(InputPromptText);
 
             for (int i = InputPromptText.Length; i < CharacterDisplays.Count; i++)
             {
-                if (i < InText.Length)
+                if (i < InText.Length && 
+                    (
+                        InputFormat.Length == 0 || 
+                        (
+                            i < InputFormat.Length && 
+                            InputFormat[i].Equals(' ')
+                        )
+                    )
+                )
                 {
                     int CharIndex = AvailableCharacters.IndexOf(InText[i]);
                     CharacterDisplays[i].GetComponent<CS_SplitFlapCharacter>().SetDisplayIndex(CharIndex);
@@ -143,6 +146,31 @@ public class CS_SplitFlapDisplay : MonoBehaviour
             if (i < InputPromptText.Length)
             {
                 int CharIndex = AvailableCharacters.IndexOf(InText[i]);
+                CharacterDisplays[i].GetComponent<CS_SplitFlapCharacter>().SetDisplayIndex(CharIndex);
+            }
+        }
+    }
+    public void SetInputFormatText(string InText)
+    {
+        InputFormat = InText;
+        if (CharacterDisplays.IsNull())
+            return;
+
+        if (InText.Length + InputPromptText.Length > CharacterDisplays.Count)
+        {
+            Debug.LogWarning("InputPrompt text is as long as/longer than Display! No input will be available!");
+        }
+
+        if(InputFormat.Length == 0)
+        {
+            return;
+        }
+
+        for (int i = InputPromptText.Length; i < CharacterDisplays.Count; i++)
+        {
+            if (i < (InputPromptText.Length + InputFormat.Length))
+            {
+                int CharIndex = AvailableCharacters.IndexOf(InText[i - InputPromptText.Length]);
                 CharacterDisplays[i].GetComponent<CS_SplitFlapCharacter>().SetDisplayIndex(CharIndex);
             }
         }
@@ -242,8 +270,16 @@ public class CS_SplitFlapDisplay : MonoBehaviour
     {
         CharacterDisplays[ActiveCharIndex].SetCardHighlightColour(ActiveColour);
 
-        if (ActiveCharIndex < CharacterDisplays.Count - 1)
+        if (ActiveCharIndex < CharacterDisplays.Count && (InputFormat.Length == 0 || ActiveCharIndex + 1 < InputFormat.Length + InputPromptText.Length))
+        {
             ActiveCharIndex++;
+        }
+
+        if (ActiveCharIndex < InputFormat.Length + InputPromptText.Length && !InputFormat[ActiveCharIndex-InputPromptText.Length].Equals(' '))
+        {
+            ActiveCharIndex++;
+        }
+
         CharacterDisplays[ActiveCharIndex].SetCardHighlightColour(HighlightColour);
 
     }
@@ -252,10 +288,54 @@ public class CS_SplitFlapDisplay : MonoBehaviour
     {
         CharacterDisplays[ActiveCharIndex].SetCardHighlightColour(ActiveColour);
 
-        if (ActiveCharIndex >= InputPromptText.Length)
+        if (ActiveCharIndex > InputPromptText.Length)
+        {
             ActiveCharIndex--;
+        }
+
+        if (InputFormat.Length != 0 && !InputFormat[ActiveCharIndex - InputPromptText.Length].Equals(' '))
+        {
+            ActiveCharIndex--;
+        }
 
         CharacterDisplays[ActiveCharIndex].SetCardHighlightColour(HighlightColour);
 
+    }
+
+    public string GetInputFieldData()
+    {
+        bool HasFoundFinalInputChar = false;
+        string OutString = "";
+        for (int i = NumCharacters - 1; i >= InputPromptText.Length; i--)
+        {
+            if(HasFoundFinalInputChar)
+            {
+                OutString = OutString.Insert(0, AvailableCharacters[CharacterDisplays[i].GetDisplayIndex()].ToString());
+            }
+            else
+            {
+                if (CharacterDisplays[i].GetDisplayIndex() > 0)
+                {
+                    HasFoundFinalInputChar = true;
+                    OutString = OutString.Insert(0, AvailableCharacters[CharacterDisplays[i].GetDisplayIndex()].ToString());
+                }
+            }
+        }
+
+        return OutString;
+    }
+
+    public void SetInputFieldData(string InString)
+    {
+        int count = 0;
+
+        if (bIsInputField)
+            count = InputPromptText.Length;
+
+        for (int i = count; i < CharacterDisplays.Count; i++)
+        {
+            int CharToSet = i - count < InString.Length ? AvailableCharacters.IndexOf(InString[i - count]) : 0;
+            CharacterDisplays[i].GetComponent<CS_SplitFlapCharacter>().SetDisplayIndex(CharToSet);
+        }
     }
 }

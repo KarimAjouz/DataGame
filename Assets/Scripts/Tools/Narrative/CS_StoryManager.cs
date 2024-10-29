@@ -7,6 +7,7 @@ using NNarrativeDataTypes;
 using Unity.VisualScripting;
 using NCharacterTraitCategoryTypes;
 using AYellowpaper.SerializedCollections;
+using ChoETL;
 
 namespace NNarrativeDataTypes
 {
@@ -30,6 +31,28 @@ namespace NNarrativeDataTypes
             DisplayName = dd.ToString() + "/" + mm.ToString() + "/" + yyyy.ToString();
         }
 
+        public FDateHandle(string InDateStr)
+        {
+            string[] dateStrings = InDateStr.Split("/");
+            string ddStr = dateStrings[0];
+            string mmStr = dateStrings[1];
+            string yyyyStr = dateStrings[2];
+            dd = 0;
+            mm = 0;
+            yyyy = 0;
+
+            if (!ddStr[1].Equals(' '))
+                dd = int.Parse(ddStr);
+
+            if (!mmStr[1].Equals(' '))
+                mm = int.Parse(mmStr);
+
+            if (!yyyyStr[3].Equals(' '))
+                yyyy = int.Parse(yyyyStr);
+
+            DisplayName = InDateStr;
+        }
+        
         public override bool Equals(object obj)
         {
             return obj is FDateHandle handle &&
@@ -54,6 +77,69 @@ namespace NNarrativeDataTypes
         public static bool operator !=(FDateHandle left, FDateHandle right)
         {
             return !(left == right);
+        }
+
+        public bool IsEmpty()
+        {
+            return DisplayName.IsNullOrEmpty();
+        }
+
+        public string GetDisplayName()
+        {
+            return DisplayName;
+        }
+
+        public bool IsFullDoB()
+        {
+            return dd != 0 && mm != 0 && yyyy != 0;
+        }
+
+        public float CalculateScore(FDateHandle InComparisonHandle, ref int InErrorCount)
+        {
+            if(InComparisonHandle == this)
+            {
+                return 1.0f;
+            }
+
+            float OutScore = 0;
+
+            if (dd != 0)
+            {
+                if(InComparisonHandle.dd == this.dd)
+                {
+                    OutScore++;
+                }
+                else
+                {
+                    InErrorCount++;
+                }
+            }
+
+            if (mm != 0)
+            {
+                if (InComparisonHandle.mm == this.mm)
+                {
+                    OutScore++;
+                }
+                else
+                {
+                    InErrorCount++;
+                }
+            }
+
+            if (yyyy != 0)
+            {
+                if (InComparisonHandle.yyyy == this.yyyy)
+                {
+                    OutScore++;
+                }
+                else
+                {
+                    InErrorCount++;
+                }
+            }
+
+            return OutScore / 3.0f;
         }
     }
     // #END: Tagged Item Data
@@ -113,30 +199,69 @@ namespace NNarrativeDataTypes
         private FCharacterWebHandle WebHandle;
 
         [SerializeField]
-        private FCivIdHandle CivIdHandle;
+        private FWebIdHandle WebIdHandle;
 
         [SerializeField]
         private FDateHandle DateOfBirth;
 
         [SerializeField]
         [SerializedDictionary]
-        private SerializedDictionary<string, FCharacterTraitId> Traits;
+        private SerializedDictionary<ECharacterTraitCategory, FCharacterTraitId> Traits;
 
         public FCharacterData(
             string InName,
             int InId, 
-            FCharacterWebHandle InWebHandle, 
-            FCivIdHandle InCivIdHandle, 
+            FCharacterWebHandle InWebHandle,
+            FWebIdHandle InWebIdHandle, 
             FDateHandle InDateOfBirth,
-            SerializedDictionary<string, FCharacterTraitId> InTraits
+            SerializedDictionary<ECharacterTraitCategory, FCharacterTraitId> InTraits
             )
         {
             this.CharacterName = InName;
             this.CharacterId = InId;
             this.WebHandle = InWebHandle;
-            this.CivIdHandle = InCivIdHandle;
+            this.WebIdHandle = InWebIdHandle;
             this.DateOfBirth = InDateOfBirth;
             this.Traits = InTraits;
+        }
+
+        public void SetCharName(string InName)
+        {
+            CharacterName = InName;
+        }
+
+        public string GetCharacterName()
+        {
+            return CharacterName;
+        }
+        public void SetWebHandle(FCharacterWebHandle InWebHandle)
+        {
+            WebHandle = InWebHandle;
+        }
+
+        public FCharacterWebHandle GetWebHandle()
+        {
+            return WebHandle;
+        }
+
+        public void SetWebId(FWebIdHandle InWebId)
+        {
+            WebIdHandle = InWebId;
+        }
+
+        public FWebIdHandle GetWebId()
+        {
+            return WebIdHandle;
+        }
+
+        public void SetDateOfBirth(FDateHandle InDateOfBirth)
+        {
+            DateOfBirth = InDateOfBirth;
+        }
+
+        public FDateHandle GetDateOfBirth()
+        {
+            return DateOfBirth;
         }
     }
 
@@ -150,49 +275,90 @@ namespace NNarrativeDataTypes
         {
             DisplayName = InDisplayName;
         }
+
+        public override bool Equals(object obj)
+        {
+            return obj is FCharacterWebHandle handle &&
+                   this == (FCharacterWebHandle)obj;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(DisplayName);
+        }
+
+        public static bool operator ==(FCharacterWebHandle lhs, FCharacterWebHandle rhs)
+        {
+            return
+                lhs.GetHashCode() == rhs.GetHashCode();
+        }
+        public static bool operator !=(FCharacterWebHandle lhs, FCharacterWebHandle rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public bool IsEmpty()
+        { 
+            return DisplayName.IsNullOrEmpty(); 
+        }
+
+        public string GetDisplayName()
+        {
+            return DisplayName;
+        }
     }
 
 
     [System.Serializable]
-    public struct FCivIdHandle
+    public struct FWebIdHandle
     {
         private int Seg1;
-        private int Seg2;
-        private int Seg3;
+        //private int Seg2;
+        //private int Seg3;
 
         [SerializeField]
         string DisplayName;
 
-        public FCivIdHandle(int InSeg1, int InSeg2, int InSeg3, string InDisplayName)
+        public FWebIdHandle(int InSeg1/*, int InSeg2, int InSeg3*/, string InDisplayName)
         {
             Seg1 = InSeg1;
-            Seg2 = InSeg2;
-            Seg3 = InSeg3;
+            //Seg2 = InSeg2;
+            //Seg3 = InSeg3;
 
             DisplayName = InDisplayName;
         }
 
         public override bool Equals(object obj)
         {
-            return obj is FCivIdHandle handle &&
-                   this == (FCivIdHandle)obj;
+            return obj is FWebIdHandle handle &&
+                   this == (FWebIdHandle)obj;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Seg1, Seg2, Seg3);
+            return HashCode.Combine(Seg1/*, Seg2, Seg3*/);
         }
 
-        public static bool operator == (FCivIdHandle lhs, FCivIdHandle rhs)
+        public static bool operator == (FWebIdHandle lhs, FWebIdHandle rhs)
         {
             return 
-                lhs.Seg1 == rhs.Seg1 && 
+                lhs.Seg1 == rhs.Seg1 /*&& 
                 lhs.Seg2 == rhs.Seg2 && 
-                lhs.Seg3 == rhs.Seg3;
+                lhs.Seg3 == rhs.Seg3*/;
         }
-        public static bool operator != (FCivIdHandle lhs, FCivIdHandle rhs)
+        public static bool operator != (FWebIdHandle lhs, FWebIdHandle rhs)
         {
             return !(lhs == rhs);
+        }
+
+        public bool IsEmpty()
+        {
+            return DisplayName.IsNullOrEmpty();
+        }
+
+        public string GetDisplayName()
+        {
+            return DisplayName;
         }
     }
 
@@ -205,9 +371,81 @@ namespace NNarrativeDataTypes
 
 public class CS_StoryManager : MonoBehaviour
 {
+    CS_CharacterListBuilder CharacterList;
 
     public void Start()
     {
+        CharacterList = gameObject.GetComponent<CS_CharacterListBuilder>();
+        if(CharacterList.IsNull())
+        {
+            Debug.LogWarning("Character List is invalid!");
+        }
     }
 
+    public void ScoreProfile(FCharacterData InProfileToValidate)
+    {
+        List<FCharacterData> MatchingCharacters = CharacterList.GetMatchingCharacters(InProfileToValidate);
+
+        if(MatchingCharacters.Count == 1)
+        {
+            float Score = ScoreProfile(InProfileToValidate, MatchingCharacters[0]);
+        }
+
+        if (MatchingCharacters.Count == 0)
+        {
+            // Run some logic to mark this as a failed submission that needs more info to identify a person
+        }
+
+        if(MatchingCharacters.Count > 1)
+        {
+            // Run some logic to mark this as a vague profile that needs more information to narrow it down to a person
+        }
+    }
+
+
+    private float ScoreProfile(FCharacterData InputProfile,  FCharacterData ComparisonProfile)
+    {
+        float Score = 0.0f;
+        int Errors = 0;
+
+        if (!InputProfile.GetCharacterName().IsNullOrEmpty())
+        {
+            if (InputProfile.GetCharacterName() == ComparisonProfile.GetCharacterName())
+            {
+                Score++;
+            }
+            else
+            {
+                Errors++;
+            }
+        }
+
+        if (!InputProfile.GetWebHandle().IsObjectNullOrEmpty())
+        {
+            if (InputProfile.GetWebHandle() == ComparisonProfile.GetWebHandle())
+            {
+                Score++;
+            }
+            else
+            {
+                Errors++;
+            }
+        }
+        
+        if (!InputProfile.GetWebId().IsObjectNullOrEmpty())
+        {
+            if (InputProfile.GetWebId() == ComparisonProfile.GetWebId())
+            {
+                Score++;
+            }
+            else
+            {
+                Errors++;
+            }
+        }
+
+        Score += InputProfile.GetDateOfBirth().CalculateScore(ComparisonProfile.GetDateOfBirth(), ref Errors);
+
+        return Errors >= 2 ? 0.0f : Score;
+    }
 }

@@ -1,26 +1,164 @@
+using AYellowpaper.SerializedCollections;
 using ChoETL;
+using NCharacterTraitCategoryTypes;
+using NNarrativeDataTypes;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+[System.Serializable]
+struct FDisplayTextData
+{
+    [SerializeField]
+    public string InputPrompt;
+
+    [SerializeField]
+    public string FormatString;
+}
+
+[System.Serializable]
+class CS_DataInputPage
+{
+    [SerializeField]
+    string PageDisplayName;
+
+    [SerializeField]
+    ECharacterDataPageType PageType;
+
+    [SerializeField]
+    [SerializedDictionary ("Category", "DisplayRef")]
+    SerializedDictionary<ECharacterTraitCategory, CS_SplitFlapDisplay> CategoryToDisplayMap;
+
+    [SerializeField]
+    [SerializedDictionary("Category", "InputPrompt")]
+    SerializedDictionary<ECharacterTraitCategory, FDisplayTextData> CategoryToPromptMap;
+
+    [SerializeField]
+    private int ActiveDisplay;
+
+    public CS_SplitFlapDisplay GetActiveDisplay()
+    {
+        return CategoryToDisplayMap.Values.Count > ActiveDisplay ? CategoryToDisplayMap.GetValueAt(ActiveDisplay) as CS_SplitFlapDisplay : null;
+    }
+
+    public int GetDisplayCount()
+    {
+        return CategoryToDisplayMap.Count;
+    }
+
+    public void InitPage()
+    {
+        foreach (KeyValuePair<ECharacterTraitCategory, CS_SplitFlapDisplay> pair in CategoryToDisplayMap)
+        {
+            pair.Value.InitDisplay(true, CategoryToPromptMap[pair.Key].InputPrompt, CategoryToPromptMap[pair.Key].FormatString);
+        } 
+    }
+
+    public void ResetPage()
+    {
+        foreach (KeyValuePair<ECharacterTraitCategory, CS_SplitFlapDisplay> pair in CategoryToDisplayMap)
+        {
+            pair.Value.ResetDisplay();
+        }
+    }
+
+    public void NextDisplay()
+    {
+        GetActiveDisplay().SetDisplayActive(false);
+        ActiveDisplay++;
+        ActiveDisplay = ActiveDisplay % GetDisplayCount();
+        GetActiveDisplay().SetDisplayActive(true);
+    }
+
+    public void PreviousDisplay()
+    {
+        GetActiveDisplay().SetDisplayActive(false);
+        ActiveDisplay--;
+        ActiveDisplay +=  GetDisplayCount();
+        ActiveDisplay %= GetDisplayCount();
+        GetActiveDisplay().SetDisplayActive(true);
+    }
+
+    public void PopulateCharacterData(ref FCharacterData InOutData)
+    {
+        if(PageType == ECharacterDataPageType.ECharacterDataPageType_IDENTIFIER)
+        {
+            foreach (KeyValuePair<ECharacterTraitCategory, CS_SplitFlapDisplay> Pair in CategoryToDisplayMap)
+            {
+                if(Pair.Key == ECharacterTraitCategory.ETraitCategory_NAME && !Pair.Value.GetInputFieldData().IsEmpty())
+                {
+                    InOutData.SetCharName(Pair.Value.GetInputFieldData());
+                }
+
+                if (Pair.Key == ECharacterTraitCategory.ETraitCategory_WEBHANDLE && !Pair.Value.GetInputFieldData().IsEmpty())
+                {
+                    InOutData.SetWebHandle(new FCharacterWebHandle(Pair.Value.GetInputFieldData()));
+                }
+
+                if (Pair.Key == ECharacterTraitCategory.ETraitCategory_WEBID && !Pair.Value.GetInputFieldData().IsEmpty())
+                {
+                    int Seg1 = int.Parse(Pair.Value.GetInputFieldData());
+                    InOutData.SetWebId(new FWebIdHandle(Seg1, Pair.Value.GetInputFieldData()));
+                }
+
+                if (Pair.Key == ECharacterTraitCategory.ETraitCategory_BIRTHDATE && !Pair.Value.GetInputFieldData().IsEmpty())
+                {
+                    InOutData.SetDateOfBirth(new FDateHandle(Pair.Value.GetInputFieldData()));
+                }
+            }
+        }
+
+    }
+
+    public void PupulateInputFields(FCharacterData InData)
+    {
+        if (PageType == ECharacterDataPageType.ECharacterDataPageType_IDENTIFIER)
+        {
+            foreach (KeyValuePair<ECharacterTraitCategory, CS_SplitFlapDisplay> Pair in CategoryToDisplayMap)
+            {
+                if (Pair.Key == ECharacterTraitCategory.ETraitCategory_NAME && !InData.GetCharacterName().IsNullOrEmpty())
+                {
+                    Pair.Value.SetInputFieldData(InData.GetCharacterName());
+                }
+
+                if (Pair.Key == ECharacterTraitCategory.ETraitCategory_WEBHANDLE && !InData.GetWebHandle().IsEmpty())
+                {
+                    Pair.Value.SetInputFieldData(InData.GetWebHandle().GetDisplayName());
+                }
+
+                if (Pair.Key == ECharacterTraitCategory.ETraitCategory_WEBID && !InData.GetWebId().IsEmpty())
+                {
+                    Pair.Value.SetInputFieldData(InData.GetWebId().GetDisplayName());
+                }
+
+                if (Pair.Key == ECharacterTraitCategory.ETraitCategory_BIRTHDATE && !InData.GetDateOfBirth().IsEmpty())
+                {
+                    Pair.Value.SetInputFieldData(InData.GetDateOfBirth().GetDisplayName());
+
+                }
+            }
+        }
+
+    }
+
+}
+
+
 public class CS_Dock_SFDisplayManager : MonoBehaviour
 {
     [SerializeField]
-    private List<CS_SplitFlapDisplay> ControlledDisplays;
+    private List<CS_DataInputPage> ControlledDisplayPages;
 
-    private int ActiveDisplay = 0;
+    [SerializeField]
+    private int ActivePage = 0;
 
     private bool ComponentActive = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        ControlledDisplays = new List<CS_SplitFlapDisplay>(GetComponentsInChildren<CS_SplitFlapDisplay>());
-        ControlledDisplays[0].InitDisplay(true, "WEB:");
-    }
-
-    private void Awake()
-    {
+        InitialiseControlledDisplays();
     }
 
     // Update is called once per frame
@@ -32,59 +170,63 @@ public class CS_Dock_SFDisplayManager : MonoBehaviour
 
             if (Input.GetKeyUp(KeyCode.UpArrow))
             {
-                PreviousDisplay();
+                ControlledDisplayPages[ActivePage].PreviousDisplay();
             }
 
             if (Input.GetKeyUp(KeyCode.DownArrow))
             {
-                NextDisplay();
+                ControlledDisplayPages[ActivePage].NextDisplay();
             }
 
             if (Input.GetKeyUp(KeyCode.LeftArrow))
             {
-                ControlledDisplays[ActiveDisplay].PreviousChar();
+                ControlledDisplayPages[ActivePage].GetActiveDisplay().PreviousChar();
             }
 
             if (Input.GetKeyUp(KeyCode.RightArrow))
             {
-                ControlledDisplays[ActiveDisplay].NextChar();
+                ControlledDisplayPages[ActivePage].GetActiveDisplay().NextChar();
             }
         }
     }
 
+    private void InitialiseControlledDisplays()
+    {
+        if(ControlledDisplayPages.Count < ActivePage)
+        {
+            Debug.LogWarning("Trying to access control display page: " + ActivePage + " Where it doesn't exist!");
+            return;
+        }
+
+        ControlledDisplayPages[ActivePage].InitPage();
+
+    }
+
     private void NextDisplay()
     {
-        ControlledDisplays[ActiveDisplay].SetDisplayActive(false);
-        ActiveDisplay = ++ActiveDisplay % ControlledDisplays.Count;
-        ControlledDisplays[ActiveDisplay].SetDisplayActive(true);
-
+        ControlledDisplayPages[ActivePage].NextDisplay();
     }
 
     private void PreviousDisplay()
     {
-        ControlledDisplays[ActiveDisplay].SetDisplayActive(false);
-        ActiveDisplay = (--ActiveDisplay + ControlledDisplays.Count) % ControlledDisplays.Count;
-        ControlledDisplays[ActiveDisplay].SetDisplayActive(true);
+        ControlledDisplayPages[ActivePage].PreviousDisplay();
     }
 
     public void OnDockEnter()
     {
         ComponentActive = true;
-        ControlledDisplays[ActiveDisplay].SetDisplayActive(true);
+        ControlledDisplayPages[ActivePage].GetActiveDisplay().SetDisplayActive(true);
     }
 
     public void OnDockExit()
     {
         ComponentActive = false;
-        ControlledDisplays[ActiveDisplay].SetDisplayActive(false);
+        ControlledDisplayPages[ActivePage].GetActiveDisplay().SetDisplayActive(false);
     }
 
-    public void ClearDisplay()
+    public void ClearScreen()
     {
-        foreach(CS_SplitFlapDisplay display in ControlledDisplays)
-        {
-            display.ResetDisplay();
-        }
+        ControlledDisplayPages[ActivePage].ResetPage();
     }
 
 
@@ -99,7 +241,7 @@ public class CS_Dock_SFDisplayManager : MonoBehaviour
                 int bspInd = InputString.IndexOf("\b");
                 if(bspInd == 0)
                 {
-                    ControlledDisplays[ActiveDisplay].FireBackspace();
+                    ControlledDisplayPages[ActivePage].GetActiveDisplay().FireBackspace();
 
                     if (InputString.Length > 2)
                         InputString = InputString.Substring(2, InputString.Length - 2);
@@ -118,8 +260,24 @@ public class CS_Dock_SFDisplayManager : MonoBehaviour
                 InputString = InputString.Remove(0, 2);
             }
 
-            ControlledDisplays[ActiveDisplay].AddInputChar(InputString[0]);
+            ControlledDisplayPages[ActivePage].GetActiveDisplay().AddInputChar(InputString[0]);
             InputString = InputString.Remove(0, 1);
         }
+    }
+
+    public FCharacterData MakeCharacterDataFromDisplays()
+    {
+        //foreach (KeyValuePair<ECharacterTraitCategory, CS_SplitFlapDisplay> pair in ControlledDisplayPages[)
+
+        FCharacterData OutChar = new FCharacterData();
+
+        ControlledDisplayPages[ActivePage].PopulateCharacterData(ref OutChar);
+
+        return OutChar;
+    }
+
+    public void ReadCharacterDataToDisplays(FCharacterData CharacterData)
+    {
+        ControlledDisplayPages[ActivePage].PupulateInputFields(CharacterData);
     }
 }

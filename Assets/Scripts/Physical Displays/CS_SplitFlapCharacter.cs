@@ -32,6 +32,8 @@ public class CS_SplitFlapCharacter : MonoBehaviour
     private int DisplayIndexCurrent = 0;
     private int DisplayIndexTarget = 0;
 
+    bool IsSelectable = false;
+
     private CS_SplitFlapDisplay SFDisplay;
 
     void Start()
@@ -70,10 +72,13 @@ public class CS_SplitFlapCharacter : MonoBehaviour
         MidPointCheckAnim();
     }
 
+    public int GetDisplayIndex()
+    {
+        return DisplayIndexTarget;
+    }
+
     public void MidPointCheckAnim()
     {
-        
-
         if (DisplayIndexCurrent != DisplayIndexTarget)
         {
             TopCard.FireAnim();

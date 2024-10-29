@@ -47,7 +47,7 @@ namespace Whilefun.FPEKit
         /// </summary>
         /// <param name="go">The GameObject to test for a match against</param>
         /// <returns>True if there is a match, false if there is not.</returns>
-        public bool putBackMatchesGameObject(GameObject go)
+        public virtual bool putBackMatchesGameObject(GameObject go)
         {
             Debug.Log("Call PutBackMathesGO");
             return (objectNameToMatch == generateMatchStringFromGameObject(go));

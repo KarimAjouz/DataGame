@@ -13,13 +13,17 @@ public class CS_CharacterListBuilder : MonoBehaviour
 {
     [SerializeField]
     [ReadOnly]
-    private List<NNarrativeDataTypes.FCharacterData> CharacterData;
+    private List<FCharacterData> CharacterData;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField]
+    [ReadOnly]
+    [SerializedDictionary("Input Name", "Category")]
+    private SerializedDictionary<string, ECharacterTraitCategory> StringToTraitCategory;
+
+
+    [SerializeField]
+    [SerializedDictionary("Trait Category", "Type")]
+    private SerializedDictionary<ECharacterTraitCategory, ECharacterTraitType> CategoryToTypeDictionary;
 
     public void PopulateCharacterList (TextAsset InLines, JArray InCharacterListArray)
     {
@@ -49,15 +53,15 @@ public class CS_CharacterListBuilder : MonoBehaviour
                 continue;
             }
 
-            string WebHandleString = (string)CharacterObject["WEBHANDLE"];
+            string WebHandleString = (string)CharacterObject["WebHandle"];
 
-            string CivIdDisplay = (string)CharacterObject["CIVID"];
+            string WebIdDisplay = (string)CharacterObject["WebID"];
 
-            string civ1str = (string)CharacterObject["CIVID1"];
+            //string civ1str = (string)CharacterObject["CIVID1"];
 
-            int CivId1 = int.Parse((string)CharacterObject["CIVID1"]);
-            int CivId2 = int.Parse((string)CharacterObject["CIVID2"]);
-            int CivId3 = int.Parse((string)CharacterObject["CIVID3"]);
+            int WebID = int.Parse((string)CharacterObject["WebID"]);
+            //int CivId2 = int.Parse((string)CharacterObject["CIVID2"]);
+            //int CivId3 = int.Parse((string)CharacterObject["CIVID3"]);
 
             string CurrentLocationString = (string)CharacterObject["LOCATION"];
             string BirthplaceLocationString = (string)CharacterObject["BIRTHPLACE"];
@@ -72,46 +76,110 @@ public class CS_CharacterListBuilder : MonoBehaviour
 
             FCharacterWebHandle characterWebHandle = new FCharacterWebHandle(WebHandleString);
 
-            FCivIdHandle civIdHandle = new FCivIdHandle(CivId1, CivId2, CivId3, CivIdDisplay);
+            FWebIdHandle civIdHandle = new FWebIdHandle(WebID/*, CivId2, CivId3,*/, WebIdDisplay);
 
-            SerializedDictionary<string, FCharacterTraitId> CharacterTraits = new SerializedDictionary<string, FCharacterTraitId>();
+            SerializedDictionary<ECharacterTraitCategory, FCharacterTraitId> CharacterTraits = new SerializedDictionary<ECharacterTraitCategory, FCharacterTraitId>();
 
-            CharacterTraits.Add(
-                "CURRENT LOCATION",
-                CharacterTraitComponent.GetTrait
-                (
-                    NCharacterTraitCategoryTypes.ECharacterTraitCategory.ETraitCategory_LOCATION,
-                    CurrentLocationString
-                )
-            );
+            //CharacterTraits.Add(
+            //    ECharacterTraitCategory.ETraitCategory_CURRENTLOCATION,
+            //    CharacterTraitComponent.GetTrait
+            //    (
+            //        NCharacterTraitCategoryTypes.ECharacterTraitType.ETraitType_LOCATION,
+            //        CurrentLocationString
+            //    )
+            //);
 
-            CharacterTraits.Add(
-                "BIRTHPLACE",
-                CharacterTraitComponent.GetTrait
-                (
-                    NCharacterTraitCategoryTypes.ECharacterTraitCategory.ETraitCategory_LOCATION, 
-                    BirthplaceLocationString
-                )
-            );
+            //CharacterTraits.Add(
+            //    ECharacterTraitCategory.ETraitCategory_BIRTHPLACE,
+            //    CharacterTraitComponent.GetTrait
+            //    (
+            //        NCharacterTraitCategoryTypes.ECharacterTraitType.ETraitType_LOCATION, 
+            //        BirthplaceLocationString
+            //    )
+            //);
 
-            foreach (string CategoryString in CharacterTraitComponent.GetCategoryList())
+            foreach (string TraitCategoryName in StringToTraitCategory.Keys)
             {
-                if(CategoryString.Equals("LOCATION"))
+                if(TraitCategoryName.Equals("LOCATION"))
                 {
                     continue;
                 }
-                string Value = (string)CharacterObject[CategoryString];
+                string Value = (string)CharacterObject[TraitCategoryName];
 
                 if(Value.IsNullOrEmpty())
                 {
-                    Debug.LogWarning("WARNING: Category: " + CategoryString + " Was not found in CharacterJObject!");
+                    Debug.LogWarning("WARNING: Category: " + TraitCategoryName + " Was not found in CharacterJObject!");
                     continue;
                 }
-                CharacterTraits.Add(CategoryString, CharacterTraitComponent.GetTrait(CharacterTraitComponent.GetCategory(CategoryString), Value));
+
+                ECharacterTraitCategory ImportedTraitCategory = StringToTraitCategory[TraitCategoryName];
+                if(ImportedTraitCategory == ECharacterTraitCategory.ETraitCategory_NONE)
+                {
+                    Debug.Log("No values exist for invalid trait Category: ETraitType_NONE");
+                    continue;
+                }
+
+                // This is wrong needs to pass in category not trait type!
+                CharacterTraits.Add(ImportedTraitCategory, CharacterTraitComponent.GetTrait(CategoryToTypeDictionary[ImportedTraitCategory], Value));
             }
 
             CharacterData.Add(new FCharacterData(CharacterNameString, CharacterId, characterWebHandle, civIdHandle, DoBHandle, CharacterTraits));
             CharacterId++;
         }
+    }
+
+    public List<FCharacterData> GetMatchingCharacters(FCharacterData InComparisonData)
+    {
+        List<FCharacterData> ValidCharacters = new List<FCharacterData>();
+
+        //Compare against names
+        if (InComparisonData.GetCharacterName() != null || !InComparisonData.GetCharacterName().IsEmpty())
+        {
+            foreach (FCharacterData Character in CharacterData)
+            {
+                if (Character.GetCharacterName() == InComparisonData.GetCharacterName() && !ValidCharacters.Contains(Character))
+                {
+                    ValidCharacters.Add(Character);
+                }
+            }
+        }
+
+        //Compare against web handle
+        if (!InComparisonData.GetWebHandle().IsEmpty())
+        {
+            foreach (FCharacterData Character in CharacterData)
+            {
+                if (Character.GetWebHandle() == InComparisonData.GetWebHandle() && !ValidCharacters.Contains(Character))
+                {
+                    ValidCharacters.Add(Character);
+                }
+            }
+        }
+
+        //Compare against webID
+        if (!InComparisonData.GetWebId().IsEmpty())
+        {
+            foreach (FCharacterData Character in CharacterData)
+            {
+                if (Character.GetWebId() == InComparisonData.GetWebId() && !ValidCharacters.Contains(Character))
+                {
+                    ValidCharacters.Add(Character);
+                }
+            }
+        }
+
+        //Compare against DoB (only if full DoB is provided!)
+        if (InComparisonData.GetDateOfBirth().IsFullDoB())
+        {
+            foreach (FCharacterData Character in CharacterData)
+            {
+                if (Character.GetDateOfBirth() == InComparisonData.GetDateOfBirth() && !ValidCharacters.Contains(Character))
+                {
+                    ValidCharacters.Add(Character);
+                }
+            }
+        }
+
+        return ValidCharacters;
     }
 }
