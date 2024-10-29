@@ -68,6 +68,12 @@ public class CS_SplitFlapCharacter : MonoBehaviour
 
     public void SetDisplayIndex(int InIndex)
     {
+        
+        if (SFDisplay.IsObjectNullOrEmpty())
+        {
+            SFDisplay = GetComponentInParent<CS_SplitFlapDisplay>();
+        }
+
         DisplayIndexTarget = InIndex;
         MidPointCheckAnim();
     }

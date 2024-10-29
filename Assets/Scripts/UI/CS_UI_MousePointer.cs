@@ -147,7 +147,12 @@ public class CS_UI_MousePointer : MonoBehaviour
 
     public void OnClick()
     {
+        IPointerClickHandler PrioToClick = null;
 
+        foreach (IPointerClickHandler pointerClickHandler in m_ClickHandlerList)
+        {
+            pointerClickHandler.OnPointerClick(m_PointerEventData);
+        }
     }
 
     private void OnTriggerEnter(Collider collision)
@@ -156,6 +161,7 @@ public class CS_UI_MousePointer : MonoBehaviour
         if (collidedSelectable != null)
         {
             m_SelectableList.Add(collidedSelectable);
+            collidedSelectable.Select();
             collidedSelectable.OnPointerEnter(m_PointerEventData);
         }
 
@@ -174,6 +180,7 @@ public class CS_UI_MousePointer : MonoBehaviour
             if (m_SelectableList.Contains(collidedSelectable))
             {
                 m_SelectableList.Remove(collidedSelectable);
+                collidedSelectable.Select();
                 collidedSelectable.OnPointerExit(m_PointerEventData);
             }
         }
