@@ -6,3 +6,10 @@ NativeFormatImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Complete OS UI
+  packageVersion: 3.2.2
+  assetPath: Assets/DreamOS - Complete OS UI/Materials/Blur_CalculatorBG.mat
+  uploadId: 686219

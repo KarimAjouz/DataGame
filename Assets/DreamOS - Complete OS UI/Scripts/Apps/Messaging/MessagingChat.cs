@@ -23,6 +23,12 @@ namespace Michsky.DreamOS
         {
             [TextArea(3, 6)] public string messageContent = "My message";
             public ObjectType objectType;
+
+            /// </ #BeginKazChange (26.11.2024): Updated chat message system to allow for an FChatMessage to specify the individual sending a message in a group chat>
+
+            public string AuthorName = "MessageAuthorName";
+            
+            /// </ #EndKazChange>
             public MessageAuthor messageAuthor;
             public string sentTime = "00:00";
             public AudioClip audioMessage;

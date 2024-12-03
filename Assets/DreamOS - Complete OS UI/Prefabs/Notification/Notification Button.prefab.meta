@@ -6,3 +6,10 @@ NativeFormatImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Complete OS UI
+  packageVersion: 3.2.2
+  assetPath: Assets/DreamOS - Complete OS UI/Prefabs/Notification/Notification Button.prefab
+  uploadId: 686219

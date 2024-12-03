@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 1405016b9e793624582b500c07d829e1
+guid: 529bd15ab4ad34993a533036e5f03be5
 MonoImporter:
   serializedVersion: 2
   defaultReferences: []
@@ -11,6 +11,6 @@ AssetOrigin:
   serializedVersion: 1
   productId: 253244
   packageName: DreamOS - Complete OS UI
-  packageVersion: 3.1.0
-  assetPath: Assets/DreamOS - Complete OS UI/_Demo Assets/Unity Standard Assets/Characters/FirstPersonCharacter/Scripts/MouseLook.cs
-  uploadId: 628941
+  packageVersion: 3.2.2
+  assetPath: Assets/FirstPersonExplorationKit/FPEPlayerController/FPECharacters/FPEFirstPerson/Scripts/MouseLook.cs
+  uploadId: 686219

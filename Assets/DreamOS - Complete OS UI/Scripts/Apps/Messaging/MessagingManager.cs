@@ -164,16 +164,22 @@ namespace Michsky.DreamOS
                         ChatMessagePreset messagePreset = msgObj.GetComponent<ChatMessagePreset>();
                         messagePreset.timeText.text = chatList[i].chatAsset.messageList[x].sentTime;
 
-                        LocalizedObject tempLoc = messagePreset.contentText.gameObject.GetComponent<LocalizedObject>();
+                        /// </ #BeginKazChange (26.11.2024): Updated chat message system to allow for an FChatMessage to specify the individual sending a message in a group chat>
 
-                        if (!useLocalization || string.IsNullOrEmpty(chatList[i].chatAsset.messageList[x].messageKey) || tempLoc == null || !tempLoc.CheckLocalizationStatus()) { messagePreset.contentText.text = chatList[i].chatAsset.messageList[x].messageContent; }
-                        else if (tempLoc != null)
+                        LocalizedObject tempLocContent = messagePreset.contentText.gameObject.GetComponent<LocalizedObject>();
+                        LocalizedObject tempLocAuthor = messagePreset.authorText.gameObject.GetComponent<LocalizedObject>();
+
+                        if (!useLocalization || string.IsNullOrEmpty(chatList[i].chatAsset.messageList[x].messageKey) || tempLocContent == null || !tempLocContent.CheckLocalizationStatus()) { messagePreset.contentText.text = chatList[i].chatAsset.messageList[x].messageContent; }
+                        else if (tempLocContent != null)
                         {
-                            tempLoc.localizationKey = chatList[i].chatAsset.messageList[x].messageKey;
-                            tempLoc.onLanguageChanged.AddListener(delegate { messagePreset.contentText.text = tempLoc.GetKeyOutput(tempLoc.localizationKey); });
-                            tempLoc.InitializeItem();
-                            tempLoc.UpdateItem();
+                            tempLocContent.localizationKey = chatList[i].chatAsset.messageList[x].messageKey;
+                            tempLocContent.onLanguageChanged.AddListener(delegate { messagePreset.contentText.text = tempLocContent.GetKeyOutput(tempLocContent.localizationKey); });
+                            tempLocAuthor.onLanguageChanged.AddListener(delegate { messagePreset.authorText.text = tempLocContent.GetKeyOutput(tempLocAuthor.localizationKey); });
+                            tempLocContent.InitializeItem();
+                            tempLocContent.UpdateItem();
                         }
+                        
+                        /// </ #EndKazChange>
                     }
 
                     else if (chatList[i].chatAsset.messageList[x].objectType == MessagingChat.ObjectType.AudioMessage)
@@ -564,7 +570,7 @@ namespace Michsky.DreamOS
             imgMessage.description = description;
             imgMessage.spriteVar = sprite;
             imgMessage.imageObject.sprite = imgMessage.spriteVar;
-
+            if (photoGalleryManager != null) { imgMessage.pgm = photoGalleryManager; }
             if (string.IsNullOrEmpty(time)) { imgMessage.timeText.text = GetTimeData(); }
             else { imgMessage.timeText.text = time; }
 
@@ -590,7 +596,7 @@ namespace Michsky.DreamOS
             imgMessage.description = description;
             imgMessage.spriteVar = sprite;
             imgMessage.imageObject.sprite = imgMessage.spriteVar;
-
+            if (photoGalleryManager != null) { imgMessage.pgm = photoGalleryManager; }
             if (string.IsNullOrEmpty(time)) { imgMessage.timeText.text = GetTimeData(); }
             else { imgMessage.timeText.text = time; }
 
@@ -758,12 +764,6 @@ namespace Michsky.DreamOS
                 DynamicMessageHandler tempHandler = tempHandlerObj.AddComponent<DynamicMessageHandler>();
                 tempHandler.manager = this;
                 tempHandler.StartCoroutine(tempHandler.HandleDynamicMessage(chatList[layoutIndex].chatAsset.dynamicMessages[dynamicMessageIndex].replyLatency, layoutIndex));
-            }
-
-            // Process after reply behavior
-            if(chatList[layoutIndex].chatAsset.dynamicMessages[dynamicMessageIndex].replyBehavior == MessagingChat.DynamicMessageReplyBehavior.DisableReply)
-            {
-                chatList[layoutIndex].chatAsset.dynamicMessages[dynamicMessageIndex].enableReply = false;
             }
         }
 

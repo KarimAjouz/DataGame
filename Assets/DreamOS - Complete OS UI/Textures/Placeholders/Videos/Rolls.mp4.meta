@@ -1,8 +1,15 @@
 fileFormatVersion: 2
 guid: 253a1a5307910ea45ab89a8d710356e9
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Complete OS UI
+  packageVersion: 3.2.2
+  assetPath: Assets/DreamOS - Complete OS UI/Textures/Placeholders/Videos/Rolls.mp4
+  uploadId: 686219
 VideoClipImporter:
   externalObjects: {}
-  serializedVersion: 2
+  serializedVersion: 3
   frameRange: 0
   startFrame: -1
   endFrame: -1
@@ -13,7 +20,7 @@ VideoClipImporter:
   flipHorizontal: 0
   importAudio: 1
   targetSettings:
-    0:
+    :
       enableTranscoding: 1
       codec: 0
       resizeFormat: 0

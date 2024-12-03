@@ -179,7 +179,7 @@ namespace Whilefun.FPEKit
             {
 
                 // Curb physics sound volume based on how hard object hits something
-                float impactVolume = Mathf.Max(minImpactSoundVolume, Mathf.Min(1.0f, (gameObject.GetComponent<Rigidbody>().velocity.magnitude / 5.0f)));
+                float impactVolume = Mathf.Max(minImpactSoundVolume, Mathf.Min(1.0f, (gameObject.GetComponent<Rigidbody>().linearVelocity.magnitude / 5.0f)));
 
                 if (gameObject.GetComponent<AudioSource>().isPlaying)
                 {

@@ -396,7 +396,7 @@ namespace Whilefun.FPEKit
                             currentHeldObject.GetComponent<Collider>().isTrigger = false;
                             currentHeldObject.GetComponent<Rigidbody>().isKinematic = false;
                             currentHeldObject.GetComponent<Rigidbody>().collisionDetectionMode = CollisionDetectionMode.Continuous;
-                            currentHeldObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                            currentHeldObject.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
                             currentHeldObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
 
                             currentHeldObject.GetComponent<FPEInteractablePickupScript>().doPickupPutdown(true);

@@ -4,7 +4,8 @@ MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - localizationSettings: {fileID: 11400000, guid: 306a0ca089807d34787bf5a5b674abee, type: 2}
+  - localizationSettings: {fileID: 11400000, guid: 306a0ca089807d34787bf5a5b674abee,
+      type: 2}
   - textObj: {instanceID: 0}
   - audioObj: {instanceID: 0}
   - imageObj: {instanceID: 0}
@@ -13,3 +14,10 @@ MonoImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Complete OS UI
+  packageVersion: 3.2.2
+  assetPath: Assets/DreamOS - Complete OS UI/Scripts/Localization/LocalizedObject.cs
+  uploadId: 686219

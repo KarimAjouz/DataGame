@@ -19,7 +19,7 @@ namespace Michsky.DreamOS
 
         void Awake()
         {
-            if (GraphicsSettings.renderPipelineAsset != null || blurMaterial == null) { return; }
+            if (GraphicsSettings.defaultRenderPipeline != null || blurMaterial == null) { return; }
             if (customProperty == null) { customProperty = "_Size"; }
 
             blurMaterial.SetFloat(customProperty, 0);
@@ -27,7 +27,7 @@ namespace Michsky.DreamOS
 
         public void BlurInAnim()
         {
-            if (GraphicsSettings.renderPipelineAsset != null || gameObject.activeInHierarchy == false)
+            if (GraphicsSettings.defaultRenderPipeline != null || gameObject.activeInHierarchy == false)
                 return;
 
             StopCoroutine("BlurOut");
@@ -37,7 +37,7 @@ namespace Michsky.DreamOS
 
         public void BlurOutAnim()
         {
-            if (GraphicsSettings.renderPipelineAsset != null || gameObject.activeInHierarchy == false)
+            if (GraphicsSettings.defaultRenderPipeline != null || gameObject.activeInHierarchy == false)
                 return;
 
             StopCoroutine("BlurIn");

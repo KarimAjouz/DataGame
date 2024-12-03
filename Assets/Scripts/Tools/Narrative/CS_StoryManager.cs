@@ -47,7 +47,7 @@ namespace NNarrativeDataTypes
             if (!mmStr[1].Equals(' '))
                 mm = int.Parse(mmStr);
 
-            if (!yyyyStr[3].Equals(' '))
+            if (yyyyStr.Length > 3 && !yyyyStr[3].Equals(' '))
                 yyyy = int.Parse(yyyyStr);
 
             DisplayName = InDateStr;
