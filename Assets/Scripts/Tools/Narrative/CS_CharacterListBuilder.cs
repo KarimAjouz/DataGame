@@ -127,6 +127,18 @@ public class CS_CharacterListBuilder : MonoBehaviour
             CharacterId++;
         }
     }
+    
+    public FCharacterData GetCharacterIndexFromName(string Name)
+    {
+        foreach (FCharacterData Character in CharacterData)
+        {
+            if(Character.GetCharacterName().Equals(Name))
+                return Character;
+        }
+
+        Debug.LogWarning("WARNING: No character matching name: " + Name + " was found! \n Consider reimporting character data sheet!");
+        return new FCharacterData();
+    }
 
     public List<FCharacterData> GetMatchingCharacters(FCharacterData InComparisonData)
     {

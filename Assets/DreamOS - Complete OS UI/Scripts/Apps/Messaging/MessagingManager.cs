@@ -454,6 +454,52 @@ namespace Michsky.DreamOS
             LayoutRebuilder.ForceRebuildLayoutImmediate(msgObj.GetComponent<RectTransform>());
         }
 
+        /// </ #BeginKazChange (26.11.2024): Updated chat message system to allow for an FChatMessage to specify the individual sending a message in a group chat>
+
+        public void CreateCustomMessageFromAuthor(ChatLayoutPreset parent, string message, string author, string time, string locKey = null)
+        {
+            GameObject msgObj = Instantiate(textMessageSent, new Vector3(0, 0, 0), Quaternion.identity);
+            msgObj.transform.SetParent(parent.messageParent, false);
+
+            ChatMessagePreset messagePreset = msgObj.GetComponent<ChatMessagePreset>();
+            messagePreset.timeText.text = time;
+            
+
+            LocalizedObject tempLocContent = messagePreset.contentText.gameObject.GetComponent<LocalizedObject>();
+            LocalizedObject tempLocAuthor = messagePreset.authorText.gameObject.GetComponent<LocalizedObject>();
+
+            if (!useLocalization || string.IsNullOrEmpty(locKey) || tempLocContent == null || !tempLocContent.CheckLocalizationStatus()) { messagePreset.contentText.text = message; }
+            else if (tempLocContent != null)
+            {
+                tempLocContent.localizationKey = locKey;
+                tempLocContent.onLanguageChanged.AddListener(delegate { messagePreset.contentText.text = tempLocContent.GetKeyOutput(tempLocContent.localizationKey); });
+                tempLocContent.InitializeItem();
+                tempLocContent.UpdateItem();
+
+                message = messagePreset.contentText.text;
+            }
+            
+            if (!useLocalization || string.IsNullOrEmpty(locKey) || tempLocAuthor == null || !tempLocAuthor.CheckLocalizationStatus()) { messagePreset.authorText.text = author; }
+            else if (tempLocAuthor != null)
+            {
+                tempLocAuthor.localizationKey = locKey;
+                tempLocAuthor.onLanguageChanged.AddListener(delegate { messagePreset.contentText.text = tempLocAuthor.GetKeyOutput(tempLocAuthor.localizationKey); });
+                tempLocAuthor.InitializeItem();
+                tempLocAuthor.UpdateItem();
+
+                author = messagePreset.authorText.text;
+            }
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(msgObj.GetComponent<RectTransform>());
+
+            if (AudioManager.instance != null) { AudioManager.instance.audioSource.PlayOneShot(sentMessageSFX); }
+            if (saveMessageHistory && messageStoring != null) { messageStoring.ApplyMessageData(parent.name, "standard", author, message, time); }
+
+            UpdateChatItem(parent.name, message, false);
+        }
+
+        // #EndKazChange;
+        
         public void CreateCustomMessage(ChatLayoutPreset parent, string message, string time, string locKey = null)
         {
             GameObject msgObj = Instantiate(textMessageSent, new Vector3(0, 0, 0), Quaternion.identity);
@@ -461,7 +507,7 @@ namespace Michsky.DreamOS
 
             ChatMessagePreset messagePreset = msgObj.GetComponent<ChatMessagePreset>();
             messagePreset.timeText.text = time;
-
+            
             LocalizedObject tempLoc = messagePreset.contentText.gameObject.GetComponent<LocalizedObject>();
 
             if (!useLocalization || string.IsNullOrEmpty(locKey) || tempLoc == null || !tempLoc.CheckLocalizationStatus()) { messagePreset.contentText.text = message; }
