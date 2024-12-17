@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 741ce2ace64af9a449fd306c0372eba2, type: 3}
   m_Name: English (en-US)
   m_EditorClassIdentifier: 
-  localizationSettings: {fileID: 11400000, guid: 306a0ca089807d34787bf5a5b674abee, type: 2}
+  localizationSettings: {fileID: 11400000, guid: 306a0ca089807d34787bf5a5b674abee,
+    type: 2}
   languageID: en-US
   languageName: English
   localizedName: English (US)

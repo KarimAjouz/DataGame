@@ -27,6 +27,11 @@ namespace Michsky.DreamOS
             manager.allowInputSubmit = true;
             manager.CreateDynamicMessage(layoutIndex, false);
 
+            if (manager.chatList[layoutIndex].chatAsset.dynamicMessages[manager.dynamicMessageIndex].replyBehavior == MessagingChat.DynamicMessageReplyBehavior.DisableReply)
+            {
+                manager.chatList[layoutIndex].chatAsset.dynamicMessages[manager.dynamicMessageIndex].enableReply = false;
+            }
+
             Destroy(messageTimerObject);
             Destroy(gameObject);
         }

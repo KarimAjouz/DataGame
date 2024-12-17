@@ -149,7 +149,7 @@ namespace Michsky.DreamOS
             {
                 var enableUIBlur = serializedObject.FindProperty("enableUIBlur");
 
-                if (GraphicsSettings.renderPipelineAsset == null) { GUI.enabled = true; }
+                if (GraphicsSettings.defaultRenderPipeline == null) { GUI.enabled = true; }
                 else { GUI.enabled = false; }
 
                 enableUIBlur.boolValue = DreamOSEditorHandler.DrawToggle(enableUIBlur.boolValue, customSkin, "Enable UI Blur", "This feature works with the built-in pipeline only.");
@@ -307,7 +307,7 @@ namespace Michsky.DreamOS
             {
                 try
                 {
-                    if (GraphicsSettings.renderPipelineAsset != null)
+                    if (GraphicsSettings.defaultRenderPipeline != null)
                     {
                         EditorPrefs.SetInt("DreamOS.SRPChecker", 1);
 

@@ -47,7 +47,7 @@ namespace NNarrativeDataTypes
             if (!mmStr[1].Equals(' '))
                 mm = int.Parse(mmStr);
 
-            if (!yyyyStr[3].Equals(' '))
+            if (yyyyStr.Length > 3 && !yyyyStr[3].Equals(' '))
                 yyyy = int.Parse(yyyyStr);
 
             DisplayName = InDateStr;
@@ -152,7 +152,10 @@ namespace NNarrativeDataTypes
     public struct FChatRoom
     {
         [SerializeField]
-        public List<string> People;
+        public List<FCharacterData> Characters;
+
+        [SerializeField] 
+        public List<FChatLineTimeChunk> ChatLog;
     }
 
     // #TODO [KA] (29.09.2024): Rename this it sucks
@@ -190,7 +193,7 @@ namespace NNarrativeDataTypes
     public struct FCharacterData
     {
         [SerializeField]
-        private String CharacterName;
+        private string CharacterName;
 
         [SerializeField]
         private int CharacterId;

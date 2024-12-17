@@ -83,7 +83,7 @@ public class CS_SplitFlapDisplay : MonoBehaviour
         for (int i = 0;  i < NumCharacters; i++) 
         {
             GameObject newChar = Instantiate(DisplayCharacterPrefab, this.transform);
-            newChar.transform.Translate(CharOffset * transform.localScale.x * i); 
+            newChar.transform.Translate(CharOffset * (transform.localScale.x * i)); 
             CharacterDisplays.Add(newChar.GetComponent<CS_SplitFlapCharacter>());
         }
     }
@@ -126,7 +126,6 @@ public class CS_SplitFlapDisplay : MonoBehaviour
                 }
             }
         }
-        
     }
 
     public void SetInputPromptText(string InText)

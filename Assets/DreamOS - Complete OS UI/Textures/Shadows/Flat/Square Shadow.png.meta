@@ -131,3 +131,10 @@ TextureImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Complete OS UI
+  packageVersion: 3.2.2
+  assetPath: Assets/DreamOS - Complete OS UI/Textures/Shadows/Flat/Square Shadow.png
+  uploadId: 686219

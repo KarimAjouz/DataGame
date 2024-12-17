@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 017a512e5c8179144b5639acbeb5607a
+guid: ad0ff90c9214b4724b1e2e318841791c
 MonoImporter:
   serializedVersion: 2
   defaultReferences: []
@@ -11,6 +11,6 @@ AssetOrigin:
   serializedVersion: 1
   productId: 253244
   packageName: DreamOS - Complete OS UI
-  packageVersion: 3.1.0
-  assetPath: Assets/DreamOS - Complete OS UI/_Demo Assets/Unity Standard Assets/Characters/FirstPersonCharacter/Scripts/FirstPersonController.cs
-  uploadId: 628941
+  packageVersion: 3.2.2
+  assetPath: Assets/FirstPersonExplorationKit/FPEPlayerController/FPECharacters/FPEFirstPerson/Scripts/FirstPersonController.cs
+  uploadId: 686219

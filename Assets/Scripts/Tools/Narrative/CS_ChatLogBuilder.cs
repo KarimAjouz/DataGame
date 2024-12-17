@@ -10,39 +10,51 @@ using UnityEditor;
 using ChoETL;
 using Newtonsoft.Json.Linq;
 using System.Linq;
+using NNarrativeDataTypes;
 
 public class CS_ChatLogBuilder : MonoBehaviour
 {
     [SerializeField]
     [ReadOnly]
-    private List<NNarrativeDataTypes.FChatLineTimeChunk> ChatLog;
-
+    private NNarrativeDataTypes.FChatRoom WorkingChatRoom;
+    
     [SerializeField]
     [ReadOnly]
-    private NNarrativeDataTypes.FChatRoom ChatRoom;
+    private List<FChatRoom> ChatRooms = new List<FChatRoom>();
 
     // Start is called before the first frame update
     public void Start()
     {
-        ChatLog = new List<NNarrativeDataTypes.FChatLineTimeChunk>();
+        WorkingChatRoom.ChatLog = new List<NNarrativeDataTypes.FChatLineTimeChunk>();
+    }
+
+    public ref List<FChatRoom> GetChatRooms()
+    {
+        return ref ChatRooms;
     }
 
     public void PopulateChatLogLines(TextAsset InLines, JArray ChatLogArray)
     {
+        CS_CharacterListBuilder CharacterHolder = gameObject.GetComponent<CS_CharacterListBuilder>();
+        
+        if(!CharacterHolder)
+        {
+            Debug.LogError("Character Holder is null!");
+            return;
+        }
+        
         if (InLines.IsObjectNullOrEmpty() || InLines.text.IsNullOrEmpty())
         {
             Debug.LogError("ERROR: InLines can not be null or empty!");
             return;
         }
 
-        ChatLog.Clear();
+        WorkingChatRoom.ChatLog.Clear();
+        WorkingChatRoom.Characters.Clear();
 
         string PeopleRow = InLines.text.Split("\n")[0];
         string[] PeopleInChatLog = PeopleRow.Split(",");
-
-        List<string> People = new List<string>();
-
-        ChatRoom.People.Clear();
+        
 
         // First we look for all the present characters in the chatlog
         // #TODO [KA] (03.10.2024): Replace the string usage of people with a structed out usage of people that gets the data from a separate CSV.
@@ -52,11 +64,19 @@ public class CS_ChatLogBuilder : MonoBehaviour
             {
                 continue;
             }
-            ChatRoom.People.Add(Person.Split("\r")[0]);
+            WorkingChatRoom.Characters.Add(CharacterHolder.GetCharacterIndexFromName(Person.Split("\r")[0]));
         }
 
-        foreach (JObject chatObject in ChatLogArray.Children())
+        foreach (var jToken in ChatLogArray.Children())
         {
+            var chatObject = (JObject)jToken;
+            
+            if (chatObject.IsNullOrEmpty())
+            {
+                Debug.LogWarning("WARNING: chatObject is null!");
+                continue;
+            }
+            
             NNarrativeDataTypes.FChatLineTimeChunk NewTimeChunk = new NNarrativeDataTypes.FChatLineTimeChunk();
 
             string TimestampString = (string)chatObject["TIME"];
@@ -73,15 +93,14 @@ public class CS_ChatLogBuilder : MonoBehaviour
             NewTimeChunk.TimeStamp = int.Parse(TimestampString);
             NewTimeChunk.ChatLines = new List<NNarrativeDataTypes.FChatLine>();
 
-            foreach (string Person in ChatRoom.People)
+            foreach (FCharacterData Character in WorkingChatRoom.Characters)
             {
-                string Dialogue = (string)chatObject[Person];
+                string Dialogue = (string)chatObject[Character.GetCharacterName()];
 
                 if (Dialogue.IsNullOrEmpty())
                 {
                     continue;
                 }
-
 
                 foreach (string DialogueLine in Dialogue.Split("\n"))
                 {
@@ -95,7 +114,7 @@ public class CS_ChatLogBuilder : MonoBehaviour
                         NNarrativeDataTypes.FChatLine Temp = new NNarrativeDataTypes.FChatLine();
                         string CleanedDialogueLine = DialogueLine.Replace("#", "");
                         Temp.PrintOrder = DialogueLine.Length - CleanedDialogueLine.Length;
-                        Temp.CharacterName = Person;
+                        Temp.CharacterName = Character.GetCharacterName();
 
                         if (CleanedDialogueLine.StartsWith(" ") && CleanedDialogueLine.Length > 1)
                         {
@@ -116,9 +135,11 @@ public class CS_ChatLogBuilder : MonoBehaviour
 
             if (NewTimeChunk.ChatLines.Count > 0)
             {
-                ChatLog.Add(NewTimeChunk);
+                WorkingChatRoom.ChatLog.Add(NewTimeChunk);
             }
         }
+        
+        ChatRooms.Add(WorkingChatRoom);
     }
 
 }

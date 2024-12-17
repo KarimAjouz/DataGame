@@ -20,3 +20,10 @@ AudioImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 253244
+  packageName: DreamOS - Complete OS UI
+  packageVersion: 3.2.2
+  assetPath: Assets/DreamOS - Complete OS UI/Audio/Placeholder/AudioMessage1.wav
+  uploadId: 686219

@@ -20,8 +20,13 @@ public class CS_NarrativeImporter : MonoBehaviour
 [CustomEditor(typeof(CS_NarrativeImporter))]
 public class CS_NarrativeImporterEditor : Editor
 {
+    [SerializeField]
     public Object SourceChatlogCSV;
+    
+    [SerializeField]
     public Object SourceCharacterTraitSheetCSV;
+    
+    [SerializeField]
     public Object SourceCharacterSheetCSV;
 
     public override void OnInspectorGUI()

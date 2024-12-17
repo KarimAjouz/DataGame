@@ -90,7 +90,7 @@ public class CS_PostItNote : MonoBehaviour
             transform.rotation = GhostGO.transform.rotation;
             transform.position = GhostGO.transform.position;
 
-            m_rb.velocity = Vector3.zero;
+            m_rb.linearVelocity = Vector3.zero;
 
             transform.SetParent(null);
 

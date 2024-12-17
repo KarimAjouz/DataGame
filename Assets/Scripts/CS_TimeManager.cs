@@ -48,8 +48,7 @@ public class CS_TimeManager : MonoBehaviour
     {
         return m_SyncEvent;
     }
-
-
+    
     // Start is called before the first frame update
     void Start()
     {

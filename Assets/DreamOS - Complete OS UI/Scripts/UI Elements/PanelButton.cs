@@ -161,7 +161,7 @@ namespace Michsky.DreamOS
             {
                 normalCG.alpha = 0;
                 highlightCG.alpha = 0;
-                pressCG.alpha = 0;
+                if (pressCG != null) { pressCG.alpha = 0; }
                 selectCG.alpha = 1;
             }
 
@@ -178,7 +178,7 @@ namespace Michsky.DreamOS
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            if (!isInteractable || isSelected || isPressedCGEmpty || eventData.button != PointerEventData.InputButton.Left)
+            if (!isInteractable || isSelected || isPressedCGEmpty || pressCG == null || eventData.button != PointerEventData.InputButton.Left)
                 return;
 
             StartCoroutine("SetPressed");
@@ -252,7 +252,7 @@ namespace Michsky.DreamOS
                 {
                     normalCG.alpha += Time.unscaledDeltaTime * fadingMultiplier;
                     highlightCG.alpha -= Time.unscaledDeltaTime * fadingMultiplier;
-                    pressCG.alpha -= Time.unscaledDeltaTime * fadingMultiplier;
+                    if (pressCG != null) { pressCG.alpha -= Time.unscaledDeltaTime * fadingMultiplier; }
                     selectCG.alpha -= Time.unscaledDeltaTime * fadingMultiplier;
                     yield return null;
                 }
@@ -260,7 +260,7 @@ namespace Michsky.DreamOS
 
             normalCG.alpha = 1;
             highlightCG.alpha = 0;
-            pressCG.alpha = 0;
+            if (pressCG != null) { pressCG.alpha = 0; }
             selectCG.alpha = 0;
         }
 
@@ -277,7 +277,7 @@ namespace Michsky.DreamOS
                 {
                     normalCG.alpha -= Time.unscaledDeltaTime * fadingMultiplier;
                     highlightCG.alpha += Time.unscaledDeltaTime * fadingMultiplier;
-                    pressCG.alpha -= Time.unscaledDeltaTime * fadingMultiplier;
+                    if (pressCG != null) { pressCG.alpha -= Time.unscaledDeltaTime * fadingMultiplier; }
                     selectCG.alpha -= Time.unscaledDeltaTime * fadingMultiplier;
                     yield return null;
                 }
@@ -285,7 +285,7 @@ namespace Michsky.DreamOS
 
             normalCG.alpha = 0;
             highlightCG.alpha = 1;
-            pressCG.alpha = 0;
+            if (pressCG != null) { pressCG.alpha = 0; }
             selectCG.alpha = 0;
         }
 
@@ -326,7 +326,7 @@ namespace Michsky.DreamOS
                 {
                     normalCG.alpha -= Time.unscaledDeltaTime * fadingMultiplier;
                     highlightCG.alpha -= Time.unscaledDeltaTime * fadingMultiplier;
-                    pressCG.alpha -= Time.unscaledDeltaTime * fadingMultiplier;
+                    if (pressCG != null) { pressCG.alpha -= Time.unscaledDeltaTime * fadingMultiplier; }
                     selectCG.alpha += Time.unscaledDeltaTime * fadingMultiplier;
                     yield return null;
                 }
@@ -334,7 +334,7 @@ namespace Michsky.DreamOS
 
             normalCG.alpha = 0;
             highlightCG.alpha = 0;
-            pressCG.alpha = 0;
+            if (pressCG != null) { pressCG.alpha = 0; }
             selectCG.alpha = 1;
         }
     }

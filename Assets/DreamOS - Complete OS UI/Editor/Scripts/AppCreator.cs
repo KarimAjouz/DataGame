@@ -105,7 +105,7 @@ namespace Michsky.DreamOS
             GUILayout.Box(new GUIContent(""), customSkin.FindStyle("DAC_Settings"));
             enableNavbar = DreamOSEditorHandler.DrawToggle(enableNavbar, customSkin, "Enable Navigation Bar");
 
-            if (!EditorPrefs.HasKey("DreamOS.PipelineUpgrader") && GraphicsSettings.renderPipelineAsset != null) { GUI.enabled = false; }
+            if (!EditorPrefs.HasKey("DreamOS.PipelineUpgrader") && GraphicsSettings.defaultRenderPipeline != null) { GUI.enabled = false; }
             enableBlurManager = DreamOSEditorHandler.DrawToggle(enableBlurManager, customSkin, "Enable Blur Effect");
             GUI.enabled = true;
             createDesktopShortcut = DreamOSEditorHandler.DrawToggle(createDesktopShortcut, customSkin, "Create Desktop Shortcut");
@@ -362,7 +362,7 @@ namespace Michsky.DreamOS
 
         void CreateBlurMaterial(GameObject clone)
         {
-            if (GraphicsSettings.renderPipelineAsset == null)
+            if (GraphicsSettings.defaultRenderPipeline == null)
             {
                 string matPath = objectPath.Replace("/Prefabs/", "/");
                 AssetDatabase.CopyAsset(matPath + "Materials/Blur_NewAppBG.mat", matPath + "Materials/Blur_" + appName + "BG" + ".mat");
