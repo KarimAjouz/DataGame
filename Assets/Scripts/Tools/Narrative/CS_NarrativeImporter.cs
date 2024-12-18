@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Text;
 using System.Collections;
@@ -10,30 +11,33 @@ using UnityEngine;
 using ChoETL;
 using Newtonsoft.Json.Linq;
 using System.Linq;
+using Object = UnityEngine.Object;
 
 public class CS_NarrativeImporter : MonoBehaviour
 {
-
+    [SerializeField]
+    public Object SourceChatlogCSV;
+    
+    //[SerializeField]
+    public Object SourceCharacterTraitSheetCSV;
+    
+    [SerializeField]
+    public Object SourceCharacterSheetCSV;
 }
 
 
 [CustomEditor(typeof(CS_NarrativeImporter))]
 public class CS_NarrativeImporterEditor : Editor
 {
-    [SerializeField]
-    public Object SourceChatlogCSV;
-    
-    [SerializeField]
-    public Object SourceCharacterTraitSheetCSV;
-    
-    [SerializeField]
-    public Object SourceCharacterSheetCSV;
-
     public override void OnInspectorGUI()
     {
-        BeginChatLogImporter();
+        serializedObject.Update();
+        CS_NarrativeImporter importer = (CS_NarrativeImporter)target;
+        BeginChatLogImporter(importer);
 
-        BeginCharacterDataImporter();
+        BeginCharacterDataImporter(importer);
+        serializedObject.ApplyModifiedProperties();
+
     }
 
     private void ImportChatlogsFromCSVs(TextAsset InSourceCSV)
@@ -84,37 +88,39 @@ public class CS_NarrativeImporterEditor : Editor
 
     /// #BEGIN: Editor button tooling.
 
-    public void BeginChatLogImporter()
+    public void BeginChatLogImporter(CS_NarrativeImporter Importer)
     {
         EditorGUILayout.BeginHorizontal();
-        SourceChatlogCSV = EditorGUILayout.ObjectField(SourceChatlogCSV, typeof(TextAsset), true);
-
+        
+        Importer.SourceChatlogCSV = EditorGUILayout.ObjectField(Importer.SourceChatlogCSV, typeof(TextAsset), false);
+        
         if (GUILayout.Button("Import all Chatlogs From CSV"))
         {
-            ImportChatlogsFromCSVs((TextAsset)SourceChatlogCSV);
+            ImportChatlogsFromCSVs((TextAsset)Importer.SourceChatlogCSV);
         }
 
         EditorGUILayout.EndHorizontal();
     }
 
-    public void BeginCharacterDataImporter()
+    public void BeginCharacterDataImporter(CS_NarrativeImporter Importer)
     {
         EditorGUILayout.BeginHorizontal();
-        SourceCharacterTraitSheetCSV = EditorGUILayout.ObjectField(SourceCharacterTraitSheetCSV, typeof(TextAsset), true);
-
+        
+        Importer.SourceCharacterTraitSheetCSV = EditorGUILayout.ObjectField(Importer.SourceCharacterTraitSheetCSV, typeof(TextAsset), false);
+        
         if (GUILayout.Button("Import all Character Traits From CSV"))
         {
-            ImportCharacterTraitDataFromCSV((TextAsset)SourceCharacterTraitSheetCSV);
+            ImportCharacterTraitDataFromCSV((TextAsset)Importer.SourceCharacterTraitSheetCSV);
         }
 
         EditorGUILayout.EndHorizontal();
 
         EditorGUILayout.BeginHorizontal();
-        SourceCharacterSheetCSV = EditorGUILayout.ObjectField(SourceCharacterSheetCSV, typeof(TextAsset), true);
+        Importer.SourceCharacterSheetCSV = EditorGUILayout.ObjectField(Importer.SourceCharacterSheetCSV, typeof(TextAsset), false);
 
         if (GUILayout.Button("Import all Character Sheets From CSV"))
         {
-            ImportCharacterListDataFromCSV((TextAsset)SourceCharacterSheetCSV);
+            ImportCharacterListDataFromCSV((TextAsset)Importer.SourceCharacterSheetCSV);
         }
 
         EditorGUILayout.EndHorizontal();

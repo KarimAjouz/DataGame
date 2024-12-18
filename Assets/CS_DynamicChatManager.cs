@@ -28,6 +28,19 @@ public class CS_DynamicChatManager : MonoBehaviour
             Debug.LogError("No Messaging Manager Found!");
         }
     }
+
+    public void TEST_PushMessage()
+    {
+        CS_TimeManager timeManager = FindFirstObjectByType<CS_TimeManager>();
+
+        if (timeManager == null)
+        {
+            Debug.LogError("No Time Manager Found!");
+            return;
+        }
+        
+        
+    }
     
 
     public void PushChatPostsToMessages(int CurrentHour, int CurrentMinute)
@@ -60,5 +73,10 @@ public class CS_DynamicChatManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void PushSingleMessage(FChatLineTimeChunk ChatLineTimeChunk)
+    {
+        
     }
 }
