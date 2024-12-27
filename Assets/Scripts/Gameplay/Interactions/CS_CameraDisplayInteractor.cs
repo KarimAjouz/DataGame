@@ -49,7 +49,7 @@ public class CS_CameraDisplayInteractor : MonoBehaviour
                 }
 
                 DisplayController.SetPointerLocation(OutHit.point);
-                FindObjectOfType<CS_UI_HUDScript>().HideReticule();
+                FindFirstObjectByType<CS_UI_HUDScript>().HideReticule();
 
 
                 FPEInputManager InputManager = FPEInputManager.Instance;

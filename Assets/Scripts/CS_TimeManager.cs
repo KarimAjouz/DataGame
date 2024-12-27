@@ -44,6 +44,14 @@ public class CS_TimeManager : MonoBehaviour
         return OutTime;
     }
 
+    public string GetDisplayTimeString()
+    {
+        int DisplayTime = GetDisplayTime();
+        string OutTimeString = (((m_CurrentTime / 60) * 100) % 2400).ToString() + ":" + (m_CurrentTime % 60).ToString();
+        return OutTimeString;
+    }
+    
+
     public TimeSyncSystem.FTimeSyncEvent GetSyncEvent()
     {
         return m_SyncEvent;

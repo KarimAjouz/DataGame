@@ -1,5 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using ChoETL;
+using NaughtyAttributes;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
@@ -9,6 +12,8 @@ using TMPro;
 
 namespace Michsky.DreamOS
 {
+    [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
+    [SuppressMessage("ReSharper", "ConvertIfStatementToConditionalTernaryExpression")]
     public class MessagingManager : MonoBehaviour
     {
         // Resources
@@ -69,11 +74,20 @@ namespace Michsky.DreamOS
         [System.Serializable]
         public class ChatItem
         {
+            // #BeginKazChange: Updating MessagingManager to work with dynamic time-gated chat items.
+            public bool isTimeEventChat = false;
+
             public string chatTitle = "Chat Title";
             public string individualName = "Name";
             public string individualSurname = "Surname";
             public Sprite individualPicture;
+
+            [ShowIf("isTimeEventChat")]
+            public int chatId = -1;
+            
+            [ShowIf("!isTimeEventChat")]
             public MessagingChat chatAsset;
+            
             public Status defaultStatus = Status.Offline;
             [Tooltip("Sets the visibility of chat item button.")]
             public bool isVisible = true;
@@ -148,83 +162,132 @@ namespace Michsky.DreamOS
                     // indicatorMessage.text = indicatorMessage.text + " <b>" + chatList[i].individualName + "</b>";
                 }
 
-                // Check and create message presets
-                for (int x = 0; x < chatList[i].chatAsset.messageList.Count; ++x)
-                {
-                    if (chatList[i].chatAsset.messageList[x].objectType == MessagingChat.ObjectType.Message)
+                List<MessagingChat.ChatMessage> MessagesToParse;
+
+                // // Check and create message presets
+                // if (!chatList[currentLayout].isTimeEventChat)
+                // {
+                    for (int x = 0; x < chatList[i].chatAsset.messageList.Count; ++x)
                     {
-                        GameObject objToCreate = null;
-
-                        if (chatList[i].chatAsset.messageList[x].messageAuthor == MessagingChat.MessageAuthor.Individual) { objToCreate = textMessageRecieved; }
-                        else if (chatList[i].chatAsset.messageList[x].messageAuthor == MessagingChat.MessageAuthor.Self) { objToCreate = textMessageSent; }
-
-                        GameObject msgObj = Instantiate(objToCreate, new Vector3(0, 0, 0), Quaternion.identity);
-                        msgObj.transform.SetParent(layoutPreset.messageParent, false);
-
-                        ChatMessagePreset messagePreset = msgObj.GetComponent<ChatMessagePreset>();
-                        messagePreset.timeText.text = chatList[i].chatAsset.messageList[x].sentTime;
-
-                        /// </ #BeginKazChange (26.11.2024): Updated chat message system to allow for an FChatMessage to specify the individual sending a message in a group chat>
-
-                        LocalizedObject tempLocContent = messagePreset.contentText.gameObject.GetComponent<LocalizedObject>();
-                        LocalizedObject tempLocAuthor = messagePreset.authorText.gameObject.GetComponent<LocalizedObject>();
-
-                        if (!useLocalization || string.IsNullOrEmpty(chatList[i].chatAsset.messageList[x].messageKey) || tempLocContent == null || !tempLocContent.CheckLocalizationStatus()) { messagePreset.contentText.text = chatList[i].chatAsset.messageList[x].messageContent; }
-                        else if (tempLocContent != null)
+                        if (chatList[i].chatAsset.messageList[x].objectType == MessagingChat.ObjectType.Message)
                         {
-                            tempLocContent.localizationKey = chatList[i].chatAsset.messageList[x].messageKey;
-                            tempLocContent.onLanguageChanged.AddListener(delegate { messagePreset.contentText.text = tempLocContent.GetKeyOutput(tempLocContent.localizationKey); });
-                            tempLocAuthor.onLanguageChanged.AddListener(delegate { messagePreset.authorText.text = tempLocContent.GetKeyOutput(tempLocAuthor.localizationKey); });
-                            tempLocContent.InitializeItem();
-                            tempLocContent.UpdateItem();
+                            GameObject objToCreate = null;
+
+                            if (chatList[i].chatAsset.messageList[x].messageAuthor ==
+                                MessagingChat.MessageAuthor.Individual)
+                            {
+                                objToCreate = textMessageRecieved;
+                            }
+                            else if (chatList[i].chatAsset.messageList[x].messageAuthor ==
+                                     MessagingChat.MessageAuthor.Self)
+                            {
+                                objToCreate = textMessageSent;
+                            }
+
+                            GameObject msgObj = Instantiate(objToCreate, new Vector3(0, 0, 0), Quaternion.identity);
+                            msgObj.transform.SetParent(layoutPreset.messageParent, false);
+
+                            ChatMessagePreset messagePreset = msgObj.GetComponent<ChatMessagePreset>();
+                            messagePreset.timeText.text = chatList[i].chatAsset.messageList[x].sentTime;
+
+                            /// </ #BeginKazChange (26.11.2024): Updated chat message system to allow for an FChatMessage to specify the individual sending a message in a group chat>
+
+                            LocalizedObject tempLocContent =
+                                messagePreset.contentText.gameObject.GetComponent<LocalizedObject>();
+                            LocalizedObject tempLocAuthor =
+                                messagePreset.authorText.gameObject.GetComponent<LocalizedObject>();
+
+                            if (!useLocalization ||
+                                string.IsNullOrEmpty(chatList[i].chatAsset.messageList[x].messageKey) ||
+                                tempLocContent == null || !tempLocContent.CheckLocalizationStatus())
+                            {
+                                messagePreset.contentText.text = chatList[i].chatAsset.messageList[x].messageContent;
+                            }
+                            else if (tempLocContent != null)
+                            {
+                                tempLocContent.localizationKey = chatList[i].chatAsset.messageList[x].messageKey;
+                                tempLocContent.onLanguageChanged.AddListener(delegate
+                                {
+                                    messagePreset.contentText.text =
+                                        tempLocContent.GetKeyOutput(tempLocContent.localizationKey);
+                                });
+                                tempLocAuthor.onLanguageChanged.AddListener(delegate
+                                {
+                                    messagePreset.authorText.text =
+                                        tempLocContent.GetKeyOutput(tempLocAuthor.localizationKey);
+                                });
+                                tempLocContent.InitializeItem();
+                                tempLocContent.UpdateItem();
+                            }
+
+                            /// </ #EndKazChange>
                         }
-                        
-                        /// </ #EndKazChange>
-                    }
 
-                    else if (chatList[i].chatAsset.messageList[x].objectType == MessagingChat.ObjectType.AudioMessage)
-                    {
-                        GameObject objToCreate = null;
+                        else if (chatList[i].chatAsset.messageList[x].objectType ==
+                                 MessagingChat.ObjectType.AudioMessage)
+                        {
+                            GameObject objToCreate = null;
 
-                        if (chatList[i].chatAsset.messageList[x].messageAuthor == MessagingChat.MessageAuthor.Individual) { objToCreate = audioMessageRecieved; }
-                        else if (chatList[i].chatAsset.messageList[x].messageAuthor == MessagingChat.MessageAuthor.Self) { objToCreate = audioMessageSent; }
+                            if (chatList[i].chatAsset.messageList[x].messageAuthor ==
+                                MessagingChat.MessageAuthor.Individual)
+                            {
+                                objToCreate = audioMessageRecieved;
+                            }
+                            else if (chatList[i].chatAsset.messageList[x].messageAuthor ==
+                                     MessagingChat.MessageAuthor.Self)
+                            {
+                                objToCreate = audioMessageSent;
+                            }
 
-                        GameObject msgObj = Instantiate(objToCreate, new Vector3(0, 0, 0), Quaternion.identity);
-                        msgObj.transform.SetParent(layoutPreset.messageParent, false);
+                            GameObject msgObj = Instantiate(objToCreate, new Vector3(0, 0, 0), Quaternion.identity);
+                            msgObj.transform.SetParent(layoutPreset.messageParent, false);
 
-                        AudioMessage audioMessage = msgObj.GetComponent<AudioMessage>();
-                        audioMessage.aSource = AudioManager.instance.audioSource;
-                        audioMessage.aClip = chatList[i].chatAsset.messageList[x].audioMessage;
-                        audioMessage.timeText.text = chatList[i].chatAsset.messageList[x].sentTime;
-                    }
+                            AudioMessage audioMessage = msgObj.GetComponent<AudioMessage>();
+                            audioMessage.aSource = AudioManager.instance.audioSource;
+                            audioMessage.aClip = chatList[i].chatAsset.messageList[x].audioMessage;
+                            audioMessage.timeText.text = chatList[i].chatAsset.messageList[x].sentTime;
+                        }
 
-                    else if (chatList[i].chatAsset.messageList[x].objectType == MessagingChat.ObjectType.ImageMessage)
-                    {
-                        GameObject objToCreate = null;
+                        else if (chatList[i].chatAsset.messageList[x].objectType ==
+                                 MessagingChat.ObjectType.ImageMessage)
+                        {
+                            GameObject objToCreate = null;
 
-                        if (chatList[i].chatAsset.messageList[x].messageAuthor == MessagingChat.MessageAuthor.Individual) { objToCreate = imageMessageRecieved; }
-                        else if (chatList[i].chatAsset.messageList[x].messageAuthor == MessagingChat.MessageAuthor.Self) { objToCreate = imageMessageSent; }
+                            if (chatList[i].chatAsset.messageList[x].messageAuthor ==
+                                MessagingChat.MessageAuthor.Individual)
+                            {
+                                objToCreate = imageMessageRecieved;
+                            }
+                            else if (chatList[i].chatAsset.messageList[x].messageAuthor ==
+                                     MessagingChat.MessageAuthor.Self)
+                            {
+                                objToCreate = imageMessageSent;
+                            }
 
-                        GameObject msgObj = Instantiate(objToCreate, new Vector3(0, 0, 0), Quaternion.identity);
-                        msgObj.transform.SetParent(layoutPreset.messageParent, false);
+                            GameObject msgObj = Instantiate(objToCreate, new Vector3(0, 0, 0), Quaternion.identity);
+                            msgObj.transform.SetParent(layoutPreset.messageParent, false);
 
-                        ImageMessage imgMessage = msgObj.GetComponent<ImageMessage>();
-                        imgMessage.title = chatList[i].chatAsset.messageList[x].messageContent;
-                        imgMessage.description = chatList[i].individualName + " " + chatList[i].individualSurname;
-                        imgMessage.spriteVar = chatList[i].chatAsset.messageList[x].imageMessage;
-                        imgMessage.imageObject.sprite = imgMessage.spriteVar;
-                        imgMessage.timeText.text = chatList[i].chatAsset.messageList[x].sentTime;
-                        if (photoGalleryManager != null) { imgMessage.pgm = photoGalleryManager; }
-                    }
+                            ImageMessage imgMessage = msgObj.GetComponent<ImageMessage>();
+                            imgMessage.title = chatList[i].chatAsset.messageList[x].messageContent;
+                            imgMessage.description = chatList[i].individualName + " " + chatList[i].individualSurname;
+                            imgMessage.spriteVar = chatList[i].chatAsset.messageList[x].imageMessage;
+                            imgMessage.imageObject.sprite = imgMessage.spriteVar;
+                            imgMessage.timeText.text = chatList[i].chatAsset.messageList[x].sentTime;
+                            if (photoGalleryManager != null)
+                            {
+                                imgMessage.pgm = photoGalleryManager;
+                            }
+                        }
 
-                    else if (chatList[i].chatAsset.messageList[x].objectType == MessagingChat.ObjectType.Date)
-                    {
-                        GameObject dateObj = Instantiate(messageDate, new Vector3(0, 0, 0), Quaternion.identity);
-                        dateObj.transform.SetParent(layoutPreset.messageParent, false);
+                        else if (chatList[i].chatAsset.messageList[x].objectType == MessagingChat.ObjectType.Date)
+                        {
+                            GameObject dateObj = Instantiate(messageDate, new Vector3(0, 0, 0), Quaternion.identity);
+                            dateObj.transform.SetParent(layoutPreset.messageParent, false);
 
-                        ChatMessagePreset messagePreset = dateObj.GetComponent<ChatMessagePreset>();
-                        messagePreset.contentText.text = chatList[i].chatAsset.messageList[x].messageContent;
-                    }
+                            ChatMessagePreset messagePreset = dateObj.GetComponent<ChatMessagePreset>();
+                            messagePreset.contentText.text = chatList[i].chatAsset.messageList[x].messageContent;
+                        }
+                    //}
                 }
 
                 // Create chat item button
@@ -236,12 +299,23 @@ namespace Michsky.DreamOS
                 ChatItemPreset itemPreset = msgButton.GetComponent<ChatItemPreset>();
                 itemPreset.coverImage.sprite = chatList[i].individualPicture;
                 itemPreset.nameText.text = chatList[i].individualName + " " + chatList[i].individualSurname;
-                itemPreset.timeText.text = chatList[i].chatAsset.messageList[chatList[i].chatAsset.messageList.Count - 1].sentTime;
+                //itemPreset.timeText.text = chatList[i].chatAsset.messageList[chatList[i].chatAsset.messageList.Count - 1].sentTime;
 
                 LocalizedObject tempChatLoc = itemPreset.latestMessage.gameObject.GetComponent<LocalizedObject>();
 
-                if (!useLocalization || string.IsNullOrEmpty(chatList[i].chatAsset.messageList[chatList[i].chatAsset.messageList.Count - 1].messageKey) || tempChatLoc == null || !tempChatLoc.CheckLocalizationStatus()) { itemPreset.latestMessage.text = chatList[i].chatAsset.messageList[chatList[i].chatAsset.messageList.Count - 1].messageContent; }
-                else if (tempChatLoc != null)
+                if 
+                (
+                    !useLocalization || 
+                    chatList[i].chatAsset.messageList.Count > 0 && 
+                    (
+                        string.IsNullOrEmpty(chatList[i].chatAsset.messageList[chatList[i].chatAsset.messageList.Count - 1].messageKey) || 
+                        tempChatLoc == null || !tempChatLoc.CheckLocalizationStatus()
+                    )
+                )
+                {
+                    itemPreset.latestMessage.text = chatList[i].chatAsset.messageList[chatList[i].chatAsset.messageList.Count - 1].messageContent;
+                }
+                else if (chatList[i].chatAsset.messageList.Count > 0 && tempChatLoc != null)
                 {
                     tempChatLoc.localizationKey = chatList[i].chatAsset.messageList[chatList[i].chatAsset.messageList.Count - 1].messageKey;
                     tempChatLoc.onLanguageChanged.AddListener(delegate { itemPreset.latestMessage.text = tempChatLoc.GetKeyOutput(tempChatLoc.localizationKey); });
@@ -985,8 +1059,8 @@ namespace Michsky.DreamOS
             if (string.IsNullOrEmpty(time)) { mcip.UpdateLatestMessage(newMessage, GetTimeData()); }
             else { mcip.UpdateLatestMessage(newMessage, time); }
 
-            if (selectedLayout != null && !selectedLayout.gameObject.activeInHierarchy && useUnreadBadge == true) { mcip.EnableNotificationBadge(true); }
-            else if (selectedLayout != null && chatTitle != selectedLayout.name && useUnreadBadge) { mcip.EnableNotificationBadge(true); }         
+            if (selectedLayout.IsNull() && !selectedLayout.gameObject.activeInHierarchy && useUnreadBadge == true) { mcip.EnableNotificationBadge(true); }
+            else if (selectedLayout.IsNull() && chatTitle != selectedLayout.name && useUnreadBadge) { mcip.EnableNotificationBadge(true); }         
         }
 
         public void ChangeStatus(Status status, string chatTitle)

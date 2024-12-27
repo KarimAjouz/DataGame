@@ -151,6 +151,12 @@ namespace NNarrativeDataTypes
     [System.Serializable]
     public struct FChatRoom
     {
+        [SerializeField] 
+        public int RoomId;
+
+        [SerializeField] 
+        public string RoomName;
+        
         [SerializeField]
         public List<FCharacterData> Characters;
 

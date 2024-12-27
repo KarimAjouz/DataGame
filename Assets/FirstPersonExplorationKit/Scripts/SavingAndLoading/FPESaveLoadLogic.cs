@@ -313,7 +313,7 @@ namespace Whilefun.FPEKit
         public FPEInventoryWorldSaveData[] gatherInventoryInWorld()
         {
 
-            FPEInteractableInventoryItemScript[] invObjs = GameObject.FindObjectsOfType<FPEInteractableInventoryItemScript>();
+            FPEInteractableInventoryItemScript[] invObjs = GameObject.FindObjectsByType<FPEInteractableInventoryItemScript>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             List<FPEInventoryWorldSaveData> invData = new List<FPEInventoryWorldSaveData>();
 
             // Zeroth value in our array is a padded value in case the level we're saving had no inventory world objects in it
@@ -362,7 +362,7 @@ namespace Whilefun.FPEKit
         public void removeAllInventoryInWorld(bool removeHeldObject)
         {
 
-            FPEInteractableInventoryItemScript[] invObjs = GameObject.FindObjectsOfType<FPEInteractableInventoryItemScript>();
+            FPEInteractableInventoryItemScript[] invObjs = GameObject.FindObjectsByType<FPEInteractableInventoryItemScript>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
             GameObject heldObject = FPEInteractionManagerScript.Instance.getHeldObject();
             int heldObjectID = 0;
@@ -447,7 +447,7 @@ namespace Whilefun.FPEKit
         public FPEPickupWorldSaveData[] gatherPickupsInWorld()
         {
 
-            FPEInteractablePickupScript[] puObjs = GameObject.FindObjectsOfType<FPEInteractablePickupScript>();
+            FPEInteractablePickupScript[] puObjs = GameObject.FindObjectsByType<FPEInteractablePickupScript>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             List<FPEPickupWorldSaveData> puData = new List<FPEPickupWorldSaveData>();
             string scrubbedName = "";
 
@@ -509,7 +509,7 @@ namespace Whilefun.FPEKit
         public void removeAllPickupsInWorld(bool removeHeldObject)
         {
 
-            FPEInteractablePickupScript[] puObjs = GameObject.FindObjectsOfType<FPEInteractablePickupScript>();
+            FPEInteractablePickupScript[] puObjs = GameObject.FindObjectsByType<FPEInteractablePickupScript>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             GameObject heldObject = FPEInteractionManagerScript.Instance.getHeldObject();
 
             int heldObjectID = 0;
@@ -647,7 +647,7 @@ namespace Whilefun.FPEKit
         public FPETriggerSaveData[] gatherTriggerData()
         {
 
-            FPEEventTrigger[] allTriggers = GameObject.FindObjectsOfType<FPEEventTrigger>();
+            FPEEventTrigger[] allTriggers = GameObject.FindObjectsByType<FPEEventTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             FPETriggerSaveData[] saveData = new FPETriggerSaveData[allTriggers.Length];
 
             for (int t = 0; t < allTriggers.Length; t++)
@@ -666,7 +666,7 @@ namespace Whilefun.FPEKit
         public void restoreTriggerData(FPETriggerSaveData[] data)
         {
 
-            FPEEventTrigger[] allTriggers = GameObject.FindObjectsOfType<FPEEventTrigger>();
+            FPEEventTrigger[] allTriggers = GameObject.FindObjectsByType<FPEEventTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             bool foundMatch = false;
 
             for (int d = 0; d < data.Length; d++)
@@ -706,7 +706,7 @@ namespace Whilefun.FPEKit
         public FPEActivateSaveData[] gatherActivateTypeData()
         {
 
-            FPEInteractableActivateScript[] activateObjs = GameObject.FindObjectsOfType<FPEInteractableActivateScript>();
+            FPEInteractableActivateScript[] activateObjs = GameObject.FindObjectsByType<FPEInteractableActivateScript>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             FPEActivateSaveData[] saveData = new FPEActivateSaveData[activateObjs.Length];
 
             for (int a = 0; a < activateObjs.Length; a++)
@@ -725,7 +725,7 @@ namespace Whilefun.FPEKit
         public void restoreActivateData(FPEActivateSaveData[] data)
         {
 
-            FPEInteractableActivateScript[] activateObjs = GameObject.FindObjectsOfType<FPEInteractableActivateScript>();
+            FPEInteractableActivateScript[] activateObjs = GameObject.FindObjectsByType<FPEInteractableActivateScript>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             bool foundMatch = false;
 
             for (int d = 0; d < data.Length; d++)
@@ -765,7 +765,7 @@ namespace Whilefun.FPEKit
         public FPEDoorSaveData[] gatherDoorTypeData()
         {
 
-            FPEDoor[] allTheDoors = GameObject.FindObjectsOfType<FPEDoor>();
+            FPEDoor[] allTheDoors = GameObject.FindObjectsByType<FPEDoor>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             List<FPEDoorSaveData> doorData = new List<FPEDoorSaveData>();
 
             // We add padding to 0th entry in case there were no doors in the scene that was saved
@@ -787,7 +787,7 @@ namespace Whilefun.FPEKit
         public void restoreDoorData(FPEDoorSaveData[] data)
         {
 
-            FPEDoor[] doorObjs = GameObject.FindObjectsOfType<FPEDoor>();
+            FPEDoor[] doorObjs = GameObject.FindObjectsByType<FPEDoor>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
             bool foundMatch = false;
 
@@ -829,7 +829,7 @@ namespace Whilefun.FPEKit
         public FPEDrawerSaveData[] gatherDrawerTypeData()
         {
 
-            FPEDrawer[] allTheDrawers = GameObject.FindObjectsOfType<FPEDrawer>();
+            FPEDrawer[] allTheDrawers = GameObject.FindObjectsByType<FPEDrawer>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             List<FPEDrawerSaveData> drawerData = new List<FPEDrawerSaveData>();
 
             // We add padding to 0th entry in case there were no doors in the scene that was saved
@@ -851,7 +851,7 @@ namespace Whilefun.FPEKit
         public void restoreDrawerData(FPEDrawerSaveData[] data)
         {
 
-            FPEDrawer[] drawerObjs = GameObject.FindObjectsOfType<FPEDrawer>();
+            FPEDrawer[] drawerObjs = GameObject.FindObjectsByType<FPEDrawer>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
             bool foundMatch = false;
 
@@ -893,7 +893,7 @@ namespace Whilefun.FPEKit
         public FPEAttachedNoteSaveData[] gatherAttachedNoteTypeData()
         {
 
-            FPEAttachedNote[] attachedNoteObjs = GameObject.FindObjectsOfType<FPEAttachedNote>();
+            FPEAttachedNote[] attachedNoteObjs = GameObject.FindObjectsByType<FPEAttachedNote>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             FPEAttachedNoteSaveData[] saveData = new FPEAttachedNoteSaveData[attachedNoteObjs.Length];
 
             for (int n = 0; n < attachedNoteObjs.Length; n++)
@@ -912,7 +912,7 @@ namespace Whilefun.FPEKit
         public void restoreAttachedNoteData(FPEAttachedNoteSaveData[] data)
         {
 
-            FPEAttachedNote[] allAttachedNotes = GameObject.FindObjectsOfType<FPEAttachedNote>();
+            FPEAttachedNote[] allAttachedNotes = GameObject.FindObjectsByType<FPEAttachedNote>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             bool foundMatch = false;
 
             for (int d = 0; d < data.Length; d++)
@@ -952,8 +952,8 @@ namespace Whilefun.FPEKit
         public FPEAudioDiaryPlayedStateSaveData[] gatherAudioDiaryPlayedStateData()
         {
 
-            FPEPassiveAudioDiary[] passiveDiaryObjs = GameObject.FindObjectsOfType<FPEPassiveAudioDiary>();
-            FPEInteractableAudioDiaryScript[] diaryObjs = GameObject.FindObjectsOfType<FPEInteractableAudioDiaryScript>();
+            FPEPassiveAudioDiary[] passiveDiaryObjs = GameObject.FindObjectsByType<FPEPassiveAudioDiary>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            FPEInteractableAudioDiaryScript[] diaryObjs = GameObject.FindObjectsByType<FPEInteractableAudioDiaryScript>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             FPEAudioDiaryPlayedStateSaveData[] saveData = new FPEAudioDiaryPlayedStateSaveData[passiveDiaryObjs.Length + diaryObjs.Length];
 
             for (int ad1 = 0; ad1 < passiveDiaryObjs.Length; ad1++)
@@ -977,8 +977,8 @@ namespace Whilefun.FPEKit
         public void restoreAudioDiaryPlaybackStateData(FPEAudioDiaryPlayedStateSaveData[] data)
         {
 
-            FPEPassiveAudioDiary[] allPassiveDiaries = GameObject.FindObjectsOfType<FPEPassiveAudioDiary>();
-            FPEInteractableAudioDiaryScript[] allRegularDiaries = GameObject.FindObjectsOfType<FPEInteractableAudioDiaryScript>();
+            FPEPassiveAudioDiary[] allPassiveDiaries = GameObject.FindObjectsByType<FPEPassiveAudioDiary>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            FPEInteractableAudioDiaryScript[] allRegularDiaries = GameObject.FindObjectsByType<FPEInteractableAudioDiaryScript>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             bool foundMatch = false;
 
             for (int d = 0; d < data.Length; d++)
@@ -1036,7 +1036,7 @@ namespace Whilefun.FPEKit
         public FPEJournalSaveData[] gatherJournalSaveData()
         {
 
-            FPEInteractableJournalScript[] allJournals = GameObject.FindObjectsOfType<FPEInteractableJournalScript>();
+            FPEInteractableJournalScript[] allJournals = GameObject.FindObjectsByType<FPEInteractableJournalScript>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             FPEJournalSaveData[] saveData = new FPEJournalSaveData[allJournals.Length];
 
             for (int n = 0; n < allJournals.Length; n++)
@@ -1055,7 +1055,7 @@ namespace Whilefun.FPEKit
         public void restoreJournalData(FPEJournalSaveData[] data)
         {
 
-            FPEInteractableJournalScript[] allJournals = GameObject.FindObjectsOfType<FPEInteractableJournalScript>();
+            FPEInteractableJournalScript[] allJournals = FindObjectsByType<FPEInteractableJournalScript>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             bool foundMatch = false;
 
             for (int d = 0; d < data.Length; d++)
@@ -1136,7 +1136,7 @@ namespace Whilefun.FPEKit
         public FPEGenericObjectSaveData[] gatherGenericSaveTypeData()
         {
 
-            FPEGenericSaveableGameObject[] allGenericSaveObjects = GameObject.FindObjectsOfType<FPEGenericSaveableGameObject>();
+            FPEGenericSaveableGameObject[] allGenericSaveObjects = FindObjectsByType<FPEGenericSaveableGameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             List<FPEGenericObjectSaveData> doorData = new List<FPEGenericObjectSaveData>();
 
             // We add padding to 0th entry in case there were no generic saveable objects in the scene that was saved
@@ -1158,7 +1158,7 @@ namespace Whilefun.FPEKit
         public void restoreGenericSaveTypeData(FPEGenericObjectSaveData[] data)
         {
 
-            FPEGenericSaveableGameObject[] genericObjs = GameObject.FindObjectsOfType<FPEGenericSaveableGameObject>();
+            FPEGenericSaveableGameObject[] genericObjs = GameObject.FindObjectsByType<FPEGenericSaveableGameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             bool foundMatch = false;
 
             // We start at index 1 since we always have a padding entry at the 0th index

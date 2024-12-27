@@ -20,7 +20,7 @@ public class CS_DigitalClock : MonoBehaviour
 
         TextComponent = GetComponentInChildren<TMP_Text>();
 
-        TimeManager = GameObject.FindObjectOfType<CS_TimeManager>();
+        TimeManager = GameObject.FindFirstObjectByType<CS_TimeManager>();
 
         TimeManager.GetSyncEvent().AddListener(OnTimeUpdated);
     }
