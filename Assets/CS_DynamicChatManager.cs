@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using AYellowpaper.SerializedCollections;
 using ChoETL;
+using NaughtyAttributes;
 using Michsky.DreamOS;
 using UnityEngine;
 using NNarrativeDataTypes;
@@ -8,10 +10,11 @@ public class CS_DynamicChatManager : MonoBehaviour
 {
     private CS_ChatLogBuilder _chatLogBuilder;
     
+    [SerializeField]
     private MessagingManager _messagingManager;
 
-    [SerializeField] 
-    private Dictionary<int, List<FNarrativeTimedEvent>> NarrativeEvents = new Dictionary<int, List<FNarrativeTimedEvent>>();
+    [SerializeField] [ReadOnly] [SerializedDictionary("RoomID", "Events")]
+    private SerializedDictionary<int, List<FNarrativeTimedEvent>> NarrativeEvents;
 
     public void Start()
     {
@@ -21,15 +24,6 @@ public class CS_DynamicChatManager : MonoBehaviour
         {
             Debug.LogError("No Chat Log Builder Found!");
         }
-        
-        _messagingManager = FindFirstObjectByType<MessagingManager>();
-
-        if (_messagingManager == null)
-        {
-            Debug.LogError("No Messaging Manager Found!");
-        }
-
-        TEST_PushMessage();
     }
 
     private void TEST_PushMessage()
@@ -51,15 +45,17 @@ public class CS_DynamicChatManager : MonoBehaviour
         
     }
 
-    private void BuildChatEvents()
+    public void BuildChatEvents(ref CS_ChatLogBuilder InChatLogBuilder)
     {
-        if (_chatLogBuilder == null)
+        if (InChatLogBuilder == null)
         {
-            Debug.LogError("No Chat Log Builder Found!");
+            Debug.LogError("InChatLogBuilder is invalid!");
+            return;
         }
         
-        List<FChatRoom> Rooms = _chatLogBuilder.GetChatRooms();
-
+        List<FChatRoom> Rooms = InChatLogBuilder.GetChatRooms();
+        NarrativeEvents.Clear();
+        
         foreach (FChatRoom ChatRoom in Rooms)
         {
             foreach (FChatLineTimeChunk ChatLineTimeChunk in ChatRoom.ChatLog)
@@ -77,18 +73,16 @@ public class CS_DynamicChatManager : MonoBehaviour
                             new List<FNarrativeTimedEvent>()
                         );
                     }
-                    else
-                    {
-                        NarrativeEvents[ChatLineTimeChunk.TimeStamp].Add(
-                            new FNarrativeTimedEvent(
-                                ENarrativeEventType.ChatMessage, 
-                                ChatRoom.RoomName,
-                                Line.CharacterName, 
-                                Line.Line, 
-                                ChatLineTimeChunk.TimestampString
-                            )
-                        );
-                    }
+                    
+                    NarrativeEvents[ChatLineTimeChunk.TimeStamp].Add(
+                        new FNarrativeTimedEvent(
+                            ENarrativeEventType.ChatMessage, 
+                            ChatRoom.RoomName,
+                            Line.CharacterName, 
+                            Line.Line, 
+                            ChatLineTimeChunk.TimestampString
+                        )
+                    );
                 }
             }
         }
@@ -120,16 +114,20 @@ public class CS_DynamicChatManager : MonoBehaviour
         
     }
 
-    public void PushChatPostsToMessages(int CurrentHour, int CurrentMinute)
+    public void PushChatPostsToMessages(int InTimeToProcessMessages)
     {
         if (_messagingManager == null)
         {
             Debug.LogError("No Messaging Manager Found!");
+            return;
         }
 
-        int CurrentTime = CurrentHour + 100 + CurrentMinute;
+        if (!NarrativeEvents.ContainsKey(InTimeToProcessMessages))
+        {
+            return;
+        }
         
-        List<FNarrativeTimedEvent> EventsToPost = NarrativeEvents[CurrentTime];
+        List<FNarrativeTimedEvent> EventsToPost = NarrativeEvents[InTimeToProcessMessages];
         foreach (FNarrativeTimedEvent Event in EventsToPost)
         {
             if (Event.EventType != ENarrativeEventType.ChatMessage)

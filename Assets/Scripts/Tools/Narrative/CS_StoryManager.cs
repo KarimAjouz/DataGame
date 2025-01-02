@@ -8,6 +8,7 @@ using Unity.VisualScripting;
 using NCharacterTraitCategoryTypes;
 using AYellowpaper.SerializedCollections;
 using ChoETL;
+using NaughtyAttributes;
 
 namespace NNarrativeDataTypes
 {
@@ -158,9 +159,11 @@ namespace NNarrativeDataTypes
         public string RoomName;
         
         [SerializeField]
+        [ReadOnly]
         public List<FCharacterData> Characters;
 
         [SerializeField] 
+        [ReadOnly]
         public List<FChatLineTimeChunk> ChatLog;
     }
 

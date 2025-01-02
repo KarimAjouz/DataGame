@@ -45,7 +45,7 @@ public class FPEUniqueNameValidator {
         // Generic Saved Object(FPEGenericObjectSaveData)
 
         // Triggers //
-        FPEEventTrigger[] allTriggers = GameObject.FindObjectsOfType<FPEEventTrigger>();
+        FPEEventTrigger[] allTriggers = GameObject.FindObjectsByType<FPEEventTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         for (int i = 0; i < allTriggers.Length; i++)
         {
             for (int j = i + 1; j < allTriggers.Length; j++)
@@ -59,7 +59,7 @@ public class FPEUniqueNameValidator {
         }
 
         // Activate //
-        FPEInteractableActivateScript[] allActivates = GameObject.FindObjectsOfType<FPEInteractableActivateScript>();
+        FPEInteractableActivateScript[] allActivates = GameObject.FindObjectsByType<FPEInteractableActivateScript>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         for (int i = 0; i < allActivates.Length; i++)
         {
             for (int j = i + 1; j < allActivates.Length; j++)
@@ -74,7 +74,7 @@ public class FPEUniqueNameValidator {
         }
 
         // Attached Notes //
-        FPEAttachedNote[] allNotes = GameObject.FindObjectsOfType<FPEAttachedNote>();
+        FPEAttachedNote[] allNotes = GameObject.FindObjectsByType<FPEAttachedNote>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         for (int i = 0; i < allNotes.Length; i++)
         {
             for (int j = i + 1; j < allNotes.Length; j++)
@@ -88,8 +88,8 @@ public class FPEUniqueNameValidator {
         }
 
         // Audio Diaries: This is a unique case because names must be common for BOTH passive and active diaries//
-        FPEPassiveAudioDiary[] allPassiveDiaries = GameObject.FindObjectsOfType<FPEPassiveAudioDiary>();
-        FPEInteractableAudioDiaryScript[] allActiveDiaries = GameObject.FindObjectsOfType<FPEInteractableAudioDiaryScript>();
+        FPEPassiveAudioDiary[] allPassiveDiaries = GameObject.FindObjectsByType<FPEPassiveAudioDiary>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        FPEInteractableAudioDiaryScript[] allActiveDiaries = GameObject.FindObjectsByType<FPEInteractableAudioDiaryScript>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
         // Combine the arrays
         List<GameObject> allCombinedDiaries = new List<GameObject>();
@@ -118,7 +118,7 @@ public class FPEUniqueNameValidator {
         }
 
         // Journals //
-        FPEInteractableJournalScript[] allJournals = GameObject.FindObjectsOfType<FPEInteractableJournalScript>();
+        FPEInteractableJournalScript[] allJournals = GameObject.FindObjectsByType<FPEInteractableJournalScript>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
         // Compare the combined list
         for (int i = 0; i < allJournals.Length; i++)
@@ -134,7 +134,7 @@ public class FPEUniqueNameValidator {
         }
 
         // Doors //
-        FPEDoor[] allDoors = GameObject.FindObjectsOfType<FPEDoor>();
+        FPEDoor[] allDoors = GameObject.FindObjectsByType<FPEDoor>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         for (int i = 0; i < allDoors.Length; i++)
         {
             for (int j = i + 1; j < allDoors.Length; j++)
@@ -148,7 +148,7 @@ public class FPEUniqueNameValidator {
         }
 
         // Drawers //
-        FPEDrawer[] allDrawers = GameObject.FindObjectsOfType<FPEDrawer>();
+        FPEDrawer[] allDrawers = GameObject.FindObjectsByType<FPEDrawer>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         for (int i = 0; i < allDrawers.Length; i++)
         {
             for (int j = i + 1; j < allDrawers.Length; j++)
@@ -162,7 +162,7 @@ public class FPEUniqueNameValidator {
         }
 
         // Generic Saveable //
-        FPEGenericSaveableGameObject[] allGenericSaveables = GameObject.FindObjectsOfType<FPEGenericSaveableGameObject>();
+        FPEGenericSaveableGameObject[] allGenericSaveables = GameObject.FindObjectsByType<FPEGenericSaveableGameObject>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         for (int i = 0; i < allGenericSaveables.Length; i++)
         {
             for (int j = i + 1; j < allGenericSaveables.Length; j++)

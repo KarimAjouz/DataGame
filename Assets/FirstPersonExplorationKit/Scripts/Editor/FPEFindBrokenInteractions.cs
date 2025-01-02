@@ -41,7 +41,7 @@ public class FPEFindBrokenInteractions {
         //
         // Inventory Items
         //
-        FPEInteractablePickupScript[] allInventoryItems = GameObject.FindObjectsOfType<FPEInteractableInventoryItemScript>();
+        FPEInteractablePickupScript[] allInventoryItems = GameObject.FindObjectsByType<FPEInteractableInventoryItemScript>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
         Object tempObject = null;
 
@@ -98,7 +98,7 @@ public class FPEFindBrokenInteractions {
         // Pickups
         //
 
-        FPEInteractablePickupScript[] allPickups = GameObject.FindObjectsOfType<FPEInteractablePickupScript>();
+        FPEInteractablePickupScript[] allPickups = GameObject.FindObjectsByType<FPEInteractablePickupScript>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 
         tempObject = null;
         

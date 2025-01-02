@@ -24,6 +24,10 @@ namespace Michsky.DreamOS
             var addSeconds = serializedObject.FindProperty("addSeconds");
             var objectType = serializedObject.FindProperty("objectType");
             var dateFormat = serializedObject.FindProperty("dateFormat");
+            
+            /// #BeginKazChange [KA] (31.12.2024): Update Date and Time manager with a parameter to stop time stepping in real time.
+            var updateInRealTime = serializedObject.FindProperty("UpdateInRealTime");
+            /// #EndKazChange [KA] (31.12.2024): Update Date and Time manager with a parameter to stop time stepping in real time.
 
             var clockHourHand = serializedObject.FindProperty("clockHourHand");
             var clockMinuteHand = serializedObject.FindProperty("clockMinuteHand");
@@ -33,6 +37,11 @@ namespace Michsky.DreamOS
             DreamOSEditorHandler.DrawHeader(customSkin, "Header_Settings", 6);
             if (dtTarget.objectType == DateAndTime.ObjectType.AnalogClock) { GUI.enabled = false; }
             enableAmPmLabel.boolValue = DreamOSEditorHandler.DrawToggle(enableAmPmLabel.boolValue, customSkin, "Enable AM/PM Label");
+            
+            /// #BeginKazChange [KA] (31.12.2024): Update Date and Time manager with a parameter to stop time stepping in real time.
+            updateInRealTime.boolValue = DreamOSEditorHandler.DrawToggle(updateInRealTime.boolValue, customSkin, "Update in Real Time");
+            /// #EndKazChange [KA] (31.12.2024): Update Date and Time manager with a parameter to stop time stepping in real time.
+
             GUI.enabled = true;
             addSeconds.boolValue = DreamOSEditorHandler.DrawToggle(addSeconds.boolValue, customSkin, "Add Seconds");
             DreamOSEditorHandler.DrawProperty(objectType, customSkin, "Object Type");

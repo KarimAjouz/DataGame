@@ -124,6 +124,10 @@ namespace Michsky.DreamOS
 
         void Update()
         {
+            if (messageInput == null)
+            {
+                return;
+            }
             if (string.IsNullOrEmpty(messageInput.text) || EventSystem.current.currentSelectedGameObject != messageInput.gameObject) { return; }
             else if (!messageInput.isFocused) { messageInput.ActivateInputField(); }
 

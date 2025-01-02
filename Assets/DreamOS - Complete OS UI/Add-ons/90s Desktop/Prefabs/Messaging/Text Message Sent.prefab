@@ -90,9 +90,9 @@ MonoBehaviour:
   m_ChildAlignment: 5
   m_Spacing: 0
   m_ChildForceExpandWidth: 0
-  m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 1
+  m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
@@ -211,7 +211,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Hey there, what's up?
+  m_text: 'Hey there, what''s up?
+
+    I believe in a thing called love'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: af6ad66f19204a644b126aac86657fca, type: 2}
   m_sharedMaterial: {fileID: -3274023643370004802, guid: af6ad66f19204a644b126aac86657fca,
@@ -314,7 +316,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3608d135e2fdfc94a964e895974c6ae0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localizationSettings: {fileID: 0}
+  localizationSettings: {fileID: 11400000, guid: 306a0ca089807d34787bf5a5b674abee,
+    type: 2}
   textObj: {fileID: 114554515343796308}
   audioObj: {fileID: 0}
   imageObj: {fileID: 0}
@@ -369,7 +372,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 289.7, y: 38.510002}
+  m_SizeDelta: {x: 289.7, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &222074371130378908
 CanvasRenderer:
@@ -848,7 +851,7 @@ MonoBehaviour:
   m_ChildForceExpandWidth: 1
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 0
-  m_ChildControlHeight: 0
+  m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
@@ -888,7 +891,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 400, y: -28.260002}
+  m_AnchoredPosition: {x: 400, y: -43.26}
   m_SizeDelta: {x: 400, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &7357540045994718995
@@ -983,7 +986,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 92.51, y: 10.01}
+  m_SizeDelta: {x: 92.51, y: 0}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &1288866985924273917
 CanvasRenderer:

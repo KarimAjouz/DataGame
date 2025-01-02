@@ -1,0 +1,20 @@
+[
+  {
+    " 2": "guid: 3af722892824fd0488e4b73b04e4b7a9"
+  },
+  {
+    " 2": "TextScriptImporter:"
+  },
+  {
+    " 2": "externalObjects: {}"
+  },
+  {
+    " 2": "userData:"
+  },
+  {
+    " 2": "assetBundleName:"
+  },
+  {
+    " 2": "assetBundleVariant:"
+  }
+]
