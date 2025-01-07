@@ -7,11 +7,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using NNarrativeDataTypes;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace NCharacterTraitCategoryTypes
 {
-
     // Where all the individual trait categories come from - we will build character data pages from this information.
     public enum ECharacterTraitCategory
     {
@@ -42,51 +43,6 @@ namespace NCharacterTraitCategoryTypes
         COUNT
     }
 
-    // The types of character data pages that players need to collect.
-    public enum ECharacterDataPageType
-    {
-        ECharacterDataPageType_IDENTIFIER,
-        ECharacterDataPageType_PERSONALITY,
-        COUNT
-    }
-
-    [System.Serializable]
-    public struct FCharacterTraitId
-    {
-        [SerializeField]
-        [ReadOnly]
-        public string DisplayName;
-
-        private int Id;
-
-
-        public FCharacterTraitId(string InDisplayName, int InIId)
-        {
-            DisplayName = InDisplayName;
-            Id = InIId;
-        }
-        public override bool Equals(object obj)
-        {
-            return obj is FCharacterTraitId InItem &&
-                   Id == InItem.Id;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Id);
-        }
-
-        public static bool operator ==(FCharacterTraitId left, FCharacterTraitId right)
-        {
-            return
-                left.Id == right.Id;
-        }
-
-        public static bool operator !=(FCharacterTraitId left, FCharacterTraitId right)
-        {
-            return !(left == right);
-        }
-    }
 
     [System.Serializable]
     public struct FCharacterTraitDictionary
@@ -100,6 +56,7 @@ namespace NCharacterTraitCategoryTypes
         [ReadOnly]
         [SerializedDictionary("DisplayName", "CategoryID")]
         private SerializedDictionary<string, ECharacterTraitType> StringToTraitType;
+        
 
 
         public FCharacterTraitDictionary(int n)
@@ -114,7 +71,6 @@ namespace NCharacterTraitCategoryTypes
             {
                 CharacterTraitsDictionary.Add(InType, new List<FCharacterTraitId>());
                 StringToTraitType.Add(TypeString, InType);
-                
             }
 
             if (!CharacterTraitsDictionary[InType].Contains(ItemId))
@@ -133,12 +89,12 @@ namespace NCharacterTraitCategoryTypes
             return CharacterTraitsDictionary.ContainsKey(InCategory);
         }
 
-        public List<FCharacterTraitId> GetTraitsForCategory(ECharacterTraitType InCategory)
+        public List<FCharacterTraitId> GetTraitsForType(ECharacterTraitType InType)
         {
-            return CharacterTraitsDictionary[InCategory];
+            return CharacterTraitsDictionary[InType];
         }
 
-        public FCharacterTraitId FindTrait(ECharacterTraitType InType, string InString)
+        public FCharacterTraitId FindTraitFromStringValue(ECharacterTraitType InType, string InString)
         {
             if(!HasCategory(InType))
             {
@@ -156,11 +112,28 @@ namespace NCharacterTraitCategoryTypes
             return new FCharacterTraitId();
         }
 
+        public FCharacterTraitId FindTraitFromId(ECharacterTraitType InType, int inId)
+        {
+            // #TODO [KA] (06.01.2024): Naive, need to make more efficient. Not a fan but might not be a problem. 
+            if (CharacterTraitsDictionary.ContainsKey(InType))
+            {
+                // #TODO [KA] (06.01.2024): Super naive, really am not a fan. 
+                foreach (FCharacterTraitId Trait in CharacterTraitsDictionary[InType])
+                {
+                    if (Trait.Equals(inId))
+                    {
+                        return Trait;
+                    }
+                }
+            }
+
+            return new FCharacterTraitId();
+        }
+
         public ECharacterTraitType GetTypeFromName(string TypeName)
         {
             if(!StringToTraitType.ContainsKey(TypeName))
             {
-                Debug.LogError("FCharacterTraitId::GetCategoryFromName() --> StringToTraitCategory Dictionary does not contain key: " + TypeName);
                 return ECharacterTraitType.ETraitType_NONE;
             }
             return StringToTraitType[TypeName];
@@ -230,7 +203,11 @@ public class CS_CharacterTraits : MonoBehaviour
                     continue;
                 }
 
-                TraitDictionary.AddUniqueItem((ECharacterTraitType)i, CategoriesInCSV[i].Split("\r")[0], new FCharacterTraitId(DisplayName, ItemId));
+                TraitDictionary.AddUniqueItem(
+                    (ECharacterTraitType)i, 
+                    CategoriesInCSV[i].Split("\r")[0], 
+                    new FCharacterTraitId(DisplayName, ECharacterTraitCategory.ETraitCategory_NONE, ItemId)
+                    );
                 bEmptyRow = false;
             }
 
@@ -241,9 +218,14 @@ public class CS_CharacterTraits : MonoBehaviour
         }
     }
 
-    public FCharacterTraitId GetTrait(ECharacterTraitType InTraitType, string Value)
+    public FCharacterTraitId GetTraitFromStringValue(ECharacterTraitType InTraitType, string Value)
     {
-        return TraitDictionary.FindTrait(InTraitType, Value);
+        return TraitDictionary.FindTraitFromStringValue(InTraitType, Value);
+    }
+
+    public FCharacterTraitId GetTraitFromId(ECharacterTraitType InTraitType, int InTraitId)
+    {
+        return TraitDictionary.FindTraitFromId(InTraitType, InTraitId);
     }
 
     public List<string> GetTraitTypeNames()
@@ -254,4 +236,5 @@ public class CS_CharacterTraits : MonoBehaviour
     {
         return TraitDictionary.GetTypeFromName(TypeName);
     }
+    
 }

@@ -930,7 +930,7 @@ namespace Whilefun.FPEKit
             if (previousSceneIndex < firstLevelSceneBuildIndex)
             {
 
-                FPEPlayerStartLocation startLocation = GameObject.FindObjectOfType<FPEPlayerStartLocation>();
+                FPEPlayerStartLocation startLocation = GameObject.FindFirstObjectByType<FPEPlayerStartLocation>();
 
                 // Yield to start location if there is one present
                 if (startLocation != null)
@@ -955,7 +955,7 @@ namespace Whilefun.FPEKit
             else
             {
 
-                FPEDoorway[] doorways = GameObject.FindObjectsOfType<FPEDoorway>();
+                FPEDoorway[] doorways = GameObject.FindObjectsByType<FPEDoorway>(FindObjectsInactive.Include, FindObjectsSortMode.None);
                 bool foundDoorway = false;
                 
                 for (int d = 0; d < doorways.Length; d++)

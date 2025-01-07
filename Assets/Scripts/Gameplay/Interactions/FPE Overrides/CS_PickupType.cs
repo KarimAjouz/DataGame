@@ -2,6 +2,7 @@ using NaughtyAttributes;
 using NInteractionTypes;
 using System.Collections;
 using System.Collections.Generic;
+using Gameplay.Interactions.FPE_Overrides;
 using Unity.VisualScripting;
 using UnityEngine;
 using Whilefun.FPEKit;
@@ -67,16 +68,15 @@ public class CS_PickupType : MonoBehaviour
         }
 
         CS_Socket Socket = PutBackObj.GetComponent<CS_Socket>();
-        if(Socket == null) 
+        if(Socket != null) 
         {
-            return;
+            Socket.SocketGO(gameObject);
+
+            //transform.SetParent(AttemptedPutBackSocket.SocketedTransform);
+            transform.position = Socket.SocketedTransform.position;
+            transform.rotation = Socket.SocketedTransform.rotation;
         }
         
-        Socket.SocketGO(gameObject);
-
-        //transform.SetParent(AttemptedPutBackSocket.SocketedTransform);
-        transform.position = Socket.SocketedTransform.position;
-        transform.rotation = Socket.SocketedTransform.rotation;
 
         m_rb.freezeRotation = true;
         m_rb.useGravity = false;

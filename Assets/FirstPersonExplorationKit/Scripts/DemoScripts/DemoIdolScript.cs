@@ -17,7 +17,7 @@ public class DemoIdolScript : MonoBehaviour {
 
 	void Awake()
     {
-        theTrap = GameObject.FindObjectOfType<DemoIdolTrapScript>();
+        theTrap = GameObject.FindFirstObjectByType<DemoIdolTrapScript>(FindObjectsInactive.Include);
 	}
     
     public void idolPickupEvent()

@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+// ReSharper disable PossibleNullReferenceException
 
 namespace Michsky.DreamOS
 {
@@ -56,7 +57,9 @@ namespace Michsky.DreamOS
                 {
                     if (Selection.activeGameObject == null)
                     {
+#pragma warning disable CS0618 // Type or member is obsolete
                         var canvas = (Canvas)GameObject.FindObjectsOfType(typeof(Canvas))[0];
+#pragma warning restore CS0618 // Type or member is obsolete
                         clone.transform.SetParent(canvas.transform, false);
                     }
 
@@ -69,7 +72,9 @@ namespace Michsky.DreamOS
                 catch
                 {
                     CreateCanvas();
+#pragma warning disable CS0618 // Type or member is obsolete
                     var canvas = (Canvas)GameObject.FindObjectsOfType(typeof(Canvas))[0];
+#pragma warning restore CS0618 // Type or member is obsolete
                     clone.transform.SetParent(canvas.transform, false);
                     clone.name = clone.name.Replace("(Clone)", "").Trim();
                     MakeSceneDirty(clone, clone.name);

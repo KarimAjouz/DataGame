@@ -79,7 +79,9 @@ namespace float_oat.Desktop90.EditorTools
         {
             // check for existing EventSystem
             // if exists, replace StandaloneInputModule with the custom one, switching over all the settings
+#pragma warning disable CS0618 // Type or member is obsolete
             EventSystem eventSystemInScene = FindObjectOfType<EventSystem>();
+#pragma warning restore CS0618 // Type or member is obsolete
             if (eventSystemInScene == null)
             {
                 // no event system in scene, so add it and give it the CustomCursor input module
@@ -113,8 +115,8 @@ namespace float_oat.Desktop90.EditorTools
                             customCursorInputModule.submitButton = standaloneInputModule.submitButton;
                             customCursorInputModule.cancelButton = standaloneInputModule.cancelButton;
                             customCursorInputModule.inputActionsPerSecond = standaloneInputModule.inputActionsPerSecond;
-                            customCursorInputModule.repeatDelay = standaloneInputModule.repeatDelay;
-                            customCursorInputModule.forceModuleActive = standaloneInputModule.forceModuleActive;
+                            customCursorInputModule.repeatDelay = standaloneInputModule.repeatDelay; 
+                            //customCursorInputModule.forceModuleActive = standaloneInputModule.forceModuleActive;
 
                             Undo.DestroyObjectImmediate(standaloneInputModule);
                         }
@@ -129,7 +131,9 @@ namespace float_oat.Desktop90.EditorTools
         /// </summary>
         private static void CreateEventSystemIfDoesntExist()
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             if (FindObjectOfType<EventSystem>() == null)
+#pragma warning restore CS0618 // Type or member is obsolete
             {
                 _ = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
             }
@@ -145,7 +149,9 @@ namespace float_oat.Desktop90.EditorTools
             if (Selection.activeTransform == null)
             {
                 // Add the UI element to a canvas in the scene if it exists, or create a new canvas
+#pragma warning disable CS0618 // Type or member is obsolete
                 Canvas canvasInScene = FindObjectOfType<Canvas>();
+#pragma warning restore CS0618 // Type or member is obsolete
                 if (canvasInScene != null)
                 {
                     return canvasInScene.transform;

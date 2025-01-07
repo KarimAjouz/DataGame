@@ -16,6 +16,12 @@ public class CS_SplitFlapDisplay : MonoBehaviour
     [SerializeField]
     private bool bIsInputField = false;
 
+    [SerializeField] 
+    private bool IsSocketInput = false;
+
+    [SerializeField] 
+    private CS_Socket SocketGO;
+
     private string InputPromptText;
 
     private string InputFormat;
@@ -62,6 +68,11 @@ public class CS_SplitFlapDisplay : MonoBehaviour
 
         if (bIsInputField)
             SetDisplayText(InputPromptText + InputFormat);
+
+        if (IsSocketInput && SocketGO == null)
+        {
+            Debug.LogError("Field is marked as socket input but has no assigned socket!");
+        }
 
     }
 

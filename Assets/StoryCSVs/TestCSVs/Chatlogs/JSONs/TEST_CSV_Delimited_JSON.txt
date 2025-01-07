@@ -49,13 +49,7 @@
   },
   {
     "TIME": "18:08",
-    "John": "\"# For example this line will appear first at 18:08.",
-    "David": null,
-    "Amy": null
-  },
-  {
-    "TIME": "## And this line will come second at 18:08.\",,",
-    "John": null,
+    "John": "# For example this line will appear first at 18:08.\n## And this line will come second at 18:08.",
     "David": null,
     "Amy": null
   },
@@ -86,19 +80,13 @@
   {
     "TIME": "18:13",
     "John": null,
-    "David": "# We do this by marking a \"`%\" before putting the Cell number in the ItemTable",
+    "David": "# We do this by marking a \"\"%\"\" before putting the Cell number in the ItemTable",
     "Amy": null
   },
   {
     "TIME": "18:14",
     "John": null,
-    "David": "\"# For example: I live in `%B2 would give us:",
-    "Amy": null
-  },
-  {
-    "TIME": "## I live in %B2\",",
-    "John": null,
-    "David": null,
+    "David": "# For example: I live in %B2 would give us:\n## I live in %B2",
     "Amy": null
   },
   {

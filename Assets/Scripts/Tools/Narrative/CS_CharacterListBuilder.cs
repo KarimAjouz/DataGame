@@ -14,16 +14,47 @@ public class CS_CharacterListBuilder : MonoBehaviour
     [SerializeField]
     [ReadOnly]
     private List<FCharacterData> CharacterData;
-
+    
     [SerializeField]
     [ReadOnly]
     [SerializedDictionary("Input Name", "Category")]
     private SerializedDictionary<string, ECharacterTraitCategory> StringToTraitCategory;
-
-
+        
     [SerializeField]
+    [ReadOnly]
     [SerializedDictionary("Trait Category", "Type")]
     private SerializedDictionary<ECharacterTraitCategory, ECharacterTraitType> CategoryToTypeDictionary;
+
+    public void PopulateCategoryAndTraitMaps(TextAsset InLines)
+    {
+        CS_CharacterTraits CharacterTraitComponent = gameObject.GetComponent<CS_CharacterTraits>();
+
+        if(CharacterTraitComponent == null)
+        {
+            Debug.LogError("CS_CharacterListBuilder::PopulateCharacterList --> No CS_CharacterTraits component found!");
+            return;
+        }
+
+        StringToTraitCategory.Clear();
+        CategoryToTypeDictionary.Clear();
+        
+        
+        string CategoryRow = InLines.text.Split("\n")[0];
+        string[] CategoriesInCSV = CategoryRow.Split(",");
+
+        for(int i = 0; i < CategoriesInCSV.Length; i++)
+        {
+            string CatName = CategoriesInCSV[i].Split("\r")[0];
+            StringToTraitCategory.Add(CatName, (ECharacterTraitCategory)i);
+            
+            string TypeName = CatName.Split("_")[0];
+            ECharacterTraitType TraitType = CharacterTraitComponent.TraitDictionary.GetTypeFromName(TypeName);
+            if(!TraitType.Equals(ECharacterTraitType.ETraitType_NONE))
+            {
+                CategoryToTypeDictionary.Add((ECharacterTraitCategory)i, TraitType);
+            }
+        }
+    }
 
     public void PopulateCharacterList (TextAsset InLines, JArray InCharacterListArray)
     {
@@ -33,19 +64,19 @@ public class CS_CharacterListBuilder : MonoBehaviour
             return;
         }
 
-        CS_CharacterTraits CharacterTraitComponent = gameObject.GetComponent<CS_CharacterTraits>();
-
-        if(CharacterTraitComponent == null)
-        {
-            Debug.LogError("CS_CharacterListBuilder::PopulateCharacterList --> No CS_CharacterTraits component found!");
-            return;
-        }
-
         int CharacterId = 0;
         CharacterData.Clear();
 
         foreach (JObject CharacterObject in InCharacterListArray.Children())
         {
+            CS_CharacterTraits CharacterTraitComponent = gameObject.GetComponent<CS_CharacterTraits>();
+
+            if(CharacterTraitComponent == null)
+            {
+                Debug.LogError("CS_CharacterListBuilder::PopulateCharacterList --> No CS_CharacterTraits component found!");
+                return;
+            }
+            
             string CharacterNameString = (string)CharacterObject["NAME"];
 
             if(CharacterNameString.IsNullOrEmpty())
@@ -113,14 +144,23 @@ public class CS_CharacterListBuilder : MonoBehaviour
                 }
 
                 ECharacterTraitCategory ImportedTraitCategory = StringToTraitCategory[TraitCategoryName];
-                if(ImportedTraitCategory == ECharacterTraitCategory.ETraitCategory_NONE)
+                if (ImportedTraitCategory == ECharacterTraitCategory.ETraitCategory_NAME
+                    || ImportedTraitCategory == ECharacterTraitCategory.ETraitCategory_WEBID
+                    || ImportedTraitCategory == ECharacterTraitCategory.ETraitCategory_BIRTHDATE
+                    || ImportedTraitCategory == ECharacterTraitCategory.ETraitCategory_WEBHANDLE
+                    || ImportedTraitCategory == ECharacterTraitCategory.ETraitCategory_NONE
+                   )
                 {
-                    Debug.Log("No values exist for invalid trait Category: ETraitType_NONE");
+                    continue;
+                }
+                if(!CategoryToTypeDictionary.ContainsKey(ImportedTraitCategory))
+                {
+                    Debug.Log("No value exists for trait category: " + TraitCategoryName);
                     continue;
                 }
 
                 // This is wrong needs to pass in category not trait type!
-                CharacterTraits.Add(ImportedTraitCategory, CharacterTraitComponent.GetTrait(CategoryToTypeDictionary[ImportedTraitCategory], Value));
+                CharacterTraits.Add(ImportedTraitCategory, CharacterTraitComponent.GetTraitFromStringValue(CategoryToTypeDictionary[ImportedTraitCategory], Value));
             }
 
             CharacterData.Add(new FCharacterData(CharacterNameString, CharacterId, characterWebHandle, civIdHandle, DoBHandle, CharacterTraits));
@@ -140,58 +180,16 @@ public class CS_CharacterListBuilder : MonoBehaviour
         return new FCharacterData();
     }
 
-    public List<FCharacterData> GetMatchingCharacters(FCharacterData InComparisonData)
+    public FCharacterData? GetCharacterDataFromWebHandle(FCharacterWebHandle InWebHandle)
     {
-        List<FCharacterData> ValidCharacters = new List<FCharacterData>();
-
-        //Compare against names
-        if (InComparisonData.GetCharacterName() != null || !InComparisonData.GetCharacterName().IsEmpty())
+        foreach (FCharacterData Character in CharacterData)
         {
-            foreach (FCharacterData Character in CharacterData)
+            if (Character.GetWebHandle() == InWebHandle)
             {
-                if (Character.GetCharacterName() == InComparisonData.GetCharacterName() && !ValidCharacters.Contains(Character))
-                {
-                    ValidCharacters.Add(Character);
-                }
+                return Character;
             }
         }
 
-        //Compare against web handle
-        if (!InComparisonData.GetWebHandle().IsEmpty())
-        {
-            foreach (FCharacterData Character in CharacterData)
-            {
-                if (Character.GetWebHandle() == InComparisonData.GetWebHandle() && !ValidCharacters.Contains(Character))
-                {
-                    ValidCharacters.Add(Character);
-                }
-            }
-        }
-
-        //Compare against webID
-        if (!InComparisonData.GetWebId().IsEmpty())
-        {
-            foreach (FCharacterData Character in CharacterData)
-            {
-                if (Character.GetWebId() == InComparisonData.GetWebId() && !ValidCharacters.Contains(Character))
-                {
-                    ValidCharacters.Add(Character);
-                }
-            }
-        }
-
-        //Compare against DoB (only if full DoB is provided!)
-        if (InComparisonData.GetDateOfBirth().IsFullDoB())
-        {
-            foreach (FCharacterData Character in CharacterData)
-            {
-                if (Character.GetDateOfBirth() == InComparisonData.GetDateOfBirth() && !ValidCharacters.Contains(Character))
-                {
-                    ValidCharacters.Add(Character);
-                }
-            }
-        }
-
-        return ValidCharacters;
+        return null;
     }
 }

@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using AYellowpaper.SerializedCollections;
+using ChoETL;
+using NaughtyAttributes;
 using Michsky.DreamOS;
 using UnityEngine;
 using NNarrativeDataTypes;
@@ -7,10 +10,11 @@ public class CS_DynamicChatManager : MonoBehaviour
 {
     private CS_ChatLogBuilder _chatLogBuilder;
     
-    private MessagingManager _messagingManager;
-    
     [SerializeField]
-    private ChatLayoutPreset ChatLayoutPreset;
+    private MessagingManager _messagingManager;
+
+    [SerializeField] [ReadOnly] [SerializedDictionary("RoomID", "Events")]
+    private SerializedDictionary<int, List<FNarrativeTimedEvent>> NarrativeEvents;
 
     public void Start()
     {
@@ -20,16 +24,9 @@ public class CS_DynamicChatManager : MonoBehaviour
         {
             Debug.LogError("No Chat Log Builder Found!");
         }
-        
-        _messagingManager = FindFirstObjectByType<MessagingManager>();
-
-        if (_messagingManager == null)
-        {
-            Debug.LogError("No Messaging Manager Found!");
-        }
     }
 
-    public void TEST_PushMessage()
+    private void TEST_PushMessage()
     {
         CS_TimeManager timeManager = FindFirstObjectByType<CS_TimeManager>();
 
@@ -39,44 +36,108 @@ public class CS_DynamicChatManager : MonoBehaviour
             return;
         }
         
+        PushIndividualMessage(
+            "TEST",
+            "This is a test message", 
+            "Test Author", 
+            timeManager.GetDisplayTimeString()
+        );
         
     }
-    
 
-    public void PushChatPostsToMessages(int CurrentHour, int CurrentMinute)
+    public void BuildChatEvents(ref CS_ChatLogBuilder InChatLogBuilder)
     {
-        if (_chatLogBuilder == null)
+        if (InChatLogBuilder == null)
         {
-            Debug.LogError("No Chat Log Builder Found!");
+            Debug.LogError("InChatLogBuilder is invalid!");
+            return;
         }
         
-        if (_messagingManager == null)
-        {
-            Debug.LogError("No Messaging Manager Found!");
-        }
+        List<FChatRoom> Rooms = InChatLogBuilder.GetChatRooms();
+        NarrativeEvents.Clear();
         
-        List<FChatRoom> Rooms = _chatLogBuilder.GetChatRooms();
-
-        foreach (FChatRoom Room in Rooms)
+        foreach (FChatRoom ChatRoom in Rooms)
         {
-            foreach (FChatLineTimeChunk ChatLineTimeChunk in Room.ChatLog)
+            foreach (FChatLineTimeChunk ChatLineTimeChunk in ChatRoom.ChatLog)
             {
-                if (CurrentHour * 100 + CurrentMinute != ChatLineTimeChunk.TimeStamp)
-                {
-                    continue;
-                }
+                // This is where we create timed narrative events and push them to the master list.
+                // #TODO [KA] (26.12.2024): Build some more cohesive system and move the master list of events out
+                // #TODO                    to the primary TimedNarrativeEventManager/StoryManager
                 
-                // This is where we create and push the DreamOS messages
                 foreach (FChatLine Line in ChatLineTimeChunk.ChatLines)
                 {
-                    _messagingManager.CreateCustomMessageFromAuthor(ChatLayoutPreset, Line.Line, Line.CharacterName, ChatLineTimeChunk.TimestampString);
+                    if (!NarrativeEvents.ContainsKey(ChatLineTimeChunk.TimeStamp))
+                    {
+                        NarrativeEvents.Add(
+                            ChatLineTimeChunk.TimeStamp, 
+                            new List<FNarrativeTimedEvent>()
+                        );
+                    }
+                    
+                    NarrativeEvents[ChatLineTimeChunk.TimeStamp].Add(
+                        new FNarrativeTimedEvent(
+                            ENarrativeEventType.ChatMessage, 
+                            ChatRoom.RoomName,
+                            Line.CharacterName, 
+                            Line.Line, 
+                            ChatLineTimeChunk.TimestampString
+                        )
+                    );
                 }
             }
         }
     }
 
-    public void PushSingleMessage(FChatLineTimeChunk ChatLineTimeChunk)
+    private void PushIndividualMessage(string InChatTitle, string InText, string InAuthor, string InTime)
     {
+        if (_messagingManager == null)
+        {
+            Debug.LogError("No Messaging Manager Found!");
+            return;
+        }
+        
+        ChatLayoutPreset layout = _messagingManager.chatViewer.Find(InChatTitle).GetComponent<ChatLayoutPreset>();
+
+        if (layout == null)
+        {
+            Debug.LogError("No Layout Preset Found!");
+            return;
+        }
+        
+        // #TODO [KA] (26.12.2024): Localisation!
+        _messagingManager.CreateCustomMessageFromAuthor(
+            layout, 
+            InText, 
+            InAuthor, 
+            InTime
+        );
         
     }
+
+    public void PushChatPostsToMessages(int InTimeToProcessMessages)
+    {
+        if (_messagingManager == null)
+        {
+            Debug.LogError("No Messaging Manager Found!");
+            return;
+        }
+
+        if (!NarrativeEvents.ContainsKey(InTimeToProcessMessages))
+        {
+            return;
+        }
+        
+        List<FNarrativeTimedEvent> EventsToPost = NarrativeEvents[InTimeToProcessMessages];
+        foreach (FNarrativeTimedEvent Event in EventsToPost)
+        {
+            if (Event.EventType != ENarrativeEventType.ChatMessage)
+            {
+                continue;
+            }
+
+            PushIndividualMessage(Event.EventSourceTitle, Event.EventText, Event.EventAuthor, Event.EventTimestampText);
+        }
+    }
+
+
 }

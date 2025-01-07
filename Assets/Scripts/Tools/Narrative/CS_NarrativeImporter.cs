@@ -15,10 +15,10 @@ using Object = UnityEngine.Object;
 
 public class CS_NarrativeImporter : MonoBehaviour
 {
-    [SerializeField]
-    public Object SourceChatlogCSV;
+    [SerializeField] 
+    public string ChatLogFolderPath;
     
-    //[SerializeField]
+    [SerializeField]
     public Object SourceCharacterTraitSheetCSV;
     
     [SerializeField]
@@ -29,6 +29,8 @@ public class CS_NarrativeImporter : MonoBehaviour
 [CustomEditor(typeof(CS_NarrativeImporter))]
 public class CS_NarrativeImporterEditor : Editor
 {
+    private string WorkingText;
+    
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
@@ -39,11 +41,63 @@ public class CS_NarrativeImporterEditor : Editor
         serializedObject.ApplyModifiedProperties();
 
     }
+    
+    private void ImportSingleLogFromCSV(TextAsset InSourceCSV)
+    {
+        CS_ChatLogBuilder ChatLogBuilder = GameObject.FindFirstObjectByType<CS_ChatLogBuilder>();
+        if (ChatLogBuilder == null)
+        {
+            Debug.LogError("Could not find CS_ChatLogBuilder scrtipt!");
+            return;
+        }
+        
+        string ChatLogJsonString = ConvertCsvFileToJsonString(InSourceCSV);
+        JArray ChatLogArray = GetJArrayFromJSON(ChatLogJsonString);
 
+        ChatLogBuilder.PopulateChatLogLinesFromTextAsset(InSourceCSV, ChatLogArray);
+    }
+
+    private void BuildTextFileFromFileInfo(FileInfo InFileInfo)
+    {
+        char[] result;
+        StringBuilder builder = new StringBuilder();
+
+        using (StreamReader reader = File.OpenText(InFileInfo.FullName))
+        {
+            result = new char[reader.BaseStream.Length];
+            reader.Read(result, 0, (int)reader.BaseStream.Length);
+        }
+
+        foreach (char c in result)
+        {
+            if (char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || char.IsPunctuation(c))
+            {
+                builder.Append(c);
+            }
+        }
+        WorkingText = builder.ToString();
+    }
+
+    private void ImportChatLogFromWorkingText(string InResourcePath, string InFileName, int InChatId)
+    {
+        CS_ChatLogBuilder ChatLogBuilder = GameObject.FindFirstObjectByType<CS_ChatLogBuilder>();
+        if (ChatLogBuilder == null)
+        {
+            Debug.LogError("Could not find CS_ChatLogBuilder script!");
+            return;
+        }
+        
+        string ChatLogJsonString = ConvertCsvStringToJsonString(WorkingText, InResourcePath + "/JSONs/" + InFileName);
+        
+        JArray ChatLogArray = GetJArrayFromJSON(ChatLogJsonString);
+
+        ChatLogBuilder.PopulateChatLogLinesFromString(WorkingText, ChatLogArray, InChatId);
+    }
+    
     private void ImportChatlogsFromCSVs(TextAsset InSourceCSV)
     {
-        CS_ChatLogBuilder ChatlogBuilder = GameObject.FindObjectOfType<CS_ChatLogBuilder>();
-        if (ChatlogBuilder == null)
+        CS_ChatLogBuilder ChatLogBuilder = GameObject.FindFirstObjectByType<CS_ChatLogBuilder>();
+        if (ChatLogBuilder == null)
         {
             Debug.LogError("Could not find CS_ChatLogBuilder scrtipt!");
             return;
@@ -52,7 +106,7 @@ public class CS_NarrativeImporterEditor : Editor
         string ChatLogJsonString = ConvertCsvFileToJsonString(InSourceCSV);
         JArray ChatLogArray = GetJArrayFromJSON(ChatLogJsonString);
 
-        ChatlogBuilder.PopulateChatLogLines(InSourceCSV, ChatLogArray);
+        ChatLogBuilder.PopulateChatLogLinesFromTextAsset(InSourceCSV, ChatLogArray);
     }
 
     private void ImportCharacterListDataFromCSV(TextAsset InSourceCSV)
@@ -67,6 +121,7 @@ public class CS_NarrativeImporterEditor : Editor
         string CharacterListJSON = ConvertCsvFileToJsonString(InSourceCSV);
         JArray CharacterListArray = GetJArrayFromJSON(CharacterListJSON);
 
+        CharacterListBuilder.PopulateCategoryAndTraitMaps(InSourceCSV);
         CharacterListBuilder.PopulateCharacterList(InSourceCSV, CharacterListArray);
     }
 
@@ -92,11 +147,44 @@ public class CS_NarrativeImporterEditor : Editor
     {
         EditorGUILayout.BeginHorizontal();
         
-        Importer.SourceChatlogCSV = EditorGUILayout.ObjectField(Importer.SourceChatlogCSV, typeof(TextAsset), false);
+        Importer.ChatLogFolderPath = EditorGUILayout.TextField(Importer.ChatLogFolderPath);
         
         if (GUILayout.Button("Import all Chatlogs From CSV"))
         {
-            ImportChatlogsFromCSVs((TextAsset)Importer.SourceChatlogCSV);
+            CS_DynamicChatManager DynamicChatManager = FindFirstObjectByType<CS_DynamicChatManager>();
+
+            if (DynamicChatManager == null)
+            {
+                Debug.LogError("Could not find CS_DynamicChatManager script!");
+                return;
+            }
+            
+            CS_ChatLogBuilder ChatLogBuilder = FindFirstObjectByType<CS_ChatLogBuilder>();
+            if (ChatLogBuilder == null)
+            {
+                Debug.LogError("Could not find CS_ChatLogBuilder scrtipt!");
+                return;
+            }
+            
+            var DirInfo = new DirectoryInfo(Importer.ChatLogFolderPath + "/CSVs");
+            var DirFiles = DirInfo.GetFiles();
+
+            int TrackingId = 0;
+
+            foreach (FileInfo fInfo in DirFiles)
+            {
+                if (fInfo.Extension == ".meta")
+                {
+                    continue;
+                }
+
+
+                BuildTextFileFromFileInfo(fInfo);
+                ImportChatLogFromWorkingText(Importer.ChatLogFolderPath, fInfo.Name, TrackingId);
+                TrackingId++;
+            }
+
+            DynamicChatManager.BuildChatEvents(ref ChatLogBuilder);
         }
 
         EditorGUILayout.EndHorizontal();
@@ -129,6 +217,28 @@ public class CS_NarrativeImporterEditor : Editor
     /// 
 
     /// #BEGIN: CSV Data Importing Logic
+    
+    
+    public string ConvertCsvStringToJsonString(string Lines, string InJsonPath)
+    {
+        var CSVLines = Lines;
+
+        StringBuilder sb = new StringBuilder();
+        using (var p = ChoCSVReader.LoadText(CSVLines)
+                   .WithFirstLineHeader()
+                   .QuoteAllFields()
+                   .MayContainEOLInData()
+                   .ThrowAndStopOnMissingField(false)
+              )
+        {
+            using (var w = new ChoJSONWriter(sb))
+                w.Write(p);
+        }
+
+        GenerateJSONLog(sb.ToString(), InJsonPath);
+
+        return sb.ToString();
+    }
 
     public string ConvertCsvFileToJsonString(TextAsset Lines)
     {
@@ -167,7 +277,7 @@ public class CS_NarrativeImporterEditor : Editor
 
     public void GenerateJSONLog(string InString, string InAssetPath)
     {
-        string path = InAssetPath.Split(".")[0] + "_JSON_" + ".txt";
+        string path = InAssetPath.Split(".")[0] + "_JSON" + ".txt";
         // This text is added only once to the file.
         if (!File.Exists(path))
         {

@@ -145,6 +145,10 @@ namespace Michsky.DreamOS
 
                     if (saveTimeData) { DreamOSDataManager.WriteIntData(dataCat, "CurrentMinute", currentMinute); }
                     if (enableTimedEvents) { CheckForTimedEvents(); }
+                    
+                    CS_TimeManager timeManager = FindFirstObjectByType<CS_TimeManager>();
+                    
+                    timeManager.AddTime(1, false);
                 }
             }
 
