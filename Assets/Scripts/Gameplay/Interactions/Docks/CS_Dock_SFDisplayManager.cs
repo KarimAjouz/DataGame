@@ -4,6 +4,7 @@ using NCharacterTraitCategoryTypes;
 using NNarrativeDataTypes;
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 
 
@@ -47,6 +48,17 @@ class CS_DataInputPage
         return CategoryToDisplayMap.Count;
     }
 
+    public ECharacterTraitCategory GetDisplayCategory(CS_SplitFlapDisplay InDisplay)
+    {
+        foreach (KeyValuePair<ECharacterTraitCategory, CS_SplitFlapDisplay> pair in CategoryToDisplayMap)
+        {
+            if(pair.Value == InDisplay)
+                return pair.Key;
+        }
+
+        return ECharacterTraitCategory.ETraitCategory_NONE;
+    }
+    
     public void InitPage()
     {
         foreach (KeyValuePair<ECharacterTraitCategory, CS_SplitFlapDisplay> pair in CategoryToDisplayMap)
@@ -153,6 +165,9 @@ public class CS_Dock_SFDisplayManager : MonoBehaviour
     [SerializeField]
     private int ActivePage = 0;
 
+    [SerializeField] 
+    private CS_ProfileInput InputSockets;
+
     private bool ComponentActive = false;
 
     // Start is called before the first frame update
@@ -228,6 +243,15 @@ public class CS_Dock_SFDisplayManager : MonoBehaviour
     {
         ControlledDisplayPages[ActivePage].ResetPage();
     }
+    
+    public string GetReadSocketDisplayStringForDisplay(CS_SplitFlapDisplay InDisplay)
+    {
+        if (InputSockets)
+        {
+            return InputSockets.GetDisplayStringForCategoryFromReadSocket(ControlledDisplayPages[ActivePage].GetDisplayCategory(InDisplay));
+        }
+        return "";
+    }
 
 
     private void ProcessInputString()
@@ -267,8 +291,6 @@ public class CS_Dock_SFDisplayManager : MonoBehaviour
 
     public FCharacterData MakeCharacterDataFromDisplays()
     {
-        //foreach (KeyValuePair<ECharacterTraitCategory, CS_SplitFlapDisplay> pair in ControlledDisplayPages[)
-
         FCharacterData OutChar = new FCharacterData();
 
         ControlledDisplayPages[ActivePage].PopulateCharacterData(ref OutChar);

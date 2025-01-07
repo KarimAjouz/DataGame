@@ -14,7 +14,7 @@ namespace NNarrativeDataTypes
 {
     public interface ICreditableCharacterData<in T>
     {
-        public FCharacterDataCredit EvaluateCredit(T other)
+        public FCharacterDataCredit EvaluateCredit(T other, ECharacterTraitCategory InTraitCategory = ECharacterTraitCategory.ETraitCategory_NONE)
         {
             return new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_NONE, ECreditType.CreditType_Invalid);
         }
@@ -101,19 +101,19 @@ namespace NNarrativeDataTypes
             return DisplayName;
         }
 
-        public FCharacterDataCredit EvaluateCredit(FDateHandle InComparisonHandle)
+        public FCharacterDataCredit EvaluateCredit(FDateHandle InComparisonHandle, ECharacterTraitCategory InTraitCategory = ECharacterTraitCategory.ETraitCategory_BIRTHDATE)
         {
             if(InComparisonHandle == this)
             {
-                return new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_BIRTHDATE, ECreditType.CreditType_Full);
+                return new FCharacterDataCredit(InTraitCategory, ECreditType.CreditType_Full);
             }
 
             if (InComparisonHandle.yyyy == yyyy)
             {
-                return new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_BIRTHDATE, ECreditType.CreditType_Partial);
+                return new FCharacterDataCredit(InTraitCategory, ECreditType.CreditType_Partial);
             }
 
-            return new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_BIRTHDATE, ECreditType.CreditType_Invalid);
+            return new FCharacterDataCredit(InTraitCategory, ECreditType.CreditType_Invalid);
         }
 
         public bool Equals(FDateHandle other)
@@ -197,7 +197,7 @@ namespace NNarrativeDataTypes
         [SerializeField]
         [SerializedDictionary]
         private SerializedDictionary<ECharacterTraitCategory, FCharacterTraitId> Traits;
-
+        
         public FCharacterData(
             string InName,
             int InId, 
@@ -272,6 +272,25 @@ namespace NNarrativeDataTypes
         public override int GetHashCode()
         {
             return CharacterId;
+        }
+
+        public string GetDisplayStringForCategory(ECharacterTraitCategory InCategory)
+        {
+            switch (InCategory)
+            {
+                case ECharacterTraitCategory.ETraitCategory_BIRTHDATE:
+                    return DateOfBirth.DisplayName;
+                case ECharacterTraitCategory.ETraitCategory_WEBID:
+                    return WebIdHandle.GetDisplayName();
+                case ECharacterTraitCategory.ETraitCategory_WEBHANDLE:
+                    return WebHandle.GetDisplayName();
+                default:
+                    if (Traits.ContainsKey(InCategory))
+                    {
+                        return Traits[InCategory].DisplayName;
+                    }
+                    return "";
+            }
         }
     }
 
@@ -402,15 +421,15 @@ namespace NNarrativeDataTypes
         
         [SerializeField]
         [ReadOnly]
-        private ECharacterTraitCategory m_TraitCategory;
+        private ECharacterTraitType m_TraitType;
 
         private int m_Id;
 
 
-        public FCharacterTraitId(string InDisplayName, ECharacterTraitCategory InTraitCategory, int InId)
+        public FCharacterTraitId(string InDisplayName, ECharacterTraitType InTraitType, int InId)
         {
             DisplayName = InDisplayName;
-            m_TraitCategory = InTraitCategory;
+            m_TraitType = InTraitType;
             m_Id = InId;
         }
         public override bool Equals(object obj)
@@ -446,13 +465,12 @@ namespace NNarrativeDataTypes
         }
 
         // #BEGIN: ICreditableCharacterData Interface
-        public FCharacterDataCredit EvaluateCredit(FCharacterTraitId InTraitId)
+        public FCharacterDataCredit EvaluateCredit(FCharacterTraitId InTraitId, ECharacterTraitCategory InCategory)
         {
-            if (this == InTraitId)
-            {
-                return new FCharacterDataCredit(m_TraitCategory, ECreditType.CreditType_Full);
-            }
-            return new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_NONE, ECreditType.CreditType_Invalid);
+            return 
+                this == InTraitId ? 
+                    new FCharacterDataCredit(InCategory, ECreditType.CreditType_Full) : 
+                    new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_NONE, ECreditType.CreditType_Invalid);
         }
         
         // #END: ICreditableCharacterData Interface
@@ -562,7 +580,7 @@ public class CS_StoryManager : MonoBehaviour
 
         foreach (KeyValuePair<ECharacterTraitCategory, FCharacterTraitId> CategoryIdPair in InputProfile.GetTraits())
         {
-            OutReward += GetRewardForCredit(CategoryIdPair.Value.EvaluateCredit(ComparisonProfile.Value.GetTraits()[CategoryIdPair.Key]));
+            OutReward += GetRewardForCredit(CategoryIdPair.Value.EvaluateCredit(ComparisonProfile.Value.GetTraits()[CategoryIdPair.Key], CategoryIdPair.Key));
         }
         
         return OutReward;

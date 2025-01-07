@@ -1,6 +1,8 @@
 using ChoETL;
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
+using NCharacterTraitCategoryTypes;
 using UnityEngine;
 
 public class CS_ProfileInput : MonoBehaviour
@@ -79,4 +81,12 @@ public class CS_ProfileInput : MonoBehaviour
         InputDisplay.ReadCharacterDataToDisplays(Punchcard.GetCharacterData());
     }
 
+    public string GetDisplayStringForCategoryFromReadSocket(ECharacterTraitCategory InCategory)
+    {
+        if (ReadSocket.GetSocketedGO())
+        {
+            return ReadSocket.GetSocketedGO().GetComponent<CS_PunchCard>().GetCharacterData().GetDisplayStringForCategory(InCategory);
+        }
+        return null;
+    }
 }

@@ -84,6 +84,17 @@ namespace NCharacterTraitCategoryTypes
             return new List<string>(StringToTraitType.Keys);
         }
 
+        public string[] GetTraitValueDisplayNames(ECharacterTraitType InType)
+        {
+            string[] OutArray = new string[CharacterTraitsDictionary[InType].Count];
+            for (int i = 0; i < CharacterTraitsDictionary[InType].Count; i++)
+            {
+                OutArray[i] = CharacterTraitsDictionary[InType][i].DisplayName;
+            }
+
+            return OutArray;
+        }
+
         public bool HasCategory(ECharacterTraitType InCategory)
         {
             return CharacterTraitsDictionary.ContainsKey(InCategory);
@@ -96,7 +107,7 @@ namespace NCharacterTraitCategoryTypes
 
         public FCharacterTraitId FindTraitFromStringValue(ECharacterTraitType InType, string InString)
         {
-            if(!HasCategory(InType))
+            if(!HasCategory(InType)) 
             {
                 Debug.LogError("Trait Type: " + InType + " Does not exist in the trait dictionary!");
                 return new FCharacterTraitId();
@@ -174,7 +185,7 @@ public class CS_CharacterTraits : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        TraitDictionary = new FCharacterTraitDictionary(0);
+        //TraitDictionary = new FCharacterTraitDictionary(0);
     }
 
     public void PopulateCharacterTraits(TextAsset InSourceCSV, JArray CharacterTraitArray)
@@ -206,7 +217,7 @@ public class CS_CharacterTraits : MonoBehaviour
                 TraitDictionary.AddUniqueItem(
                     (ECharacterTraitType)i, 
                     CategoriesInCSV[i].Split("\r")[0], 
-                    new FCharacterTraitId(DisplayName, ECharacterTraitCategory.ETraitCategory_NONE, ItemId)
+                    new FCharacterTraitId(DisplayName, (ECharacterTraitType)i, ItemId)
                     );
                 bEmptyRow = false;
             }
