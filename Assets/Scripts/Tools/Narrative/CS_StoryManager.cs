@@ -1,21 +1,32 @@
 using System;
-using System.IO;
-using System.Text;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using NNarrativeDataTypes;
-using Unity.VisualScripting;
 using NCharacterTraitCategoryTypes;
 using AYellowpaper.SerializedCollections;
 using ChoETL;
 using NaughtyAttributes;
+using static UnityEngine.GameObject;
+using Object = UnityEngine.Object;
 
 namespace NNarrativeDataTypes
 {
+    public interface ICreditableCharacterData<in T>
+    {
+        public FCharacterDataCredit EvaluateCredit(T other)
+        {
+            return new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_NONE, ECreditType.CreditType_Invalid);
+        }
+    }
+    
+    
     // #BEGIN: Tagged Item Data
 
-    [System.Serializable]
-    public struct FDateHandle
+    [Serializable]
+    public struct FDateHandle : 
+        ICreditableCharacterData<FDateHandle>, 
+        IEquatable<FDateHandle>
     {
         public string DisplayName;
 
@@ -90,57 +101,24 @@ namespace NNarrativeDataTypes
             return DisplayName;
         }
 
-        public bool IsFullDoB()
-        {
-            return dd != 0 && mm != 0 && yyyy != 0;
-        }
-
-        public float CalculateScore(FDateHandle InComparisonHandle, ref int InErrorCount)
+        public FCharacterDataCredit EvaluateCredit(FDateHandle InComparisonHandle)
         {
             if(InComparisonHandle == this)
             {
-                return 1.0f;
+                return new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_BIRTHDATE, ECreditType.CreditType_Full);
             }
 
-            float OutScore = 0;
-
-            if (dd != 0)
+            if (InComparisonHandle.yyyy == yyyy)
             {
-                if(InComparisonHandle.dd == this.dd)
-                {
-                    OutScore++;
-                }
-                else
-                {
-                    InErrorCount++;
-                }
+                return new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_BIRTHDATE, ECreditType.CreditType_Partial);
             }
 
-            if (mm != 0)
-            {
-                if (InComparisonHandle.mm == this.mm)
-                {
-                    OutScore++;
-                }
-                else
-                {
-                    InErrorCount++;
-                }
-            }
+            return new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_BIRTHDATE, ECreditType.CreditType_Invalid);
+        }
 
-            if (yyyy != 0)
-            {
-                if (InComparisonHandle.yyyy == this.yyyy)
-                {
-                    OutScore++;
-                }
-                else
-                {
-                    InErrorCount++;
-                }
-            }
-
-            return OutScore / 3.0f;
+        public bool Equals(FDateHandle other)
+        {
+            return DisplayName == other.DisplayName && dd == other.dd && mm == other.mm && yyyy == other.yyyy;
         }
     }
     // #END: Tagged Item Data
@@ -149,7 +127,7 @@ namespace NNarrativeDataTypes
     // #BEGIN: Chatroom Data Types
 
     // #TODO [KA] (29.09.2024): Rename this it sucks
-    [System.Serializable]
+    [Serializable]
     public struct FChatRoom
     {
         [SerializeField] 
@@ -168,7 +146,7 @@ namespace NNarrativeDataTypes
     }
 
     // #TODO [KA] (29.09.2024): Rename this it sucks
-    [System.Serializable]
+    [Serializable]
     public struct FChatLineTimeChunk
     {
         [HideInInspector]
@@ -181,7 +159,7 @@ namespace NNarrativeDataTypes
         public List<FChatLine> ChatLines;
     }
 
-    [System.Serializable]
+    [Serializable]
     public struct FChatLine
     {
         [SerializeField]
@@ -198,8 +176,8 @@ namespace NNarrativeDataTypes
 
     // #BEGIN: Character Data Types
 
-    [System.Serializable]
-    public struct FCharacterData
+    [Serializable]
+    public struct FCharacterData : IEquatable<FCharacterData>
     {
         [SerializeField]
         private string CharacterName;
@@ -229,12 +207,12 @@ namespace NNarrativeDataTypes
             SerializedDictionary<ECharacterTraitCategory, FCharacterTraitId> InTraits
             )
         {
-            this.CharacterName = InName;
-            this.CharacterId = InId;
-            this.WebHandle = InWebHandle;
-            this.WebIdHandle = InWebIdHandle;
-            this.DateOfBirth = InDateOfBirth;
-            this.Traits = InTraits;
+            CharacterName = InName;
+            CharacterId = InId;
+            WebHandle = InWebHandle;
+            WebIdHandle = InWebIdHandle;
+            DateOfBirth = InDateOfBirth;
+            Traits = InTraits;
         }
 
         public void SetCharName(string InName)
@@ -275,10 +253,30 @@ namespace NNarrativeDataTypes
         {
             return DateOfBirth;
         }
+
+        public SerializedDictionary<ECharacterTraitCategory, FCharacterTraitId> GetTraits()
+        {
+            return Traits;
+        }
+
+        public bool Equals(FCharacterData other)
+        {
+            return CharacterId == other.CharacterId;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is FCharacterData other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return CharacterId;
+        }
     }
 
-    [System.Serializable]
-    public struct FCharacterWebHandle
+    [Serializable]
+    public struct FCharacterWebHandle : IEquatable<FCharacterWebHandle>
     {
         [SerializeField]
         private string DisplayName;
@@ -291,7 +289,7 @@ namespace NNarrativeDataTypes
         public override bool Equals(object obj)
         {
             return obj is FCharacterWebHandle handle &&
-                   this == (FCharacterWebHandle)obj;
+                   this == handle;
         }
 
         public override int GetHashCode()
@@ -318,11 +316,16 @@ namespace NNarrativeDataTypes
         {
             return DisplayName;
         }
+
+        public bool Equals(FCharacterWebHandle other)
+        {
+            return DisplayName == other.DisplayName;
+        }
     }
 
 
-    [System.Serializable]
-    public struct FWebIdHandle
+    [Serializable]
+    public struct FWebIdHandle : IEquatable<FWebIdHandle>
     {
         private int Seg1;
         //private int Seg2;
@@ -372,10 +375,145 @@ namespace NNarrativeDataTypes
         {
             return DisplayName;
         }
+
+        public bool Equals(FWebIdHandle other)
+        {
+            return Seg1 == other.Seg1 && DisplayName == other.DisplayName;
+        }
+    }
+    
+    
+    // The types of character data pages that players need to collect.
+    public enum ECharacterDataPageType
+    {
+        ECharacterDataPageType_IDENTIFIER,
+        ECharacterDataPageType_PERSONALITY,
+        COUNT
     }
 
+    [System.Serializable]
+    public struct FCharacterTraitId : 
+        ICreditableCharacterData<FCharacterTraitId>,
+        IEquatable<FCharacterTraitId>
+    {
+        [SerializeField]
+        [ReadOnly]
+        public string DisplayName;
+        
+        [SerializeField]
+        [ReadOnly]
+        private ECharacterTraitCategory m_TraitCategory;
 
+        private int m_Id;
+
+
+        public FCharacterTraitId(string InDisplayName, ECharacterTraitCategory InTraitCategory, int InId)
+        {
+            DisplayName = InDisplayName;
+            m_TraitCategory = InTraitCategory;
+            m_Id = InId;
+        }
+        public override bool Equals(object obj)
+        {
+            return obj is FCharacterTraitId InItem 
+                   && m_Id == InItem.m_Id;
+        }
+
+        public bool Equals(int InId)
+        {
+            return m_Id == InId;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(m_Id);
+        }
+
+        public static bool operator ==(FCharacterTraitId left, FCharacterTraitId right)
+        {
+            return
+                left.m_Id == right.m_Id;
+        }
+
+        public static bool operator !=(FCharacterTraitId left, FCharacterTraitId right)
+        {
+            return !(left == right);
+        }
+
+        public bool Equals(FCharacterTraitId other)
+        {
+            return m_Id == other.m_Id;
+        }
+
+        // #BEGIN: ICreditableCharacterData Interface
+        public FCharacterDataCredit EvaluateCredit(FCharacterTraitId InTraitId)
+        {
+            if (this == InTraitId)
+            {
+                return new FCharacterDataCredit(m_TraitCategory, ECreditType.CreditType_Full);
+            }
+            return new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_NONE, ECreditType.CreditType_Invalid);
+        }
+        
+        // #END: ICreditableCharacterData Interface
+    }
+    
     // #END: Character Data Types
+    
+    // #BEGIN: Profile scoring types
+    
+    public enum ECreditType
+    {
+        CreditType_Invalid,
+        CreditType_Partial,
+        CreditType_Full,
+        COUNT
+    }
+    
+
+    [Serializable]
+    public struct FCharacterDataCredit : IEquatable<FCharacterDataCredit>
+    {
+        [SerializeField]
+        public ECharacterTraitCategory m_CharacterType;
+        
+        [SerializeField]
+        public ECreditType m_CreditType;
+
+        public FCharacterDataCredit(ECharacterTraitCategory InCharacterType, ECreditType InCreditType)
+        {
+            m_CharacterType = InCharacterType;
+            m_CreditType = InCreditType;
+        }
+
+        public static bool operator ==(FCharacterDataCredit lhs, FCharacterDataCredit rhs)
+        {
+            return lhs.m_CharacterType == rhs.m_CharacterType && lhs.m_CreditType == rhs.m_CreditType;
+        }
+
+        public static bool operator !=(FCharacterDataCredit lhs, FCharacterDataCredit rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is FCharacterDataCredit Reward
+                   && Reward == this;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(m_CharacterType, m_CreditType);
+        }
+
+        public bool Equals(FCharacterDataCredit other)
+        {
+            return m_CharacterType == other.m_CharacterType && m_CreditType == other.m_CreditType;
+        }
+    }
+    
+    // #END: Profile scoring types
 
 }
 
@@ -383,6 +521,10 @@ namespace NNarrativeDataTypes
 
 public class CS_StoryManager : MonoBehaviour
 {
+    [SerializeField]
+    [SerializedDictionary("RewardType", "Value")] 
+    private SerializedDictionary<FCharacterDataCredit, int> m_CharacterDataCredit;
+    
     CS_CharacterListBuilder CharacterList;
 
     public void Start()
@@ -393,71 +535,48 @@ public class CS_StoryManager : MonoBehaviour
             Debug.LogWarning("Character List is invalid!");
         }
     }
+    
 
-    public void ScoreProfile(FCharacterData InProfileToValidate)
+    private int GetRewardsForProfile(FCharacterData InputProfile)
     {
-        List<FCharacterData> MatchingCharacters = CharacterList.GetMatchingCharacters(InProfileToValidate);
+        int OutReward = 0;
 
-        if(MatchingCharacters.Count == 1)
+        if (InputProfile.GetCharacterName().IsNullOrEmpty())
         {
-            float Score = ScoreProfile(InProfileToValidate, MatchingCharacters[0]);
+            return OutReward;
         }
 
-        if (MatchingCharacters.Count == 0)
+        FCharacterData? ComparisonProfile = CharacterList.GetCharacterDataFromWebHandle(InputProfile.GetWebHandle());
+        if (!ComparisonProfile.HasValue)
         {
-            // Run some logic to mark this as a failed submission that needs more info to identify a person
+            return OutReward;
         }
 
-        if(MatchingCharacters.Count > 1)
+        if (ComparisonProfile.Value.GetWebId() != InputProfile.GetWebId())
         {
-            // Run some logic to mark this as a vague profile that needs more information to narrow it down to a person
-        }
-    }
-
-
-    private float ScoreProfile(FCharacterData InputProfile,  FCharacterData ComparisonProfile)
-    {
-        float Score = 0.0f;
-        int Errors = 0;
-
-        if (!InputProfile.GetCharacterName().IsNullOrEmpty())
-        {
-            if (InputProfile.GetCharacterName() == ComparisonProfile.GetCharacterName())
-            {
-                Score++;
-            }
-            else
-            {
-                Errors++;
-            }
-        }
-
-        if (!InputProfile.GetWebHandle().IsObjectNullOrEmpty())
-        {
-            if (InputProfile.GetWebHandle() == ComparisonProfile.GetWebHandle())
-            {
-                Score++;
-            }
-            else
-            {
-                Errors++;
-            }
+            return OutReward;
         }
         
-        if (!InputProfile.GetWebId().IsObjectNullOrEmpty())
+        OutReward += GetRewardForCredit(new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_WEBID, ECreditType.CreditType_Full));
+        OutReward += GetRewardForCredit(InputProfile.GetDateOfBirth().EvaluateCredit(ComparisonProfile.Value.GetDateOfBirth()));
+
+        foreach (KeyValuePair<ECharacterTraitCategory, FCharacterTraitId> CategoryIdPair in InputProfile.GetTraits())
         {
-            if (InputProfile.GetWebId() == ComparisonProfile.GetWebId())
-            {
-                Score++;
-            }
-            else
-            {
-                Errors++;
-            }
+            OutReward += GetRewardForCredit(CategoryIdPair.Value.EvaluateCredit(ComparisonProfile.Value.GetTraits()[CategoryIdPair.Key]));
+        }
+        
+        return OutReward;
+    }
+    
+    private int GetRewardForCredit(FCharacterDataCredit InReward)
+    {
+        int outReward = 0;
+
+        if (m_CharacterDataCredit.ContainsKey(InReward))
+        {
+            outReward = m_CharacterDataCredit[InReward];
         }
 
-        Score += InputProfile.GetDateOfBirth().CalculateScore(ComparisonProfile.GetDateOfBirth(), ref Errors);
-
-        return Errors >= 2 ? 0.0f : Score;
+        return outReward;
     }
 }

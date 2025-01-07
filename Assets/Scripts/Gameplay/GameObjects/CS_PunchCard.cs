@@ -4,6 +4,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+enum EPunchCardType
+{
+    PCT_NONE,
+    PCT_Character,
+    PCT_Trait,
+    count
+}
 
 public class CS_PunchCard : MonoBehaviour
 {

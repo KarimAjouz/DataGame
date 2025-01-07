@@ -121,6 +121,7 @@ public class CS_NarrativeImporterEditor : Editor
         string CharacterListJSON = ConvertCsvFileToJsonString(InSourceCSV);
         JArray CharacterListArray = GetJArrayFromJSON(CharacterListJSON);
 
+        CharacterListBuilder.PopulateCategoryAndTraitMaps(InSourceCSV);
         CharacterListBuilder.PopulateCharacterList(InSourceCSV, CharacterListArray);
     }
 
