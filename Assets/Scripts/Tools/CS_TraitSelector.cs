@@ -14,7 +14,7 @@ class CS_TraitSelector : MonoBehaviour
 
     public FCharacterTraitId MakeIdFromTrait()
     {
-        return new FCharacterTraitId(TraitValueDisplayNames[TraitId], TraitType, TraitId);
+        return new FCharacterTraitId(TraitValueDisplayNames[TraitId], TraitType, TraitId + 1);
     }
 }
 

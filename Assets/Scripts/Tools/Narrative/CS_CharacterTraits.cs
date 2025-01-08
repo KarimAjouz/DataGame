@@ -115,7 +115,7 @@ namespace NCharacterTraitCategoryTypes
 
             foreach (FCharacterTraitId Trait in CharacterTraitsDictionary[InType])
             {
-                if(Trait.DisplayName == InString)
+                if(string.Equals(Trait.DisplayName, InString, StringComparison.CurrentCultureIgnoreCase))
                 {
                     return Trait;
                 }

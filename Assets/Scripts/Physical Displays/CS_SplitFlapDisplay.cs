@@ -1,5 +1,6 @@
 using ChoETL;
 using System.Collections.Generic;
+using NNarrativeDataTypes;
 using UnityEngine;
 
 public class CS_SplitFlapDisplay : MonoBehaviour
@@ -225,14 +226,15 @@ public class CS_SplitFlapDisplay : MonoBehaviour
 
         if(!AvailableCharacters.Contains(InNewChar))
         {
+            Debug.LogWarning("Can't add char: " + InNewChar.ToString() + " to display as it is not an available character!");
             return;
         }
 
-        if(InputPromptText.Length + DisplayText.Length > CharacterDisplays.Count) 
-        {
+        //if(InputPromptText.Length + DisplayText.Length > CharacterDisplays.Count) 
+        //{
             CharacterDisplays[ActiveCharIndex].SetDisplayIndex(AvailableCharacters.IndexOf(InNewChar));
             NextChar();
-        }
+        //}
     }
 
     public void SetDisplayActive(bool Active) 
@@ -371,6 +373,24 @@ public class CS_SplitFlapDisplay : MonoBehaviour
         {
             SetInputFieldData(Punchcard.GetDisplayText());
         }
+    }
+
+    public FCharacterTraitId ReadTraitFromInputSocket()
+    {
+        GameObject PunchcardGO = ReadSocket.GetSocketedGO();
+        if(PunchcardGO.IsNull())
+        {
+            return new FCharacterTraitId();
+        }
+
+        CS_PunchCard Punchcard = PunchcardGO.GetComponent<CS_PunchCard>();
+
+        if (Punchcard.IsNull())
+        {
+            return new FCharacterTraitId();
+        }
+
+        return Punchcard.PunchCardType == EPunchCardType.PCT_Trait ? Punchcard.GetTraitId() : new FCharacterTraitId();
     }
 
     public void ClearFromInputSocket()

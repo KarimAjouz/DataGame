@@ -98,25 +98,30 @@ class CS_DataInputPage
         {
             foreach (KeyValuePair<ECharacterTraitCategory, CS_SplitFlapDisplay> Pair in CategoryToDisplayMap)
             {
-                if(Pair.Key == ECharacterTraitCategory.ETraitCategory_NAME && !Pair.Value.GetInputFieldData().IsEmpty())
+                switch (Pair.Key)
                 {
-                    InOutData.SetCharName(Pair.Value.GetInputFieldData());
-                }
-
-                if (Pair.Key == ECharacterTraitCategory.ETraitCategory_WEBHANDLE && !Pair.Value.GetInputFieldData().IsEmpty())
-                {
-                    InOutData.SetWebHandle(new FCharacterWebHandle(Pair.Value.GetInputFieldData()));
-                }
-
-                if (Pair.Key == ECharacterTraitCategory.ETraitCategory_WEBID && !Pair.Value.GetInputFieldData().IsEmpty())
-                {
-                    int Seg1 = int.Parse(Pair.Value.GetInputFieldData());
-                    InOutData.SetWebId(new FWebIdHandle(Seg1, Pair.Value.GetInputFieldData()));
-                }
-
-                if (Pair.Key == ECharacterTraitCategory.ETraitCategory_BIRTHDATE && !Pair.Value.GetInputFieldData().IsEmpty())
-                {
-                    InOutData.SetDateOfBirth(new FDateHandle(Pair.Value.GetInputFieldData()));
+                    case ECharacterTraitCategory.ETraitCategory_NAME when !Pair.Value.GetInputFieldData().IsEmpty():
+                        InOutData.SetCharName(Pair.Value.GetInputFieldData());
+                        break;
+                    case ECharacterTraitCategory.ETraitCategory_WEBHANDLE when !Pair.Value.GetInputFieldData().IsEmpty():
+                        InOutData.SetWebHandle(new FCharacterWebHandle(Pair.Value.GetInputFieldData()));
+                        break;
+                    case ECharacterTraitCategory.ETraitCategory_WEBID when !Pair.Value.GetInputFieldData().IsEmpty():
+                    {
+                        int Seg1 = int.Parse(Pair.Value.GetInputFieldData());
+                        InOutData.SetWebId(new FWebIdHandle(Seg1, Pair.Value.GetInputFieldData()));
+                        break;
+                    }
+                    case ECharacterTraitCategory.ETraitCategory_BIRTHDATE when !Pair.Value.GetInputFieldData().IsEmpty():
+                        InOutData.SetDateOfBirth(new FDateHandle(Pair.Value.GetInputFieldData()));
+                        break;
+                    default:
+                        FCharacterTraitId TraitId = Pair.Value.ReadTraitFromInputSocket();
+                        if (!TraitId.DisplayName.IsNullOrEmpty())
+                        {
+                            InOutData.GetTraits().Add(Pair.Key, TraitId);
+                        }
+                        break;
                 }
             }
         }
@@ -256,9 +261,10 @@ public class CS_Dock_SFDisplayManager : MonoBehaviour
 
     private void ProcessInputString()
     {
-        string InputString = Input.inputString.ToUpper();
+        string InputString = Input.inputString;
         while (!InputString.IsEmpty())
         {
+            
             //First we process all instances of backspace inside the string.
             while (InputString.Contains("\b", 0))
             {
@@ -278,13 +284,21 @@ public class CS_Dock_SFDisplayManager : MonoBehaviour
                 }
             }
 
+            // Then process all instances of the 'Return' key.
             if(InputString.Length > 1 && InputString.Substring(0, 2) == "\n")
             {
                 NextDisplay();
                 InputString = InputString.Remove(0, 2);
+                //continue;
             }
-
-            ControlledDisplayPages[ActivePage].GetActiveDisplay().AddInputChar(InputString[0]);
+            
+            string NextChar = InputString.Substring(0, 1);
+            if (NextChar.IsAlpha())
+            {
+                NextChar = NextChar.ToUpper();
+            }
+            
+            ControlledDisplayPages[ActivePage].GetActiveDisplay().AddInputChar(NextChar[0]);
             InputString = InputString.Remove(0, 1);
         }
     }
@@ -292,6 +306,7 @@ public class CS_Dock_SFDisplayManager : MonoBehaviour
     public FCharacterData MakeCharacterDataFromDisplays()
     {
         FCharacterData OutChar = new FCharacterData();
+        OutChar.InitTraits();
 
         ControlledDisplayPages[ActivePage].PopulateCharacterData(ref OutChar);
 

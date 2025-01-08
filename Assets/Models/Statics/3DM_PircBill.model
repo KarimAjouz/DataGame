@@ -1,0 +1,18 @@
+# Made using Asset Forge (2.4.1)
+
+:materials
+
+[name:_defaultMat;color:RGBA(0.029, 0.390, 0.000, 1.000);scale:(0.7, 0.7);texture:Nature/beach.png;shader:Default;mapping:1;valueA:0.1;valueB:0.1;]
+[name:custom1;color:RGBA(0.000, 0.359, 0.025, 1.000);scale:(1.0, 1.0);texture:Nature/beach.png;shader:Default;mapping:0;valueA:0.1;valueB:0.1;]
+
+:models
+
+[name:;collection:Primitives;type:block;position:(0.1200, 0.1000, -0.0200);rotation:(0.0000, 0.0000, 0.0000);scale:(0.0500, 0.0300, 0.3000);group:;locked:False;hidden:False;materials:custom1;]
+[name:;collection:Primitives;type:block;position:(0.1200, 0.0000, 0.0500);rotation:(0.0000, 180.0000, 180.0000);scale:(0.0500, 0.0300, 0.3000);group:;locked:False;hidden:False;materials:custom1;]
+[name:;collection:Primitives;type:block;position:(0.2700, 0.1000, -0.0200);rotation:(0.0000, 0.0000, 0.0000);scale:(0.0500, 0.0300, 0.3000);group:;locked:False;hidden:False;materials:custom1;]
+[name:;collection:Primitives;type:block;position:(0.2700, 0.0000, 0.0500);rotation:(0.0000, 180.0000, 180.0000);scale:(0.0500, 0.0300, 0.3000);group:;locked:False;hidden:False;materials:custom1;]
+[name:;collection:Primitives;type:cylinderHollow_half;position:(-0.1500, 0.0000, -0.1700);rotation:(0.0000, 0.0000, 180.0000);scale:(0.4000, 0.0300, 0.4000);group:;locked:False;hidden:False;materials:custom1;]
+[name:;collection:Primitives;type:block;position:(-0.0530, 0.0000, 0.0538);rotation:(0.0000, 180.0000, 180.0000);scale:(0.6000, 0.0300, 0.0600);group:;locked:False;hidden:False;materials:custom1;]
+[name:;collection:Primitives;type:block;position:(-0.0500, 0.1000, -0.0300);rotation:(0.0000, 0.0000, 0.0000);scale:(0.6000, 0.0300, 0.0550);group:;locked:False;hidden:False;materials:custom1;]
+[name:;collection:Primitives;type:cylinderHollow_half;position:(-0.1500, 0.1000, 0.1950);rotation:(0.0000, 180.0000, 0.0000);scale:(0.4000, 0.0300, 0.4000);group:;locked:False;hidden:False;materials:custom1;]
+[name:;collection:Primitives;type:block;position:(0.0000, 0.0000, 0.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.0000, 0.1000, 2.0000);group:;locked:False;hidden:False;materials:_defaultMat;]

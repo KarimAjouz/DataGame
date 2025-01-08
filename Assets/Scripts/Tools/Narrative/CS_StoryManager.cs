@@ -30,8 +30,13 @@ namespace NNarrativeDataTypes
     {
         public string DisplayName;
 
+        [SerializeField]
         private int dd;
+        
+        [SerializeField]
         private int mm;
+        
+        [SerializeField]
         private int yyyy;
 
         public FDateHandle(int InDd, int InMm, int InYyyy)
@@ -215,6 +220,11 @@ namespace NNarrativeDataTypes
             Traits = InTraits;
         }
 
+        public void InitTraits()
+        {
+            Traits = new SerializedDictionary<ECharacterTraitCategory, FCharacterTraitId>();
+        }
+
         public void SetCharName(string InName)
         {
             CharacterName = InName;
@@ -319,7 +329,7 @@ namespace NNarrativeDataTypes
         public static bool operator ==(FCharacterWebHandle lhs, FCharacterWebHandle rhs)
         {
             return
-                lhs.GetHashCode() == rhs.GetHashCode();
+                lhs.Equals(rhs);
         }
         public static bool operator !=(FCharacterWebHandle lhs, FCharacterWebHandle rhs)
         {
@@ -338,7 +348,7 @@ namespace NNarrativeDataTypes
 
         public bool Equals(FCharacterWebHandle other)
         {
-            return DisplayName == other.DisplayName;
+            return string.Equals(DisplayName, other.DisplayName, StringComparison.CurrentCultureIgnoreCase);
         }
     }
 
@@ -346,6 +356,7 @@ namespace NNarrativeDataTypes
     [Serializable]
     public struct FWebIdHandle : IEquatable<FWebIdHandle>
     {
+        [SerializeField]
         private int Seg1;
         //private int Seg2;
         //private int Seg3;
@@ -423,6 +434,8 @@ namespace NNarrativeDataTypes
         [ReadOnly]
         private ECharacterTraitType m_TraitType;
 
+        [SerializeField]
+        [ReadOnly]
         private int m_Id;
 
 
@@ -544,6 +557,9 @@ public class CS_StoryManager : MonoBehaviour
     private SerializedDictionary<FCharacterDataCredit, int> m_CharacterDataCredit;
     
     CS_CharacterListBuilder CharacterList;
+    
+    [SerializeField]
+    private CS_CashDispenser m_CashDispenser;
 
     public void Start()
     {
@@ -552,6 +568,23 @@ public class CS_StoryManager : MonoBehaviour
         {
             Debug.LogWarning("Character List is invalid!");
         }
+
+        if (!m_CashDispenser)
+        {
+            m_CashDispenser = FindFirstObjectByType<CS_CashDispenser>();
+        }
+
+        if (!m_CashDispenser)
+        {
+            Debug.LogError("Cash Dispenser is invalid!");
+            return;
+        }
+        
+    }
+
+    public void SubmitProfile(FCharacterData InCharacterData)
+    {
+        m_CashDispenser.QueueRewards(GetRewardsForProfile(InCharacterData));
     }
     
 
@@ -559,7 +592,7 @@ public class CS_StoryManager : MonoBehaviour
     {
         int OutReward = 0;
 
-        if (InputProfile.GetCharacterName().IsNullOrEmpty())
+        if (InputProfile.GetWebHandle().IsEmpty())
         {
             return OutReward;
         }
@@ -578,6 +611,11 @@ public class CS_StoryManager : MonoBehaviour
         OutReward += GetRewardForCredit(new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_WEBID, ECreditType.CreditType_Full));
         OutReward += GetRewardForCredit(InputProfile.GetDateOfBirth().EvaluateCredit(ComparisonProfile.Value.GetDateOfBirth()));
 
+        if (InputProfile.GetTraits().IsNull())
+        {
+            return OutReward;
+        }
+        
         foreach (KeyValuePair<ECharacterTraitCategory, FCharacterTraitId> CategoryIdPair in InputProfile.GetTraits())
         {
             OutReward += GetRewardForCredit(CategoryIdPair.Value.EvaluateCredit(ComparisonProfile.Value.GetTraits()[CategoryIdPair.Key], CategoryIdPair.Key));

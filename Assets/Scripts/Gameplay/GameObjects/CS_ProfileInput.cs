@@ -80,6 +80,7 @@ public class CS_ProfileInput : MonoBehaviour
         }
         InputDisplay.ReadCharacterDataToDisplays(Punchcard.GetCharacterData());
     }
+    
 
     public string GetDisplayStringForCategoryFromReadSocket(ECharacterTraitCategory InCategory)
     {

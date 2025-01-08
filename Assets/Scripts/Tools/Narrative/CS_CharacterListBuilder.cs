@@ -160,7 +160,10 @@ public class CS_CharacterListBuilder : MonoBehaviour
                 }
 
                 // This is wrong needs to pass in category not trait type!
-                CharacterTraits.Add(ImportedTraitCategory, CharacterTraitComponent.GetTraitFromStringValue(CategoryToTypeDictionary[ImportedTraitCategory], Value));
+
+                FCharacterTraitId TraitToAdd = CharacterTraitComponent.GetTraitFromStringValue(CategoryToTypeDictionary[ImportedTraitCategory], Value);
+                
+                CharacterTraits.Add(ImportedTraitCategory, TraitToAdd);
             }
 
             CharacterData.Add(new FCharacterData(CharacterNameString, CharacterId, characterWebHandle, civIdHandle, DoBHandle, CharacterTraits));

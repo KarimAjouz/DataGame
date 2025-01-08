@@ -10,6 +10,7 @@ namespace NInteractionTypes
         OT_Generic,
         OT_Punchcard,
         OT_WireJack,
+        OT_Currency,
         COUNT
     }
 }

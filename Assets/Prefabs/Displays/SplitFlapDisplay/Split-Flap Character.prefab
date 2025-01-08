@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 193188788061771722}
   - component: {fileID: 3142685430999085812}
   - component: {fileID: 4891396856792664311}
-  - component: {fileID: 5455493766307150973}
   m_Layer: 0
   m_Name: LBar
   m_TagString: Untagged
@@ -59,6 +58,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -84,29 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &5455493766307150973
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3776268827284102075}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &4714085269333369401
 GameObject:
   m_ObjectHideFlags: 0
@@ -118,7 +97,6 @@ GameObject:
   - component: {fileID: 1918827845540804479}
   - component: {fileID: 5313712566646026185}
   - component: {fileID: 511943327198903213}
-  - component: {fileID: 6565812761916016166}
   m_Layer: 0
   m_Name: RBar
   m_TagString: Untagged
@@ -166,6 +144,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -191,29 +172,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &6565812761916016166
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4714085269333369401}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &7840082050197259547
 GameObject:
   m_ObjectHideFlags: 0
@@ -276,6 +234,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3811369068147957955}
     m_Modifications:
+    - target: {fileID: 10905171025199937, guid: 4fd3e77cdb1641540a85d23b4676dc1e,
+        type: 3}
+      propertyPath: m_ActiveFontFeatures.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 182132668076213692, guid: 4fd3e77cdb1641540a85d23b4676dc1e,
         type: 3}
       propertyPath: m_Name
@@ -331,6 +294,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3303188308362628799, guid: 4fd3e77cdb1641540a85d23b4676dc1e,
+        type: 3}
+      propertyPath: m_ActiveFontFeatures.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -362,6 +330,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3811369068147957955}
     m_Modifications:
+    - target: {fileID: 10905171025199937, guid: 4fd3e77cdb1641540a85d23b4676dc1e,
+        type: 3}
+      propertyPath: m_ActiveFontFeatures.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 182132668076213692, guid: 4fd3e77cdb1641540a85d23b4676dc1e,
         type: 3}
       propertyPath: m_Name
@@ -417,6 +390,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3303188308362628799, guid: 4fd3e77cdb1641540a85d23b4676dc1e,
+        type: 3}
+      propertyPath: m_ActiveFontFeatures.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -448,6 +426,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3811369068147957955}
     m_Modifications:
+    - target: {fileID: 10905171025199937, guid: 4fd3e77cdb1641540a85d23b4676dc1e,
+        type: 3}
+      propertyPath: m_ActiveFontFeatures.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 182132668076213692, guid: 4fd3e77cdb1641540a85d23b4676dc1e,
         type: 3}
       propertyPath: m_Name
@@ -503,9 +486,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3303188308362628799, guid: 4fd3e77cdb1641540a85d23b4676dc1e,
+        type: 3}
+      propertyPath: m_ActiveFontFeatures.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9151863642930858001, guid: 4fd3e77cdb1641540a85d23b4676dc1e,
         type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: f557cee16a5f3764196b899720b4f576, type: 2}
     m_RemovedComponents: []
@@ -539,6 +527,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3811369068147957955}
     m_Modifications:
+    - target: {fileID: 10905171025199937, guid: 4fd3e77cdb1641540a85d23b4676dc1e,
+        type: 3}
+      propertyPath: m_ActiveFontFeatures.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 182132668076213692, guid: 4fd3e77cdb1641540a85d23b4676dc1e,
         type: 3}
       propertyPath: m_Name
@@ -594,6 +587,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3303188308362628799, guid: 4fd3e77cdb1641540a85d23b4676dc1e,
+        type: 3}
+      propertyPath: m_ActiveFontFeatures.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3313635706341439596, guid: 4fd3e77cdb1641540a85d23b4676dc1e,
         type: 3}
       propertyPath: m_Color.a
@@ -611,7 +609,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5417920605832747312, guid: 4fd3e77cdb1641540a85d23b4676dc1e,
         type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: f557cee16a5f3764196b899720b4f576, type: 2}
     - target: {fileID: 5734817245584589228, guid: 4fd3e77cdb1641540a85d23b4676dc1e,
