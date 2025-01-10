@@ -23,6 +23,9 @@ public class CS_PickupType : MonoBehaviour
     bool HasPutBack = false;
 
     [SerializeField]
+    private bool Stackable = false;
+
+    [SerializeField]
     [ShowIf("HasPutBack")]
     private PutBackSetup PutBackRules = new PutBackSetup();
 
@@ -74,7 +77,7 @@ public class CS_PickupType : MonoBehaviour
         {
             FoundSocket.SocketGO(gameObject);
             Socket = FoundSocket;
-            //transform.SetParent(AttemptedPutBackSocket.SocketedTransform);
+            
             transform.position = Socket.SocketedTransform.position;
             transform.rotation = Socket.SocketedTransform.rotation;
         }
