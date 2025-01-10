@@ -30,6 +30,8 @@ public class CS_PickupType : MonoBehaviour
     private Rigidbody m_rb;
     private Collider m_collider;
 
+    private CS_Socket Socket = null;
+
     private void Start()
     {
         m_rb = GetComponent<Rigidbody>();
@@ -41,10 +43,10 @@ public class CS_PickupType : MonoBehaviour
     {
         m_rb.useGravity = true;
 
-        CS_Socket Socket = GetComponent<CS_Socket>();
         if (Socket != null)
         {
             Socket.Unsocket();
+            Socket = null;
         }
     }
 
@@ -67,11 +69,11 @@ public class CS_PickupType : MonoBehaviour
             return;
         }
 
-        CS_Socket Socket = PutBackObj.GetComponent<CS_Socket>();
-        if(Socket != null) 
+        CS_Socket FoundSocket = PutBackObj.GetComponent<CS_Socket>();
+        if(FoundSocket != null) 
         {
-            Socket.SocketGO(gameObject);
-
+            FoundSocket.SocketGO(gameObject);
+            Socket = FoundSocket;
             //transform.SetParent(AttemptedPutBackSocket.SocketedTransform);
             transform.position = Socket.SocketedTransform.position;
             transform.rotation = Socket.SocketedTransform.rotation;

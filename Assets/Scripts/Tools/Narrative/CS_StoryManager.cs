@@ -14,7 +14,7 @@ namespace NNarrativeDataTypes
 {
     public interface ICreditableCharacterData<in T>
     {
-        public FCharacterDataCredit EvaluateCredit(T other)
+        public FCharacterDataCredit EvaluateCredit(T other, ECharacterTraitCategory InTraitCategory = ECharacterTraitCategory.ETraitCategory_NONE)
         {
             return new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_NONE, ECreditType.CreditType_Invalid);
         }
@@ -30,8 +30,13 @@ namespace NNarrativeDataTypes
     {
         public string DisplayName;
 
+        [SerializeField]
         private int dd;
+        
+        [SerializeField]
         private int mm;
+        
+        [SerializeField]
         private int yyyy;
 
         public FDateHandle(int InDd, int InMm, int InYyyy)
@@ -101,19 +106,19 @@ namespace NNarrativeDataTypes
             return DisplayName;
         }
 
-        public FCharacterDataCredit EvaluateCredit(FDateHandle InComparisonHandle)
+        public FCharacterDataCredit EvaluateCredit(FDateHandle InComparisonHandle, ECharacterTraitCategory InTraitCategory = ECharacterTraitCategory.ETraitCategory_BIRTHDATE)
         {
             if(InComparisonHandle == this)
             {
-                return new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_BIRTHDATE, ECreditType.CreditType_Full);
+                return new FCharacterDataCredit(InTraitCategory, ECreditType.CreditType_Full);
             }
 
             if (InComparisonHandle.yyyy == yyyy)
             {
-                return new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_BIRTHDATE, ECreditType.CreditType_Partial);
+                return new FCharacterDataCredit(InTraitCategory, ECreditType.CreditType_Partial);
             }
 
-            return new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_BIRTHDATE, ECreditType.CreditType_Invalid);
+            return new FCharacterDataCredit(InTraitCategory, ECreditType.CreditType_Invalid);
         }
 
         public bool Equals(FDateHandle other)
@@ -197,7 +202,7 @@ namespace NNarrativeDataTypes
         [SerializeField]
         [SerializedDictionary]
         private SerializedDictionary<ECharacterTraitCategory, FCharacterTraitId> Traits;
-
+        
         public FCharacterData(
             string InName,
             int InId, 
@@ -213,6 +218,11 @@ namespace NNarrativeDataTypes
             WebIdHandle = InWebIdHandle;
             DateOfBirth = InDateOfBirth;
             Traits = InTraits;
+        }
+
+        public void InitTraits()
+        {
+            Traits = new SerializedDictionary<ECharacterTraitCategory, FCharacterTraitId>();
         }
 
         public void SetCharName(string InName)
@@ -273,6 +283,25 @@ namespace NNarrativeDataTypes
         {
             return CharacterId;
         }
+
+        public string GetDisplayStringForCategory(ECharacterTraitCategory InCategory)
+        {
+            switch (InCategory)
+            {
+                case ECharacterTraitCategory.ETraitCategory_BIRTHDATE:
+                    return DateOfBirth.DisplayName;
+                case ECharacterTraitCategory.ETraitCategory_WEBID:
+                    return WebIdHandle.GetDisplayName();
+                case ECharacterTraitCategory.ETraitCategory_WEBHANDLE:
+                    return WebHandle.GetDisplayName();
+                default:
+                    if (Traits.ContainsKey(InCategory))
+                    {
+                        return Traits[InCategory].DisplayName;
+                    }
+                    return "";
+            }
+        }
     }
 
     [Serializable]
@@ -300,7 +329,7 @@ namespace NNarrativeDataTypes
         public static bool operator ==(FCharacterWebHandle lhs, FCharacterWebHandle rhs)
         {
             return
-                lhs.GetHashCode() == rhs.GetHashCode();
+                lhs.Equals(rhs);
         }
         public static bool operator !=(FCharacterWebHandle lhs, FCharacterWebHandle rhs)
         {
@@ -319,7 +348,7 @@ namespace NNarrativeDataTypes
 
         public bool Equals(FCharacterWebHandle other)
         {
-            return DisplayName == other.DisplayName;
+            return string.Equals(DisplayName, other.DisplayName, StringComparison.CurrentCultureIgnoreCase);
         }
     }
 
@@ -327,6 +356,7 @@ namespace NNarrativeDataTypes
     [Serializable]
     public struct FWebIdHandle : IEquatable<FWebIdHandle>
     {
+        [SerializeField]
         private int Seg1;
         //private int Seg2;
         //private int Seg3;
@@ -402,15 +432,17 @@ namespace NNarrativeDataTypes
         
         [SerializeField]
         [ReadOnly]
-        private ECharacterTraitCategory m_TraitCategory;
+        private ECharacterTraitType m_TraitType;
 
+        [SerializeField]
+        [ReadOnly]
         private int m_Id;
 
 
-        public FCharacterTraitId(string InDisplayName, ECharacterTraitCategory InTraitCategory, int InId)
+        public FCharacterTraitId(string InDisplayName, ECharacterTraitType InTraitType, int InId)
         {
             DisplayName = InDisplayName;
-            m_TraitCategory = InTraitCategory;
+            m_TraitType = InTraitType;
             m_Id = InId;
         }
         public override bool Equals(object obj)
@@ -446,13 +478,12 @@ namespace NNarrativeDataTypes
         }
 
         // #BEGIN: ICreditableCharacterData Interface
-        public FCharacterDataCredit EvaluateCredit(FCharacterTraitId InTraitId)
+        public FCharacterDataCredit EvaluateCredit(FCharacterTraitId InTraitId, ECharacterTraitCategory InCategory)
         {
-            if (this == InTraitId)
-            {
-                return new FCharacterDataCredit(m_TraitCategory, ECreditType.CreditType_Full);
-            }
-            return new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_NONE, ECreditType.CreditType_Invalid);
+            return 
+                this == InTraitId ? 
+                    new FCharacterDataCredit(InCategory, ECreditType.CreditType_Full) : 
+                    new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_NONE, ECreditType.CreditType_Invalid);
         }
         
         // #END: ICreditableCharacterData Interface
@@ -526,6 +557,9 @@ public class CS_StoryManager : MonoBehaviour
     private SerializedDictionary<FCharacterDataCredit, int> m_CharacterDataCredit;
     
     CS_CharacterListBuilder CharacterList;
+    
+    [SerializeField]
+    private CS_CashDispenser m_CashDispenser;
 
     public void Start()
     {
@@ -534,6 +568,23 @@ public class CS_StoryManager : MonoBehaviour
         {
             Debug.LogWarning("Character List is invalid!");
         }
+
+        if (!m_CashDispenser)
+        {
+            m_CashDispenser = FindFirstObjectByType<CS_CashDispenser>();
+        }
+
+        if (!m_CashDispenser)
+        {
+            Debug.LogError("Cash Dispenser is invalid!");
+            return;
+        }
+        
+    }
+
+    public void SubmitProfile(FCharacterData InCharacterData)
+    {
+        m_CashDispenser.QueueRewards(GetRewardsForProfile(InCharacterData));
     }
     
 
@@ -541,7 +592,7 @@ public class CS_StoryManager : MonoBehaviour
     {
         int OutReward = 0;
 
-        if (InputProfile.GetCharacterName().IsNullOrEmpty())
+        if (InputProfile.GetWebHandle().IsEmpty())
         {
             return OutReward;
         }
@@ -560,9 +611,14 @@ public class CS_StoryManager : MonoBehaviour
         OutReward += GetRewardForCredit(new FCharacterDataCredit(ECharacterTraitCategory.ETraitCategory_WEBID, ECreditType.CreditType_Full));
         OutReward += GetRewardForCredit(InputProfile.GetDateOfBirth().EvaluateCredit(ComparisonProfile.Value.GetDateOfBirth()));
 
+        if (InputProfile.GetTraits().IsNull())
+        {
+            return OutReward;
+        }
+        
         foreach (KeyValuePair<ECharacterTraitCategory, FCharacterTraitId> CategoryIdPair in InputProfile.GetTraits())
         {
-            OutReward += GetRewardForCredit(CategoryIdPair.Value.EvaluateCredit(ComparisonProfile.Value.GetTraits()[CategoryIdPair.Key]));
+            OutReward += GetRewardForCredit(CategoryIdPair.Value.EvaluateCredit(ComparisonProfile.Value.GetTraits()[CategoryIdPair.Key], CategoryIdPair.Key));
         }
         
         return OutReward;

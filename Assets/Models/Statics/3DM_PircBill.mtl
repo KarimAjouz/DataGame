@@ -1,0 +1,10 @@
+# Created by Kenney (www.kenney.nl)
+
+newmtl custom1(Clone)
+Kd 0 0.359 0.025
+map_Kd Textures/custom1(Clone).png
+
+newmtl _defaultMat(Clone)
+Kd 0.02939853 0.3896552 0
+map_Kd Textures/_defaultMat(Clone).png
+

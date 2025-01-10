@@ -1,0 +1,18 @@
+# Made using Asset Forge (2.4.1)
+
+:materials
+
+[name:_defaultMat;color:RGBA(0.875, 0.625, 0.100, 1.000);scale:(0.3, 0.3);texture:Metal/metalGalvan.png;shader:Default;mapping:1;valueA:0.4;valueB:0.7;]
+[name:custom1;color:RGBA(0.875, 0.635, 0.132, 1.000);scale:(1.0, 1.0);texture:Metal/metalGalvan.png;shader:Default;mapping:0;valueA:0.35;valueB:0.25;]
+
+:models
+
+[name:;collection:Primitives;type:cylinder;position:(0.0000, 0.0000, 0.0000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.0000, 0.1000, 1.0000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:block;position:(-0.0530, 0.1000, -0.0238);rotation:(0.0000, 0.0000, 0.0000);scale:(0.6000, 0.0300, 0.0500);group:;locked:False;hidden:False;materials:custom1;]
+[name:;collection:Primitives;type:block;position:(0.1200, 0.1000, -0.0200);rotation:(0.0000, 0.0000, 0.0000);scale:(0.0500, 0.0300, 0.3000);group:;locked:False;hidden:False;materials:custom1;]
+[name:;collection:Primitives;type:block;position:(0.2700, 0.1000, -0.0200);rotation:(0.0000, 0.0000, 0.0000);scale:(0.0500, 0.0300, 0.3000);group:;locked:False;hidden:False;materials:custom1;]
+[name:;collection:Primitives;type:cylinderHollow_half;position:(-0.1500, 0.1000, 0.2000);rotation:(0.0000, 180.0000, 0.0000);scale:(0.4000, 0.0300, 0.4000);group:;locked:False;hidden:False;materials:custom1;]
+[name:;collection:Primitives;type:block;position:(-0.0530, 0.0000, 0.0538);rotation:(0.0000, 180.0000, 180.0000);scale:(0.6000, 0.0300, 0.0500);group:;locked:False;hidden:False;materials:custom1;]
+[name:;collection:Primitives;type:block;position:(0.1200, 0.0000, 0.0500);rotation:(0.0000, 180.0000, 180.0000);scale:(0.0500, 0.0300, 0.3000);group:;locked:False;hidden:False;materials:custom1;]
+[name:;collection:Primitives;type:block;position:(0.2700, 0.0000, 0.0500);rotation:(0.0000, 180.0000, 180.0000);scale:(0.0500, 0.0300, 0.3000);group:;locked:False;hidden:False;materials:custom1;]
+[name:;collection:Primitives;type:cylinderHollow_half;position:(-0.1500, 0.0000, -0.1700);rotation:(0.0000, 0.0000, 180.0000);scale:(0.4000, 0.0300, 0.4000);group:;locked:False;hidden:False;materials:custom1;]

@@ -1,10 +1,6 @@
 using ChoETL;
-using Newtonsoft.Json;
-using NNarrativeDataTypes;
-using System.Collections;
 using System.Collections.Generic;
-using TMPro;
-using UnityEditor;
+using NNarrativeDataTypes;
 using UnityEngine;
 
 public class CS_SplitFlapDisplay : MonoBehaviour
@@ -20,7 +16,7 @@ public class CS_SplitFlapDisplay : MonoBehaviour
     private bool IsSocketInput = false;
 
     [SerializeField] 
-    private CS_Socket SocketGO;
+    private CS_Socket ReadSocket;
 
     private string InputPromptText;
 
@@ -69,11 +65,15 @@ public class CS_SplitFlapDisplay : MonoBehaviour
         if (bIsInputField)
             SetDisplayText(InputPromptText + InputFormat);
 
-        if (IsSocketInput && SocketGO == null)
+        if (IsSocketInput && ReadSocket == null)
         {
-            Debug.LogError("Field is marked as socket input but has no assigned socket!");
-        }
+            ReadSocket = GetComponentInChildren<CS_Socket>();
 
+            if (ReadSocket == null)
+            {
+                Debug.LogError("Field is marked as socket input but GO has no child CS_Socket!");
+            }
+        }
     }
 
 
@@ -116,25 +116,26 @@ public class CS_SplitFlapDisplay : MonoBehaviour
             return; 
         }
 
-        if(bIsInputField)
+        if (!bIsInputField)
         {
-            SetInputPromptText(InputPromptText);
+            return;
+        }
+        
+        SetInputPromptText(InputPromptText);
 
-            for (int i = InputPromptText.Length; i < CharacterDisplays.Count; i++)
-            {
-                if (i < InText.Length && 
-                    (
-                        InputFormat.Length == 0 || 
-                        (
-                            i < InputFormat.Length && 
-                            InputFormat[i].Equals(' ')
+        for (int i = InputPromptText.Length; i < CharacterDisplays.Count; i++)
+        {
+            if (i < InText.Length && 
+                (
+                    InputFormat.Length == 0 
+                    || (i < InputFormat.Length 
+                        && InputFormat[i].Equals(' ')
                         )
-                    )
                 )
-                {
-                    int CharIndex = AvailableCharacters.IndexOf(InText[i]);
-                    CharacterDisplays[i].GetComponent<CS_SplitFlapCharacter>().SetDisplayIndex(CharIndex);
-                }
+               )
+            {
+                int CharIndex = AvailableCharacters.IndexOf(InText[i]);
+                CharacterDisplays[i].GetComponent<CS_SplitFlapCharacter>().SetDisplayIndex(CharIndex);
             }
         }
     }
@@ -225,14 +226,15 @@ public class CS_SplitFlapDisplay : MonoBehaviour
 
         if(!AvailableCharacters.Contains(InNewChar))
         {
+            Debug.LogWarning("Can't add char: " + InNewChar.ToString() + " to display as it is not an available character!");
             return;
         }
 
-        if(InputPromptText.Length + DisplayText.Length > CharacterDisplays.Count) 
-        {
+        //if(InputPromptText.Length + DisplayText.Length > CharacterDisplays.Count) 
+        //{
             CharacterDisplays[ActiveCharIndex].SetDisplayIndex(AvailableCharacters.IndexOf(InNewChar));
             NextChar();
-        }
+        //}
     }
 
     public void SetDisplayActive(bool Active) 
@@ -338,14 +340,62 @@ public class CS_SplitFlapDisplay : MonoBehaviour
     public void SetInputFieldData(string InString)
     {
         int count = 0;
+        string Display = InString.ToUpper();
 
         if (bIsInputField)
             count = InputPromptText.Length;
 
         for (int i = count; i < CharacterDisplays.Count; i++)
         {
-            int CharToSet = i - count < InString.Length ? AvailableCharacters.IndexOf(InString[i - count]) : 0;
+            int CharToSet = i - count < Display.Length ? AvailableCharacters.IndexOf(Display[i - count]) : 0;
             CharacterDisplays[i].GetComponent<CS_SplitFlapCharacter>().SetDisplayIndex(CharToSet);
         }
+    }
+
+    public void UpdateFromInputSocket()
+    {
+        GameObject PunchcardGO = ReadSocket.GetSocketedGO();
+        if(PunchcardGO.IsNull())
+        {            
+            SetInputFieldData("");
+            return;
+        }
+
+        CS_PunchCard Punchcard = PunchcardGO.GetComponent<CS_PunchCard>();
+
+        if (Punchcard.IsNull())
+        {
+            Debug.LogError("Attempted to write to invalid punchcard!");
+            return;
+        }
+
+        if (Punchcard.PunchCardType == EPunchCardType.PCT_Trait)
+        {
+            SetInputFieldData(Punchcard.GetDisplayText());
+        }
+    }
+
+    public FCharacterTraitId ReadTraitFromInputSocket()
+    {
+        GameObject PunchcardGO = ReadSocket.GetSocketedGO();
+        if(PunchcardGO.IsNull())
+        {
+            return new FCharacterTraitId();
+        }
+
+        CS_PunchCard Punchcard = PunchcardGO.GetComponent<CS_PunchCard>();
+
+        if (Punchcard.IsNull())
+        {
+            return new FCharacterTraitId();
+        }
+
+        return Punchcard.PunchCardType == EPunchCardType.PCT_Trait ? Punchcard.GetTraitId() : new FCharacterTraitId();
+    }
+
+    public void ClearFromInputSocket()
+    {
+        CS_Dock_SFDisplayManager DisplayManager = GetComponentInParent<CS_Dock_SFDisplayManager>();
+        SetInputFieldData(DisplayManager.GetReadSocketDisplayStringForDisplay(this));
     }
 }
