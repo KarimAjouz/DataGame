@@ -1,0 +1,26 @@
+# Made using Asset Forge (2.4.1)
+
+:materials
+
+[name:_defaultMat;color:RGBA(0.353, 0.360, 0.386, 1.000);scale:(1.0, 1.0);shader:Default;mapping:0;valueA:0.35;valueB:0.25;]
+[name:custom1;color:RGBA(1.000, 1.000, 1.000, 1.000);scale:(1.0, 1.0);shader:Default;mapping:0;valueA:0.35;valueB:0.25;]
+
+:models
+
+[name:;collection:Primitives;type:block;position:(0.0000, 0.0000, 0.5000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.0000, 0.2000, 1.6000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:block;position:(0.4000, 1.0000, 0.5000);rotation:(0.0000, 0.0000, 0.0000);scale:(0.2000, 0.2000, 2.0000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:wedge;position:(0.4500, 1.2000, 0.5000);rotation:(0.0000, 90.0000, 0.0000);scale:(1.4000, 0.1000, 0.1000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:wedge_cornerInner;position:(0.4000, 1.2500, 1.2500);rotation:(0.0000, 180.0000, 90.0000);scale:(0.1000, 0.1000, 0.1000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:wedge_cornerInner;position:(0.4000, 1.2500, -0.2500);rotation:(270.0000, 270.0000, 0.0000);scale:(0.1000, 0.1000, 0.1000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:block;position:(-0.4500, 0.2000, 0.5000);rotation:(0.0000, 0.0000, 0.0000);scale:(0.1000, 0.8000, 1.6000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:block;position:(0.4000, 2.3000, 0.5000);rotation:(0.0000, 0.0000, 0.0000);scale:(0.2000, 0.2000, 2.0000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:block;position:(-0.0520, 1.0000, 0.5000);rotation:(0.0000, 0.0000, 0.0000);scale:(0.8960, 1.5000, 2.0000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:wedge;position:(0.4500, 2.3000, 0.5000);rotation:(0.0000, 90.0000, 180.0000);scale:(1.4000, 0.1000, 0.1000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:wedge_cornerInner;position:(0.4000, 2.2500, -0.2500);rotation:(0.0000, 0.0000, 270.0000);scale:(0.1000, 0.1000, 0.1000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:wedge_cornerInner;position:(0.4000, 2.2500, 1.2500);rotation:(90.0000, 90.0000, 0.0000);scale:(0.1000, 0.1000, 0.1000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:block;position:(0.4000, 1.2000, -0.4000);rotation:(0.0000, 0.0000, 0.0000);scale:(0.2000, 1.1016, 0.2000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:block;position:(0.4000, 1.2000, 1.4000);rotation:(0.0000, 0.0000, 0.0000);scale:(0.2000, 1.1016, 0.2000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:wedge;position:(0.4500, 1.7600, -0.3000);rotation:(0.0000, 90.0000, 90.0000);scale:(0.9200, 0.1000, 0.1000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:wedge;position:(0.4500, 1.7600, 1.3000);rotation:(0.0000, 90.0000, 270.0000);scale:(0.9200, 0.1000, 0.1000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:block;position:(0.0000, 0.0000, -0.4000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.0000, 1.0000, 0.2000);group:;locked:False;hidden:False;materials:_defaultMat;]
+[name:;collection:Primitives;type:block;position:(0.0000, 0.0000, 1.4000);rotation:(0.0000, 0.0000, 0.0000);scale:(1.0000, 1.0000, 0.2000);group:;locked:False;hidden:False;materials:_defaultMat;]
