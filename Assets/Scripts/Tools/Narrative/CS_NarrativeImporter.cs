@@ -1,16 +1,11 @@
-using System;
 using System.IO;
 using System.Text;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEditor;
-using UnityEditor.Rendering.Universal;
 using UnityEngine;
-
-
 using ChoETL;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
-using System.Linq;
+
 using Object = UnityEngine.Object;
 
 public class CS_NarrativeImporter : MonoBehaviour
@@ -41,7 +36,8 @@ public class CS_NarrativeImporterEditor : Editor
         serializedObject.ApplyModifiedProperties();
 
     }
-    
+
+    [UsedImplicitly]
     private void ImportSingleLogFromCSV(TextAsset InSourceCSV)
     {
         CS_ChatLogBuilder ChatLogBuilder = GameObject.FindFirstObjectByType<CS_ChatLogBuilder>();
@@ -94,6 +90,7 @@ public class CS_NarrativeImporterEditor : Editor
         ChatLogBuilder.PopulateChatLogLinesFromString(WorkingText, ChatLogArray, InChatId);
     }
     
+    [UsedImplicitly]
     private void ImportChatlogsFromCSVs(TextAsset InSourceCSV)
     {
         CS_ChatLogBuilder ChatLogBuilder = GameObject.FindFirstObjectByType<CS_ChatLogBuilder>();
@@ -111,7 +108,7 @@ public class CS_NarrativeImporterEditor : Editor
 
     private void ImportCharacterListDataFromCSV(TextAsset InSourceCSV)
     {
-        CS_CharacterListBuilder CharacterListBuilder = GameObject.FindObjectOfType<CS_CharacterListBuilder>();
+        CS_CharacterListBuilder CharacterListBuilder = GameObject.FindFirstObjectByType<CS_CharacterListBuilder>();
         if (CharacterListBuilder == null)
         {
             Debug.LogError("Could not find CS_CharacterListBuilder scrtipt!");
@@ -127,7 +124,7 @@ public class CS_NarrativeImporterEditor : Editor
 
     private void ImportCharacterTraitDataFromCSV(TextAsset InSourceCSV)
     {
-        CS_CharacterTraits CharacterTraits = GameObject.FindObjectOfType<CS_CharacterTraits>();
+        CS_CharacterTraits CharacterTraits = GameObject.FindFirstObjectByType<CS_CharacterTraits>();
         if (CharacterTraits == null)
         {
             Debug.LogError("Could not find CS_CharacterListBuilder scrtipt!");
@@ -141,7 +138,7 @@ public class CS_NarrativeImporterEditor : Editor
     }
 
 
-    /// #BEGIN: Editor button tooling.
+    // #BEGIN: Editor button tooling.
 
     public void BeginChatLogImporter(CS_NarrativeImporter Importer)
     {
@@ -213,10 +210,10 @@ public class CS_NarrativeImporterEditor : Editor
 
         EditorGUILayout.EndHorizontal();
     }
-    /// #END: Editor button tooling.
-    /// 
+    // #END: Editor button tooling.
 
-    /// #BEGIN: CSV Data Importing Logic
+
+    // #BEGIN: CSV Data Importing Logic
     
     
     public string ConvertCsvStringToJsonString(string Lines, string InJsonPath)
@@ -242,7 +239,7 @@ public class CS_NarrativeImporterEditor : Editor
 
     public string ConvertCsvFileToJsonString(TextAsset Lines)
     {
-        var csv = new List<string[]>();
+        //var csv = new List<string[]>();
         var CSVLines = Lines.text;
 
         StringBuilder sb = new StringBuilder();
@@ -261,8 +258,7 @@ public class CS_NarrativeImporterEditor : Editor
 
         return sb.ToString();
     }
-
-
+    
     public JArray GetJArrayFromJSON(string InJsonText)
     {
         if (InJsonText.IsNullOrEmpty())
@@ -293,6 +289,6 @@ public class CS_NarrativeImporterEditor : Editor
         }
     }
 
-    /// #END: CSV Data Importing Logic
+    // #END: CSV Data Importing Logic
 
 }

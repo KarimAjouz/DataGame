@@ -1,4 +1,6 @@
 using UnityEngine;
+using NInteractionTypes;
+
 
 public class CS_CashDispenser : MonoBehaviour
 {

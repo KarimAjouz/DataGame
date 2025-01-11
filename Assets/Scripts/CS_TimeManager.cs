@@ -115,7 +115,7 @@ public class CS_TimeManager : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.Semicolon))
         {
-            AddTime(1);
+            AddTime(1, true);
         }
     }
 }

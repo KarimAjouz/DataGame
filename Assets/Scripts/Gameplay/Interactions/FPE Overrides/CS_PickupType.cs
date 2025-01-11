@@ -1,9 +1,6 @@
 using NaughtyAttributes;
 using NInteractionTypes;
-using System.Collections;
-using System.Collections.Generic;
 using Gameplay.Interactions.FPE_Overrides;
-using Unity.VisualScripting;
 using UnityEngine;
 using Whilefun.FPEKit;
 
@@ -50,6 +47,12 @@ public class CS_PickupType : MonoBehaviour
         {
             Socket.Unsocket();
             Socket = null;
+        }
+
+        CS_ItemDeliverer ItemDeliverer = transform.parent.GetComponent<CS_ItemDeliverer>();
+        if (ItemDeliverer)
+        {
+            ItemDeliverer.PickupItem();
         }
     }
 

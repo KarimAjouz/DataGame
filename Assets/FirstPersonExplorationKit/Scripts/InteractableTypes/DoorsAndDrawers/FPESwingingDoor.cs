@@ -42,6 +42,11 @@ namespace Whilefun.FPEKit
         private Transform doorActionLookTarget = null;
         private Vector3 currentSafeZoneTargetPosition = Vector3.zero;
         private Vector3 currentSafeLookTargetPosition = Vector3.zero;
+        
+        // #BeginKazChange [KA]: Allowing for a public override that removes the requirement for a door handle.
+
+        [SerializeField]
+        private bool IsDoorHandleNecessary = true;
 
 
 #if UNITY_EDITOR
@@ -122,7 +127,7 @@ namespace Whilefun.FPEKit
             // Error Checking //
 
             // Doors must have swinging parts and at least one door handle
-            if (!swingingPart || doorHandles.Count == 0)
+            if (!swingingPart || (doorHandles.Count == 0 && IsDoorHandleNecessary))
             {
 
                 Debug.Log("FPESwingingDoor:: Door '" + gameObject.name + "' is missing a required part. Attempting to fix.", gameObject);

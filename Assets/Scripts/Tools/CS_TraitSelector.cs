@@ -1,4 +1,3 @@
-using System;
 using NCharacterTraitCategoryTypes;
 using NNarrativeDataTypes;
 using UnityEngine;
