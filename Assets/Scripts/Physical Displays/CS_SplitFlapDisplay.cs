@@ -120,13 +120,20 @@ public class CS_SplitFlapDisplay : MonoBehaviour
         {
             return;
         }
-        
-        SetInputPromptText(InputPromptText);
 
-        for (int i = InputPromptText.Length; i < CharacterDisplays.Count; i++)
+        int StartingChar = 0;
+        if (!InputPromptText.IsNullOrEmpty())
         {
-            if (i < InText.Length && 
-                (
+            StartingChar = InputPromptText.Length;
+            SetInputPromptText(InputPromptText);
+        }
+        
+        for (int i = StartingChar; i < CharacterDisplays.Count; i++)
+        {
+            if (i < InText.Length 
+                && InputFormat.IsNullOrEmpty()
+                ||
+                (   
                     InputFormat.Length == 0 
                     || (i < InputFormat.Length 
                         && InputFormat[i].Equals(' ')
@@ -142,6 +149,9 @@ public class CS_SplitFlapDisplay : MonoBehaviour
 
     public void SetInputPromptText(string InText)
     {
+        if (InText.IsNullOrEmpty())
+            return;
+        
         InputPromptText = InText;
         if (CharacterDisplays.IsNull())
             return;

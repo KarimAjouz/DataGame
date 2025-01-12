@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using NStoreDataTypes;
 
-
-
-public class CS_StoreManager : MonoBehaviour
+namespace NStoreDataTypes
 {
-    private enum EItemType
+    public enum EItemType
     {
         IT_None,
         IT_Item,
@@ -31,6 +30,9 @@ public class CS_StoreManager : MonoBehaviour
         
         [SerializeField] 
         public Vector3 SpawnRotationOffset;
+
+        [SerializeField] 
+        public EItemType ItemType;
         
 
         public bool IsValid()
@@ -40,6 +42,11 @@ public class CS_StoreManager : MonoBehaviour
                 && Name != null;
         }
     }
+}
+
+public class CS_StoreManager : MonoBehaviour
+{
+    
 
     [SerializeField] 
     private List<FStoreItem> StoreItems;

@@ -3,6 +3,7 @@ using NNarrativeDataTypes;
 using UnityEngine;
 using UnityEditor;
 using Object = UnityEngine.Object;
+// ReSharper disable ArrangeTypeModifiers
 
 class CS_TraitSelector : MonoBehaviour
 {

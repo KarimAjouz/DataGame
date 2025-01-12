@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+using NStoreDataTypes;
+
 public class CS_ItemDeliverer : MonoBehaviour
 {
     [SerializeField]
@@ -14,7 +16,7 @@ public class CS_ItemDeliverer : MonoBehaviour
     private GameObject ItemDeliveryParent;
     
 
-    public void DeliverItem(CS_StoreManager.FStoreItem InStoreItem)
+    public void DeliverItem(FStoreItem InStoreItem)
     {
         if (ItemDeliveryParent.transform.childCount != 0)
         {
