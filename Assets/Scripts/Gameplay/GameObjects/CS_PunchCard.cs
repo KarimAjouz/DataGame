@@ -21,7 +21,7 @@ public class CS_PunchCard : MonoBehaviour
 
     [SerializeField]
     [ReadOnly]
-    private CS_TraitSelector StoredTrait = new CS_TraitSelector();
+    private CS_TraitSelector StoredTrait;
 
 
     // Start is called before the first frame update

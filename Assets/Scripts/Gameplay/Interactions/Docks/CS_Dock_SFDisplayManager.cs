@@ -29,7 +29,7 @@ class CS_DataInputPage
 
     [SerializeField]
     [SerializedDictionary ("Category", "DisplayRef")]
-    SerializedDictionary<ECharacterTraitCategory, CS_SplitFlapDisplay> CategoryToDisplayMap;
+    SerializedDictionary<ECharacterTraitCategory, CS_PromptDisplayHandler> CategoryToDisplayMap;
 
     [SerializeField]
     [SerializedDictionary("Category", "InputPrompt")]
@@ -40,7 +40,7 @@ class CS_DataInputPage
 
     public CS_SplitFlapDisplay GetActiveDisplay()
     {
-        return CategoryToDisplayMap.Values.Count > ActiveDisplay ? CategoryToDisplayMap.GetValueAt(ActiveDisplay) as CS_SplitFlapDisplay : null;
+        return CategoryToDisplayMap.Values.Count > ActiveDisplay ? (CategoryToDisplayMap.GetValueAt(ActiveDisplay) as CS_PromptDisplayHandler)?.GetInputDisplay() : null;
     }
 
     public int GetDisplayCount()
@@ -48,9 +48,9 @@ class CS_DataInputPage
         return CategoryToDisplayMap.Count;
     }
 
-    public ECharacterTraitCategory GetDisplayCategory(CS_SplitFlapDisplay InDisplay)
+    public ECharacterTraitCategory GetDisplayCategory(CS_PromptDisplayHandler InDisplay)
     {
-        foreach (KeyValuePair<ECharacterTraitCategory, CS_SplitFlapDisplay> pair in CategoryToDisplayMap)
+        foreach (KeyValuePair<ECharacterTraitCategory, CS_PromptDisplayHandler> pair in CategoryToDisplayMap)
         {
             if(pair.Value == InDisplay)
                 return pair.Key;
@@ -61,19 +61,19 @@ class CS_DataInputPage
     
     public void InitPage()
     {
-        foreach (KeyValuePair<ECharacterTraitCategory, CS_SplitFlapDisplay> pair in CategoryToDisplayMap)
+        foreach (KeyValuePair<ECharacterTraitCategory, CS_PromptDisplayHandler> pair in CategoryToDisplayMap)
         {
-            pair.Value.InitDisplay(true, CategoryToPromptMap[pair.Key].InputPrompt, CategoryToPromptMap[pair.Key].FormatString);
+            pair.Value.InitDisplay(CategoryToPromptMap[pair.Key].InputPrompt, CategoryToPromptMap[pair.Key].FormatString);
         } 
     }
 
     public void ResetPage()
     {
-        foreach (KeyValuePair<ECharacterTraitCategory, CS_SplitFlapDisplay> pair in CategoryToDisplayMap)
+        foreach (KeyValuePair<ECharacterTraitCategory, CS_PromptDisplayHandler> pair in CategoryToDisplayMap)
         {
             pair.Value.ResetDisplay();
         }
-    }
+    } 
 
     public void NextDisplay()
     {
@@ -96,24 +96,25 @@ class CS_DataInputPage
     {
         if(PageType == ECharacterDataPageType.ECharacterDataPageType_IDENTIFIER)
         {
-            foreach (KeyValuePair<ECharacterTraitCategory, CS_SplitFlapDisplay> Pair in CategoryToDisplayMap)
+            foreach (KeyValuePair<ECharacterTraitCategory, CS_PromptDisplayHandler> Pair in CategoryToDisplayMap)
             {
+                CS_SplitFlapDisplay InputDisplay = Pair.Value.GetInputDisplay();
                 switch (Pair.Key)
                 {
-                    case ECharacterTraitCategory.ETraitCategory_NAME when !Pair.Value.GetInputFieldData().IsEmpty():
-                        InOutData.SetCharName(Pair.Value.GetInputFieldData());
+                    case ECharacterTraitCategory.ETraitCategory_NAME when !InputDisplay.GetInputFieldData().IsEmpty():
+                        InOutData.SetCharName(InputDisplay.GetInputFieldData());
                         break;
-                    case ECharacterTraitCategory.ETraitCategory_WEBHANDLE when !Pair.Value.GetInputFieldData().IsEmpty():
-                        InOutData.SetWebHandle(new FCharacterWebHandle(Pair.Value.GetInputFieldData()));
+                    case ECharacterTraitCategory.ETraitCategory_WEBHANDLE when !InputDisplay.GetInputFieldData().IsEmpty():
+                        InOutData.SetWebHandle(new FCharacterWebHandle(InputDisplay.GetInputFieldData()));
                         break;
-                    case ECharacterTraitCategory.ETraitCategory_WEBID when !Pair.Value.GetInputFieldData().IsEmpty():
+                    case ECharacterTraitCategory.ETraitCategory_WEBID when !InputDisplay.GetInputFieldData().IsEmpty():
                     {
-                        int Seg1 = int.Parse(Pair.Value.GetInputFieldData());
-                        InOutData.SetWebId(new FWebIdHandle(Seg1, Pair.Value.GetInputFieldData()));
+                        int Seg1 = int.Parse(InputDisplay.GetInputFieldData());
+                        InOutData.SetWebId(new FWebIdHandle(Seg1, InputDisplay.GetInputFieldData()));
                         break;
                     }
-                    case ECharacterTraitCategory.ETraitCategory_BIRTHDATE when !Pair.Value.GetInputFieldData().IsEmpty():
-                        InOutData.SetDateOfBirth(new FDateHandle(Pair.Value.GetInputFieldData()));
+                    case ECharacterTraitCategory.ETraitCategory_BIRTHDATE when !InputDisplay.GetInputFieldData().IsEmpty():
+                        InOutData.SetDateOfBirth(new FDateHandle(InputDisplay.GetInputFieldData()));
                         break;
                     default:
                         FCharacterTraitId TraitId = Pair.Value.ReadTraitFromInputSocket();
@@ -128,31 +129,37 @@ class CS_DataInputPage
 
     }
 
-    public void PupulateInputFields(FCharacterData InData)
+    public void PopulateInputFields(FCharacterData InData)
     {
         if (PageType == ECharacterDataPageType.ECharacterDataPageType_IDENTIFIER)
         {
-            foreach (KeyValuePair<ECharacterTraitCategory, CS_SplitFlapDisplay> Pair in CategoryToDisplayMap)
+            foreach (KeyValuePair<ECharacterTraitCategory, CS_PromptDisplayHandler> Pair in CategoryToDisplayMap)
             {
-                if (Pair.Key == ECharacterTraitCategory.ETraitCategory_NAME && !InData.GetCharacterName().IsNullOrEmpty())
-                {
-                    Pair.Value.SetInputFieldData(InData.GetCharacterName());
-                }
+                CS_SplitFlapDisplay InputDisplay = Pair.Value.GetInputDisplay();
 
-                if (Pair.Key == ECharacterTraitCategory.ETraitCategory_WEBHANDLE && !InData.GetWebHandle().IsEmpty())
+                switch (Pair.Key)
                 {
-                    Pair.Value.SetInputFieldData(InData.GetWebHandle().GetDisplayName());
-                }
-
-                if (Pair.Key == ECharacterTraitCategory.ETraitCategory_WEBID && !InData.GetWebId().IsEmpty())
-                {
-                    Pair.Value.SetInputFieldData(InData.GetWebId().GetDisplayName());
-                }
-
-                if (Pair.Key == ECharacterTraitCategory.ETraitCategory_BIRTHDATE && !InData.GetDateOfBirth().IsEmpty())
-                {
-                    Pair.Value.SetInputFieldData(InData.GetDateOfBirth().GetDisplayName());
-
+                    case ECharacterTraitCategory.ETraitCategory_WEBHANDLE when !InData.GetWebHandle().IsEmpty():
+                    {
+                        string DisplayText = InData.GetCharacterName();
+                        InputDisplay.SetDisplayText(DisplayText);
+                        InputDisplay.SetDefaultDisplayText(DisplayText);
+                        break;
+                    }
+                    case ECharacterTraitCategory.ETraitCategory_WEBID when !InData.GetWebId().IsEmpty():
+                    {
+                        string DisplayText = InData.GetWebId().GetDisplayName();
+                        InputDisplay.SetDisplayText(DisplayText);
+                        InputDisplay.SetDefaultDisplayText(DisplayText);
+                        break;
+                    }
+                    case ECharacterTraitCategory.ETraitCategory_BIRTHDATE when !InData.GetDateOfBirth().IsEmpty():
+                    {
+                        string DisplayText = InData.GetDateOfBirth().GetDisplayName();
+                        InputDisplay.SetDisplayText(DisplayText);
+                        InputDisplay.SetDefaultDisplayText(DisplayText);
+                        break;
+                    }
                 }
             }
         }
@@ -249,11 +256,11 @@ public class CS_Dock_SFDisplayManager : MonoBehaviour
         ControlledDisplayPages[ActivePage].ResetPage();
     }
     
-    public string GetReadSocketDisplayStringForDisplay(CS_SplitFlapDisplay InDisplay)
+    public string GetReadSocketDisplayStringForDisplay(CS_PromptDisplayHandler InDisplayHandler)
     {
         if (InputSockets)
         {
-            return InputSockets.GetDisplayStringForCategoryFromReadSocket(ControlledDisplayPages[ActivePage].GetDisplayCategory(InDisplay));
+            return InputSockets.GetDisplayStringForCategoryFromReadSocket(ControlledDisplayPages[ActivePage].GetDisplayCategory(InDisplayHandler));
         }
         return "";
     }
@@ -315,6 +322,6 @@ public class CS_Dock_SFDisplayManager : MonoBehaviour
 
     public void ReadCharacterDataToDisplays(FCharacterData CharacterData)
     {
-        ControlledDisplayPages[ActivePage].PupulateInputFields(CharacterData);
+        ControlledDisplayPages[ActivePage].PopulateInputFields(CharacterData);
     }
 }
