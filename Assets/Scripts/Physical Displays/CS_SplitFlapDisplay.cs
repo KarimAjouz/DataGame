@@ -1,6 +1,5 @@
-using ChoETL;
 using System.Collections.Generic;
-using NNarrativeDataTypes;
+using ChoETL;
 using UnityEngine;
 
 public class CS_SplitFlapDisplay : MonoBehaviour
@@ -9,16 +8,11 @@ public class CS_SplitFlapDisplay : MonoBehaviour
     [Min(1)]
     private int NumCharacters = 1;
 
-    [SerializeField]
-    private bool bIsInputField = false;
-
     [SerializeField] 
     private bool IsSocketInput = false;
 
     [SerializeField] 
     private CS_Socket ReadSocket;
-
-    private string InputPromptText;
 
     private string InputFormat;
 
@@ -26,6 +20,9 @@ public class CS_SplitFlapDisplay : MonoBehaviour
 
     [SerializeField]
     private string DisplayText;
+
+    [SerializeField] 
+    private string DefaultDisplayText;
 
     [SerializeField]
     private GameObject DisplayCharacterPrefab;
@@ -36,6 +33,7 @@ public class CS_SplitFlapDisplay : MonoBehaviour
     [SerializeField]
     private Vector3 CharOffset;
 
+    [SerializeField]
     private List<CS_SplitFlapCharacter> CharacterDisplays;
 
     [SerializeField]
@@ -56,14 +54,23 @@ public class CS_SplitFlapDisplay : MonoBehaviour
     [SerializeField]
     private Color HighlightColour;
 
+    [SerializeField]
+    private GameObject CharHolder;
+
+    void Awake()
+    {
+        RegenerateDisplay();
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        CharacterDisplays = new List<CS_SplitFlapCharacter>(GetComponentsInChildren<CS_SplitFlapCharacter>());
+        CharacterDisplays = new List<CS_SplitFlapCharacter>(CharHolder.GetComponentsInChildren<CS_SplitFlapCharacter>());
 
-        if (bIsInputField)
-            SetDisplayText(InputPromptText + InputFormat);
+        if (InputFormat != null)
+        {
+            SetDisplayText(InputFormat);
+        }
 
         if (IsSocketInput && ReadSocket == null)
         {
@@ -79,12 +86,20 @@ public class CS_SplitFlapDisplay : MonoBehaviour
 
     public void RegenerateDisplay()
     {
-        List<CS_SplitFlapCharacter> DisplayChars = new List<CS_SplitFlapCharacter>(GetComponentsInChildren<CS_SplitFlapCharacter>());
         if(CharacterDisplays == null)
         {
             CharacterDisplays = new List<CS_SplitFlapCharacter>();
         }
+        CharacterDisplays.Clear();
 
+        if (CharHolder == null)
+        {
+            CharHolder = Instantiate(new GameObject(), transform);
+            CharHolder.name = "Character Displays";
+        }
+
+        List<CS_SplitFlapCharacter> DisplayChars = new List<CS_SplitFlapCharacter>(CharHolder.GetComponentsInChildren<CS_SplitFlapCharacter>());
+        
         while(DisplayChars.Count > 0) 
         { 
             DestroyImmediate(DisplayChars[0].gameObject); 
@@ -93,131 +108,76 @@ public class CS_SplitFlapDisplay : MonoBehaviour
 
         for (int i = 0;  i < NumCharacters; i++) 
         {
-            GameObject newChar = Instantiate(DisplayCharacterPrefab, this.transform);
+            GameObject newChar = Instantiate(DisplayCharacterPrefab, CharHolder.transform);
             newChar.transform.Translate(CharOffset * (transform.localScale.x * i)); 
             CharacterDisplays.Add(newChar.GetComponent<CS_SplitFlapCharacter>());
         }
     }
 
-    public void InitDisplay(bool InIsInputDisplay, string InInputPrompt = null, string InInputFormat = null)
+    public void InitDisplay(string InInputFormat)
     {
-        bIsInputField = InIsInputDisplay;
-        if(bIsInputField)
-        {
-            SetInputPromptText(InInputPrompt);
-            SetInputFormatText(InInputFormat);
-        }
+        SetDefaultDisplayText("");
+        SetInputFormatText(InInputFormat);
     }
 
     public void SetDisplayText(string InText)
     {
-        if(InText.IsNullOrEmpty()) 
-        { 
-            return; 
-        }
+        DisplayText = InText.ToUpper();
 
-        if (!bIsInputField)
+        for (int i = 0; i < CharacterDisplays.Count; i++)
         {
-            return;
-        }
-
-        int StartingChar = 0;
-        if (!InputPromptText.IsNullOrEmpty())
-        {
-            StartingChar = InputPromptText.Length;
-            SetInputPromptText(InputPromptText);
-        }
-        
-        for (int i = StartingChar; i < CharacterDisplays.Count; i++)
-        {
-            if (i < InText.Length 
-                && InputFormat.IsNullOrEmpty()
-                ||
-                (   
-                    InputFormat.Length == 0 
+            int CharIndex = 0;
+            if (i < DisplayText.Length && 
+                (
+                    InputFormat.IsNullOrEmpty() 
+                    || InputFormat.Length <= i
                     || (i < InputFormat.Length 
                         && InputFormat[i].Equals(' ')
                         )
                 )
                )
             {
-                int CharIndex = AvailableCharacters.IndexOf(InText[i]);
-                CharacterDisplays[i].GetComponent<CS_SplitFlapCharacter>().SetDisplayIndex(CharIndex);
+                CharIndex = AvailableCharacters.IndexOf(DisplayText[i]);
             }
+            CharacterDisplays[i].GetComponent<CS_SplitFlapCharacter>().SetDisplayIndex(CharIndex);
         }
     }
-
-    public void SetInputPromptText(string InText)
-    {
-        if (InText.IsNullOrEmpty())
-            return;
-        
-        InputPromptText = InText;
-        if (CharacterDisplays.IsNull())
-            return;
-
-        if (InText.Length >= CharacterDisplays.Count)
-        {
-            Debug.LogWarning("InputPrompt text is as long as/longer than Display! No input will be available!");
-        }
-        
-
-        for (int i = 0; i < CharacterDisplays.Count; i++)
-        {
-            if (i < InputPromptText.Length)
-            {
-                int CharIndex = AvailableCharacters.IndexOf(InText[i]);
-                CharacterDisplays[i].GetComponent<CS_SplitFlapCharacter>().SetDisplayIndex(CharIndex);
-            }
-        }
-    }
-    public void SetInputFormatText(string InText)
+    
+    
+    private void SetInputFormatText(string InText)
     {
         InputFormat = InText;
         if (CharacterDisplays.IsNull())
             return;
 
-        if (InText.Length + InputPromptText.Length > CharacterDisplays.Count)
+        if (InText.Length >= CharacterDisplays.Count)
         {
-            Debug.LogWarning("InputPrompt text is as long as/longer than Display! No input will be available!");
+            Debug.LogWarning("InputFormat text is as long as/longer than Display! No input will be available!");
         }
 
-        if(InputFormat.Length == 0)
+        for (int i = 0; i < CharacterDisplays.Count; i++)
         {
-            return;
-        }
-
-        for (int i = InputPromptText.Length; i < CharacterDisplays.Count; i++)
-        {
-            if (i < (InputPromptText.Length + InputFormat.Length))
+            int CharIndex = 0;
+            if (i < (InputFormat.Length))
             {
-                int CharIndex = AvailableCharacters.IndexOf(InText[i - InputPromptText.Length]);
-                CharacterDisplays[i].GetComponent<CS_SplitFlapCharacter>().SetDisplayIndex(CharIndex);
+                CharIndex = AvailableCharacters.IndexOf(InText[i]);
             }
+            CharacterDisplays[i].GetComponent<CS_SplitFlapCharacter>().SetDisplayIndex(CharIndex);
         }
+    }
+
+    public void SetDefaultDisplayText(string InText)
+    {
+        DefaultDisplayText = InText.ToUpper();
     }
 
     public void ResetDisplay()
     {
-        int count = 0;
-
-        if(bIsInputField)
-            count = InputPromptText.Length;
-
-        for (int i = count; i < CharacterDisplays.Count; i++)
-        {
-            CharacterDisplays[i].GetComponent<CS_SplitFlapCharacter>().SetDisplayIndex(0);
-        }
+        SetDisplayText(DefaultDisplayText);
     }
 
     public void SetActiveCharacter(char InNewChar)
     {
-        if (!bIsInputField)
-        {
-            Debug.LogWarning("Can't set character to display that is not an input field!");
-            return;
-        }
-
         if(ActiveCharIndex >= CharacterDisplays.Count)
         {
             return;
@@ -228,63 +188,50 @@ public class CS_SplitFlapDisplay : MonoBehaviour
 
     public void AddInputChar(char InNewChar)
     {
-        if(!bIsInputField)
-        {
-            Debug.LogWarning("Can't add character to display that is not an input field!");
-            return;
-        }
-
         if(!AvailableCharacters.Contains(InNewChar))
         {
-            Debug.LogWarning("Can't add char: " + InNewChar.ToString() + " to display as it is not an available character!");
+            Debug.LogWarning("Can't add char: " + InNewChar+ " to display as it is not an available character!");
             return;
         }
+        
+        DisplayText += InNewChar;
 
-        //if(InputPromptText.Length + DisplayText.Length > CharacterDisplays.Count) 
-        //{
-            CharacterDisplays[ActiveCharIndex].SetDisplayIndex(AvailableCharacters.IndexOf(InNewChar));
-            NextChar();
-        //}
+        CharacterDisplays[ActiveCharIndex].SetDisplayIndex(AvailableCharacters.IndexOf(InNewChar));
+        NextChar();
     }
 
-    public void SetDisplayActive(bool Active) 
+    public void SetDisplayActive(bool Active, bool InIsInputDisplay = false)
     {
-        if(Active)
+        Color DisplayColour = DefaultColour;
+        if (Active)
         {
-            for (int i = 0; i < CharacterDisplays.Count; i++)
-            {
-                foreach (CS_SplitFlapCharacter FlapCharacter in CharacterDisplays)
-                {
-                    FlapCharacter.SetCardHighlightColour(ActiveColour);
-                }
-            }
-
-            int InitialIndex = 0;
-            if(bIsInputField)
-            {
-                InitialIndex = InputPromptText.Length;
-
-                CS_SplitFlapCharacter FlapCharacter = CharacterDisplays[InitialIndex];
-                FlapCharacter.SetCardHighlightColour(HighlightColour);
-            }
-            ActiveCharIndex = InitialIndex;
+            DisplayColour = ActiveColour;
         }
-        else
+        
+        foreach (CS_SplitFlapCharacter FlapCharacter in CharacterDisplays)
         {
-            for (int i = 0; i < CharacterDisplays.Count; i++)
-            {
-                foreach (CS_SplitFlapCharacter FlapCharacter in CharacterDisplays)
-                {
-                    FlapCharacter.SetCardHighlightColour(DefaultColour);
-                }
-            }
+            FlapCharacter.SetCardHighlightColour(DisplayColour);
+        }
+
+        if (InIsInputDisplay && Active)
+        {
+            CS_SplitFlapCharacter FlapCharacter = CharacterDisplays[0];
+            FlapCharacter.SetCardHighlightColour(HighlightColour);
+        
+            ActiveCharIndex = 0;
         }
     }
 
-    public void FireBackspace()
+    public void FireBackspace() 
     {
-        if (ActiveCharIndex >= InputPromptText.Length)
-            CharacterDisplays[ActiveCharIndex].SetDisplayIndex(0);
+        if(ActiveCharIndex >= DisplayText.Length)
+        {
+            ActiveCharIndex = DisplayText.Length;
+            PreviousChar();
+        }
+
+        //UGHHHHH
+        SetDisplayText(DisplayText.Remove(ActiveCharIndex, 1));
         PreviousChar();
     }
 
@@ -292,16 +239,20 @@ public class CS_SplitFlapDisplay : MonoBehaviour
     {
         CharacterDisplays[ActiveCharIndex].SetCardHighlightColour(ActiveColour);
 
-        if (ActiveCharIndex < CharacterDisplays.Count && (InputFormat.Length == 0 || ActiveCharIndex + 1 < InputFormat.Length + InputPromptText.Length))
+        //Go to the next character if it's available...
+        if (ActiveCharIndex < CharacterDisplays.Count)
         {
             ActiveCharIndex++;
         }
-
-        if (ActiveCharIndex < InputFormat.Length + InputPromptText.Length && !InputFormat[ActiveCharIndex-InputPromptText.Length].Equals(' '))
+        
+        // If the next character display is overridden by the input formatting then go to the next character.
+        if (ActiveCharIndex < CharacterDisplays.Count 
+            && ActiveCharIndex < InputFormat.Length
+            && !InputFormat[ActiveCharIndex].Equals(' '))
         {
             ActiveCharIndex++;
         }
-
+        
         CharacterDisplays[ActiveCharIndex].SetCardHighlightColour(HighlightColour);
 
     }
@@ -310,12 +261,12 @@ public class CS_SplitFlapDisplay : MonoBehaviour
     {
         CharacterDisplays[ActiveCharIndex].SetCardHighlightColour(ActiveColour);
 
-        if (ActiveCharIndex > InputPromptText.Length)
+        if (ActiveCharIndex > 0)
         {
             ActiveCharIndex--;
         }
-
-        if (InputFormat.Length != 0 && !InputFormat[ActiveCharIndex - InputPromptText.Length].Equals(' '))
+        
+        if (ActiveCharIndex < InputFormat.Length && !InputFormat[ActiveCharIndex].Equals(' '))
         {
             ActiveCharIndex--;
         }
@@ -328,7 +279,7 @@ public class CS_SplitFlapDisplay : MonoBehaviour
     {
         bool HasFoundFinalInputChar = false;
         string OutString = "";
-        for (int i = NumCharacters - 1; i >= InputPromptText.Length; i--)
+        for (int i = NumCharacters - 1; i >= 0; i--)
         {
             if(HasFoundFinalInputChar)
             {
@@ -345,67 +296,5 @@ public class CS_SplitFlapDisplay : MonoBehaviour
         }
 
         return OutString;
-    }
-
-    public void SetInputFieldData(string InString)
-    {
-        int count = 0;
-        string Display = InString.ToUpper();
-
-        if (bIsInputField)
-            count = InputPromptText.Length;
-
-        for (int i = count; i < CharacterDisplays.Count; i++)
-        {
-            int CharToSet = i - count < Display.Length ? AvailableCharacters.IndexOf(Display[i - count]) : 0;
-            CharacterDisplays[i].GetComponent<CS_SplitFlapCharacter>().SetDisplayIndex(CharToSet);
-        }
-    }
-
-    public void UpdateFromInputSocket()
-    {
-        GameObject PunchcardGO = ReadSocket.GetSocketedGO();
-        if(PunchcardGO.IsNull())
-        {            
-            SetInputFieldData("");
-            return;
-        }
-
-        CS_PunchCard Punchcard = PunchcardGO.GetComponent<CS_PunchCard>();
-
-        if (Punchcard.IsNull())
-        {
-            Debug.LogError("Attempted to write to invalid punchcard!");
-            return;
-        }
-
-        if (Punchcard.PunchCardType == EPunchCardType.PCT_Trait)
-        {
-            SetInputFieldData(Punchcard.GetDisplayText());
-        }
-    }
-
-    public FCharacterTraitId ReadTraitFromInputSocket()
-    {
-        GameObject PunchcardGO = ReadSocket.GetSocketedGO();
-        if(PunchcardGO.IsNull())
-        {
-            return new FCharacterTraitId();
-        }
-
-        CS_PunchCard Punchcard = PunchcardGO.GetComponent<CS_PunchCard>();
-
-        if (Punchcard.IsNull())
-        {
-            return new FCharacterTraitId();
-        }
-
-        return Punchcard.PunchCardType == EPunchCardType.PCT_Trait ? Punchcard.GetTraitId() : new FCharacterTraitId();
-    }
-
-    public void ClearFromInputSocket()
-    {
-        CS_Dock_SFDisplayManager DisplayManager = GetComponentInParent<CS_Dock_SFDisplayManager>();
-        SetInputFieldData(DisplayManager.GetReadSocketDisplayStringForDisplay(this));
     }
 }

@@ -1,11 +1,9 @@
 using UnityEngine;
 using UnityEditor;
-// ReSharper disable ArrangeTypeModifiers
 
 public class CS_SplitFlapDisplayBuilder : MonoBehaviour
 {
 }
-
 
 
 [CustomEditor(typeof(CS_SplitFlapDisplayBuilder))]
