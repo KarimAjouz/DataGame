@@ -1,6 +1,5 @@
-using ChoETL;
 using System.Collections.Generic;
-using NNarrativeDataTypes;
+using ChoETL;
 using UnityEngine;
 
 public class CS_SplitFlapDisplay : MonoBehaviour
@@ -34,6 +33,7 @@ public class CS_SplitFlapDisplay : MonoBehaviour
     [SerializeField]
     private Vector3 CharOffset;
 
+    [SerializeField]
     private List<CS_SplitFlapCharacter> CharacterDisplays;
 
     [SerializeField]
@@ -57,6 +57,10 @@ public class CS_SplitFlapDisplay : MonoBehaviour
     [SerializeField]
     private GameObject CharHolder;
 
+    void Awake()
+    {
+        RegenerateDisplay();
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -86,6 +90,7 @@ public class CS_SplitFlapDisplay : MonoBehaviour
         {
             CharacterDisplays = new List<CS_SplitFlapCharacter>();
         }
+        CharacterDisplays.Clear();
 
         if (CharHolder == null)
         {
@@ -117,14 +122,11 @@ public class CS_SplitFlapDisplay : MonoBehaviour
 
     public void SetDisplayText(string InText)
     {
-        if(InText.IsNullOrEmpty()) 
-        { 
-            return; 
-        }
         DisplayText = InText.ToUpper();
 
         for (int i = 0; i < CharacterDisplays.Count; i++)
         {
+            int CharIndex = 0;
             if (i < DisplayText.Length && 
                 (
                     InputFormat.IsNullOrEmpty() 
@@ -135,9 +137,9 @@ public class CS_SplitFlapDisplay : MonoBehaviour
                 )
                )
             {
-                int CharIndex = AvailableCharacters.IndexOf(DisplayText[i]);
-                CharacterDisplays[i].GetComponent<CS_SplitFlapCharacter>().SetDisplayIndex(CharIndex);
+                CharIndex = AvailableCharacters.IndexOf(DisplayText[i]);
             }
+            CharacterDisplays[i].GetComponent<CS_SplitFlapCharacter>().SetDisplayIndex(CharIndex);
         }
     }
     
@@ -220,14 +222,17 @@ public class CS_SplitFlapDisplay : MonoBehaviour
         }
     }
 
-    public void FireBackspace()
+    public void FireBackspace() 
     {
-        CharacterDisplays[ActiveCharIndex].SetDisplayIndex(0);
-        
-        DisplayText = DisplayText.Substring(0, DisplayText.Length - 1);
-        
-        if (ActiveCharIndex > 0) 
+        if(ActiveCharIndex >= DisplayText.Length)
+        {
+            ActiveCharIndex = DisplayText.Length;
             PreviousChar();
+        }
+
+        //UGHHHHH
+        SetDisplayText(DisplayText.Remove(ActiveCharIndex, 1));
+        PreviousChar();
     }
 
     public void NextChar()
@@ -241,7 +246,9 @@ public class CS_SplitFlapDisplay : MonoBehaviour
         }
         
         // If the next character display is overridden by the input formatting then go to the next character.
-        if (ActiveCharIndex < CharacterDisplays.Count && (ActiveCharIndex < InputFormat.Length && !InputFormat[ActiveCharIndex].Equals(' ')))
+        if (ActiveCharIndex < CharacterDisplays.Count 
+            && ActiveCharIndex < InputFormat.Length
+            && !InputFormat[ActiveCharIndex].Equals(' '))
         {
             ActiveCharIndex++;
         }
@@ -259,9 +266,9 @@ public class CS_SplitFlapDisplay : MonoBehaviour
             ActiveCharIndex--;
         }
         
-        if (ActiveCharIndex > 0 && ActiveCharIndex > InputFormat.Length || !InputFormat[ActiveCharIndex].Equals(' '))
+        if (ActiveCharIndex < InputFormat.Length && !InputFormat[ActiveCharIndex].Equals(' '))
         {
-            ActiveCharIndex++;
+            ActiveCharIndex--;
         }
 
         CharacterDisplays[ActiveCharIndex].SetCardHighlightColour(HighlightColour);

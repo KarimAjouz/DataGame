@@ -163,9 +163,7 @@ class CS_DataInputPage
                 }
             }
         }
-
     }
-
 }
 
 
@@ -193,27 +191,24 @@ public class CS_Dock_SFDisplayManager : MonoBehaviour
     {
         if(ComponentActive)
         {
-            ProcessInputString();
-
             if (Input.GetKeyUp(KeyCode.UpArrow))
             {
                 ControlledDisplayPages[ActivePage].PreviousDisplay();
-            }
-
-            if (Input.GetKeyUp(KeyCode.DownArrow))
+            } 
+            else if (Input.GetKeyUp(KeyCode.DownArrow))
             {
                 ControlledDisplayPages[ActivePage].NextDisplay();
             }
-
-            if (Input.GetKeyUp(KeyCode.LeftArrow))
+            else if (Input.GetKeyUp(KeyCode.LeftArrow))
             {
                 ControlledDisplayPages[ActivePage].GetActiveDisplay().PreviousChar();
             }
-
-            if (Input.GetKeyUp(KeyCode.RightArrow))
+            else if (Input.GetKeyUp(KeyCode.RightArrow))
             {
                 ControlledDisplayPages[ActivePage].GetActiveDisplay().NextChar();
             }
+            
+            ProcessInputString();
         }
     }
 
@@ -280,33 +275,44 @@ public class CS_Dock_SFDisplayManager : MonoBehaviour
                 {
                     ControlledDisplayPages[ActivePage].GetActiveDisplay().FireBackspace();
 
-                    if (InputString.Length > 2)
-                        InputString = InputString.Substring(2, InputString.Length - 2);
+                    if (InputString.Length > 1)
+                        InputString = InputString.Substring(1, InputString.Length - 1);
                     else
-                        break;
+                        InputString = InputString.Remove(0, 1);
                 }
                 else
                 {
-                    InputString = InputString.Remove(bspInd - 1, 3);
+                    InputString = InputString.Remove(bspInd - 1, 2);
                 }
             }
 
-            // Then process all instances of the 'Return' key.
+            
+            // Then process all instances of the 'Return' key while ignoring all other non-char key instances.
             if(InputString.Length > 1 && InputString.Substring(0, 2) == "\n")
             {
                 NextDisplay();
                 InputString = InputString.Remove(0, 2);
-                //continue;
             }
             
+            if (InputString.Length == 0)
+                return;
+            
             string NextChar = InputString.Substring(0, 1);
+
+            if (!NextChar.IsAlphaNumeric())
+            {
+                InputString = InputString.Remove(0, 1);
+                continue;
+            }
+
             if (NextChar.IsAlpha())
             {
                 NextChar = NextChar.ToUpper();
             }
-            
+
             ControlledDisplayPages[ActivePage].GetActiveDisplay().AddInputChar(NextChar[0]);
             InputString = InputString.Remove(0, 1);
+            
         }
     }
 

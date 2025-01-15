@@ -50,7 +50,7 @@ MonoBehaviour:
   NumCharacters: 20
   IsSocketInput: 0
   ReadSocket: {fileID: 0}
-  DisplayText: LOVETHIS
+  DisplayText: 
   DefaultDisplayText: 
   DisplayCharacterPrefab: {fileID: 7840082050197259547, guid: 32d11142567a49647b77b2e82cd61c7f,
     type: 3}

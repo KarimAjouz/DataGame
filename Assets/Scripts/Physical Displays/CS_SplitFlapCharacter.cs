@@ -63,6 +63,7 @@ public class CS_SplitFlapCharacter : MonoBehaviour
 
     public void SetDisplayIndex(int InIndex)
     {
+        EndAllAnimations();
         
         if (SFDisplay.IsObjectNullOrEmpty())
         {
@@ -90,7 +91,7 @@ public class CS_SplitFlapCharacter : MonoBehaviour
     public void SpinCardAnim()
     {
         DisplayIndexCurrent++;
-        DisplayIndexCurrent = DisplayIndexCurrent % SFDisplay.AvailableCharacters.Length;
+        DisplayIndexCurrent %= SFDisplay.AvailableCharacters.Length;
 
         QueuedCard = BottomCard;
 
@@ -107,6 +108,7 @@ public class CS_SplitFlapCharacter : MonoBehaviour
         PendingCard.transform.SetPositionAndRotation(PendingCardPos, PendingCardRot);
         SFDisplay.ReleaseAudio.Play();
     }
+    
     public void CompleteSpinAnim()
     {
         CompletedCard.transform.SetPositionAndRotation(CompCardPos, CompCardRot);
@@ -121,5 +123,19 @@ public class CS_SplitFlapCharacter : MonoBehaviour
         BottomCard.SetColor(InColour);
         PendingCard.SetColor(InColour);
         CompletedCard.SetColor(InColour);
+    }
+
+    private void EndAllAnimations()
+    {
+        TopCard.CancelAnim();
+        BottomCard.CancelAnim();
+        PendingCard.CancelAnim();
+        CompletedCard.CancelAnim();
+
+        if (QueuedCard)
+        {
+            QueuedCard.CancelAnim();
+        }
+
     }
 }
