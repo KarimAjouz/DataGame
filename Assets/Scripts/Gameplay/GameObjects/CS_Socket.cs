@@ -38,4 +38,9 @@ public class CS_Socket : MonoBehaviour
         return SocketedGO;
     }
 
+    public void DestroySocketedGO()
+    {
+        Destroy(SocketedGO);
+    }
+
 }

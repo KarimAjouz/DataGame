@@ -12,6 +12,14 @@ namespace NStoreDataTypes
         IT_Upgrade,
         COUNT
     }
+
+    public enum EItemStoreType
+    {
+        ST_None,
+        ST_VendingMachine,
+        ST_MailOrder,
+        COUNT
+    }
     
     [Serializable]
     public struct FStoreItem
@@ -33,6 +41,15 @@ namespace NStoreDataTypes
 
         [SerializeField] 
         public EItemType ItemType;
+
+        [SerializeField] 
+        public EItemStoreType StoreType;
+
+        [SerializeField] 
+        public int PurchaseCode;
+
+        [SerializeField] 
+        public int MaxPurchaseAmount;
         
 
         public bool IsValid()
@@ -79,5 +96,10 @@ public class CS_StoreManager : MonoBehaviour
         }
         
         ItemDeliverer.DeliverItem(StoreItems[0]);
+    }
+
+    public List<FStoreItem> GetItemList()
+    {
+        return StoreItems;
     }
 }
