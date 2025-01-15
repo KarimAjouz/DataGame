@@ -57,4 +57,9 @@ public class CS_SplitFlapCharacter_SingleCard : MonoBehaviour
         FrontText.color = c;
         RearText.color = c;
     }
+
+    public void CancelAnim()
+    {
+        Anim.Stop();
+    }
 }

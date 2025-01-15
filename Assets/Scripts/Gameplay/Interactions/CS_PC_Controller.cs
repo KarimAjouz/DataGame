@@ -25,6 +25,7 @@ public class CS_PC_Controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         if(FPEInputManager.Instance.GetAxis(FPEInputManager.eFPEInput.KAZ_INPUT_SCROLLWHEEL) > 0.0f && bDocked)
         {
             UpScroll();

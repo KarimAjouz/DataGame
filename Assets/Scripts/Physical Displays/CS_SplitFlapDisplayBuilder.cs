@@ -1,13 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
+using UnityEditor;
 
 public class CS_SplitFlapDisplayBuilder : MonoBehaviour
 {
 }
-
 
 
 [CustomEditor(typeof(CS_SplitFlapDisplayBuilder))]
