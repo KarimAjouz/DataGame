@@ -36,31 +36,22 @@ public class CS_VendingMachineManager : MonoBehaviour
         m_Keypad.OnKeypadClear.AddListener(ClearKeypad);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void AddKeypadInput(int InKeypadInput)
     {
         if (m_KeypadValue > 99)
         {
             ClearKeypad();
         }
-        else
-        {
-            m_KeypadValue *= 10;
-            m_KeypadValue += InKeypadInput;
-        }
+        
+        m_KeypadValue *= 10; 
+        m_KeypadValue += InKeypadInput;
 
         string KeypadText = m_KeypadValue.ToString();
         if (m_KeypadValue < 10)
         {
             KeypadText = KeypadText.Insert(0, "00");
         }
-
-        if (m_KeypadValue < 100)
+        else if (m_KeypadValue < 100)
         {
             KeypadText = KeypadText.Insert(0, "0");
         }
