@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using NNarrativeDataTypes;
 using NCharacterTraitCategoryTypes;
 using AYellowpaper.SerializedCollections;
 using ChoETL;
 using NaughtyAttributes;
-using static UnityEngine.GameObject;
-using Object = UnityEngine.Object;
 
 namespace NNarrativeDataTypes
 {
@@ -376,7 +374,7 @@ namespace NNarrativeDataTypes
         public override bool Equals(object obj)
         {
             return obj is FWebIdHandle handle &&
-                   this == (FWebIdHandle)obj;
+                   this == handle;
         }
 
         public override int GetHashCode()
@@ -550,13 +548,14 @@ namespace NNarrativeDataTypes
 
 
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class CS_StoryManager : MonoBehaviour
 {
     [SerializeField]
     [SerializedDictionary("RewardType", "Value")] 
     private SerializedDictionary<FCharacterDataCredit, int> m_CharacterDataCredit;
-    
-    CS_CharacterListBuilder CharacterList;
+
+    private CS_CharacterListBuilder CharacterList;
     
     [SerializeField]
     private CS_CashDispenser m_CashDispenser;
@@ -577,7 +576,6 @@ public class CS_StoryManager : MonoBehaviour
         if (!m_CashDispenser)
         {
             Debug.LogError("Cash Dispenser is invalid!");
-            return;
         }
         
     }

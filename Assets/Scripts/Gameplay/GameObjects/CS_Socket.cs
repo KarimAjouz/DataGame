@@ -24,6 +24,12 @@ public class CS_Socket : MonoBehaviour
         }
         SocketedGO = go;
 
+        if (SocketedTransform)
+        {
+            go.transform.position = SocketedTransform.position;
+            go.transform.rotation = SocketedTransform.rotation;
+        }
+
         OnSocket.Invoke();
     }
 
@@ -36,6 +42,11 @@ public class CS_Socket : MonoBehaviour
     public GameObject GetSocketedGO()
     {
         return SocketedGO;
+    }
+
+    public void DestroySocketedGO()
+    {
+        Destroy(SocketedGO);
     }
 
 }
