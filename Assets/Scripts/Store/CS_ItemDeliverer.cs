@@ -16,7 +16,7 @@ public class CS_ItemDeliverer : MonoBehaviour
     private GameObject ItemDeliveryParent;
     
 
-    public void DeliverItem(FStoreItem InStoreItem)
+    public void DeliverItems(FStoreItem InStoreItem, int InCount = 0)
     {
         if (ItemDeliveryParent.transform.childCount != 0)
         {
@@ -24,10 +24,15 @@ public class CS_ItemDeliverer : MonoBehaviour
             return;
         }
         
-        GameObject NewItem = Instantiate(InStoreItem.ItemPrefab, ItemDeliveryParent.transform);
+
+        for (int i = 0; i < InCount; i++)
+        {
+            GameObject NewItem = Instantiate(InStoreItem.ItemPrefab, ItemDeliveryParent.transform);
+            
+            NewItem.transform.localPosition = InStoreItem.SpawnPositionOffset;
+            NewItem.transform.localEulerAngles = InStoreItem.SpawnRotationOffset;
+        }
         
-        NewItem.transform.localPosition = InStoreItem.SpawnPositionOffset;
-        NewItem.transform.localEulerAngles = InStoreItem.SpawnRotationOffset;
 
         foreach (UnityEvent deliverEvent in ItemsDeliveredEvents)
         {

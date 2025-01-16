@@ -95,7 +95,7 @@ public class CS_StoreManager : MonoBehaviour
             return;
         }
         
-        ItemDeliverer.DeliverItem(StoreItems[0]);
+        ItemDeliverer.DeliverItems(StoreItems[0]);
     }
 
     public List<FStoreItem> GetItemList()

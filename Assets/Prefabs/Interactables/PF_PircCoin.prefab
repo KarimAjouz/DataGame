@@ -51,7 +51,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PickupType: 3
-  HasPutBack: 0
+  HasPutBack: 1
   Stackable: 0
   PutBackRules:
     LockToPositionOnPutBack: 0
@@ -89,7 +89,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0009981d3cbc4e81993b46e08b2f5bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CurrencyValue: 0
+  m_CurrencyValue: 1
 --- !u!54 &5265716516082107851
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -251,11 +251,35 @@ MonoBehaviour:
   impactSounds: []
   OnPickupEvent:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1386892527841693088}
+        m_TargetAssemblyTypeName: CS_PickupType, Assembly-CSharp
+        m_MethodName: OnPickup
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   pickupRepeatMode: 1
   OnPutBackEvent:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1386892527841693088}
+        m_TargetAssemblyTypeName: CS_PickupType, Assembly-CSharp
+        m_MethodName: OnPutBack
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   putbackRepeatMode: 1
   OnThrowEvent:
     m_PersistentCalls:

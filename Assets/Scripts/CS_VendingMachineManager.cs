@@ -225,6 +225,18 @@ public class CS_VendingMachineManager : MonoBehaviour
         QueueItem(m_VendingMachineInventory[m_KeypadValue]);
     }
 
+    public void UpdateCount(int InCountDifference)
+    {
+        if (m_QueuedItemCode == 0
+            ||m_RequestedItemCount + InCountDifference >= m_VendingMachineInventory[m_QueuedItemCode].MaxPurchaseAmount
+            || m_RequestedItemCount + InCountDifference < 1)
+        {
+            return;
+        }
+        m_RequestedItemCount += InCountDifference;
+        UpdatePurchasePrice(m_RequestedItemCount);
+    }
+
     public void TryPurchaseItem()
     {
         if (m_QueuedItemCode == 0)
@@ -233,13 +245,16 @@ public class CS_VendingMachineManager : MonoBehaviour
         }
         
         FStoreItem Item = m_VendingMachineInventory[m_QueuedItemCode];
-        if (m_DepositedCashCount < Item.Price)
+        if (m_DepositedCashCount <= Item.Price * m_RequestedItemCount)
         {
             RequestFailed();
             return;
         }
         
-        m_ItemDeliverer.DeliverItem(Item);
+        m_DepositedCashCount -= Item.Price * m_RequestedItemCount;
+        UpdateCashDisplay();
+        
+        m_ItemDeliverer.DeliverItems(Item, m_RequestedItemCount);
     }
     
     public void DequeueItem()

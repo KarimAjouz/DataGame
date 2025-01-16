@@ -49,6 +49,11 @@ public class CS_PickupType : MonoBehaviour
             Socket = null;
         }
 
+        if (transform.parent == null)
+        {
+            return;
+        }
+        
         CS_ItemDeliverer ItemDeliverer = transform.parent.GetComponent<CS_ItemDeliverer>();
         if (ItemDeliverer)
         {
@@ -80,9 +85,6 @@ public class CS_PickupType : MonoBehaviour
         {
             FoundSocket.SocketGO(gameObject);
             Socket = FoundSocket;
-            
-            transform.position = Socket.SocketedTransform.position;
-            transform.rotation = Socket.SocketedTransform.rotation;
         }
         
 
